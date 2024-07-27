@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  app:
+    container_name: fastapi_saas_dev
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    volumes:
+      - ..:/home/mmanez/projects/fastapi_saas_dev:cached
+    command: sleep infinity
+    network_mode: service:db
+  db:
+    container_name: fastapi_saas_dev_db
+    image: mysql:8
+    restart: unless-stopped
+    volumes:
+      - mysql-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - 3311:3306
+volumes:
+  mysql-data:

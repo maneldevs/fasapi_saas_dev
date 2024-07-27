@@ -1,0 +1,21 @@
+{
+	"name": "Fastapi SAAS Dev",
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "app",
+	"workspaceFolder": "/home/mmanez/projects/fastapi_saas_dev",
+	"customizations": {
+		"vscode": {
+			"settings": {},
+			"extensions": [
+				"ms-python.python",
+				"wholroyd.jinja",
+				"WyattFerguson.jinja2-snippet-kit",
+				"ms-python.black-formatter",
+				"ms-python.flake8",
+				"mhutchie.git-graph",
+				"humao.rest-client"
+			]
+		}
+	},
+	"remoteUser": "mmanez"
+}
