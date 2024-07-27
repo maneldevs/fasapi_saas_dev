@@ -47,6 +47,42 @@
                 "core"
             ]
         },
-
+        {
+            "name": "venv-custom",
+            "base": "environment",
+            "color": "blue-600",
+            "lightColor": "blue-400",
+            "folderNames": [
+                ".venv",
+                "venv"
+            ]
+        },
+        {
+            "name": "src-custom",
+            "base": "src",
+            "color": "green-600",
+            "lightColor": "green-400",
+            "folderNames": [
+                "src"
+            ]
+        },
+        {
+            "name": "resources-custom",
+            "base": "resource",
+            "color": "red-500",
+            "lightColor": "pink-300",
+            "folderNames": [
+                "resources"
+            ]
+        },
+        {
+            "name": "config-custom",
+            "base": "config",
+            "color": "blue-600",
+            "lightColor": "blue-400",
+            "folderNames": [
+                "nginx"
+            ]
+        }
     ],
 }
