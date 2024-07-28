@@ -46,7 +46,7 @@ pip freeze > requirements.txt
 ```py
 from fastapi import FastAPI
 app = FastAPI()
-@app.get("/api/health")
+@app.get("/health")
 async def health() -> dict:
     return {"status": "UP"}
 ```
@@ -56,9 +56,50 @@ async def health() -> dict:
 fastapi dev src/app/main.py
 ```
 
-- obrir el navegador y provar la adreça http://localhost:8000/api/health
+- obrir el navegador y provar la adreça http://localhost:8000/health
 
 - Parar la execució pulsant ctrl+c
+
+## Crear frontend
+
+- Crear un directori resources dins de src/app
+- Crear un directori statics dins de resources
+- Crear un directori templates dins de resources
+- En main.py afegir una subaplicació per el admin frontend:
+```py
+import os
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+
+app_folder = os.path.dirname(__file__)
+
+# API -> http://localhost/...
+
+app = FastAPI()
+
+@app.get("/health")
+async def health() -> dict:
+    return {"status": "UP"}
+
+# ADMIN WEB ->   # http://localhost/admin/...
+
+admin = FastAPI()
+app.mount("/static", StaticFiles(directory=app_folder + "/resources/static"), name="static")
+app.mount("/admin", admin)
+templates = Jinja2Templates(directory=app_folder + "/resources/templates")
+
+@admin.get("/health", response_class=HTMLResponse)
+async def admin_health(request: Request):
+    return templates.TemplateResponse(request=request, name="health.html", context={})
+```
+
+- IMPORTANT: Les referencies als fitxers estatics no son com en la documentació:
+```html
+    <link href="{{ url_for('static', path='/css/base.css') }}" rel="stylesheet"> -> MALAMENT!!!!
+    <link href="/static/css/base.css" rel="stylesheet"> -> BÉ!!!!!
+```
 
 
 ## Configure contenidors Docker per desplegar darrere de NGINX - GUNICORN - UVICORN sense TLS
@@ -71,13 +112,14 @@ fastapi dev src/app/main.py
 FROM tiangolo/uvicorn-gunicorn-fastapi:python3.11
 COPY ./requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
-COPY src /app
+COPY src/app /app
 ```
 
 - Crear el fitxer docker-compose.yml
 
 ```yml
 version: '3.8'
+
 services:
   app:
     container_name: fastapi_saas_dev_local
@@ -106,11 +148,8 @@ services:
 ```
 server {
     listen 80;
-    server_name localhost;
 
-    client_max_body_size 32m;
-
-    location /api {
+    location / {
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_set_header X-Forwarded-Host $server_name;
