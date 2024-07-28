@@ -34,6 +34,7 @@ deactivate
 source .venv/bin/activate
 pip install fastapi
 pip install python-dotenv
+pip install jinja2
 pip freeze > requirements.txt
 ```
 
@@ -119,4 +120,12 @@ server {
 }
 ```
 
-- Per desplegar copiar els tres fitxers de abans al arrel del projecte
+## Desplegament en producció
+
+1. Per desplegar en producció sense haver creat una imatge, copiar al mateix nivell en un directori:
+
+  - els tres fitxers de abans: Dockerfile, docker-compose.yml, nginx.conf
+  - requirements.txt
+  - el directory src y tot el seu contingut
+
+2. Executar: `docker compose up`

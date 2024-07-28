@@ -30,12 +30,12 @@
             ]
         },
         {
-            "name": "application",
-            "base": "api",
+            "name": "modules",
+            "base": "module",
             "color": "pink-400",
             "lightColor": "pink-600",
             "folderNames": [
-                "application"
+                "modules"
             ]
         },
         {
@@ -60,7 +60,7 @@
         {
             "name": "src-custom",
             "base": "src",
-            "color": "green-600",
+            "color": "blue-600",
             "lightColor": "green-400",
             "folderNames": [
                 "src"
@@ -69,8 +69,8 @@
         {
             "name": "resources-custom",
             "base": "resource",
-            "color": "red-500",
-            "lightColor": "pink-300",
+            "color": "purple-500",
+            "lightColor": "purple-300",
             "folderNames": [
                 "resources"
             ]
@@ -83,6 +83,60 @@
             "folderNames": [
                 "nginx"
             ]
-        }
+        },
+        {
+            "name": "static-custom",
+            "base": "public",
+            "color": "purple-500",
+            "lightColor": "purple-300",
+            "folderNames": [
+                "static"
+            ]
+        },
+        {
+            "name": "templates-custom",
+            "base": "template",
+            "color": "purple-500",
+            "lightColor": "purple-300",
+            "folderNames": [
+                "templates"
+            ]
+        },
+        {
+            "name": "img-custom",
+            "base": "images",
+            "color": "purple-500",
+            "lightColor": "purple-300",
+            "folderNames": [
+                "img"
+            ]
+        },
+        {
+            "name": "css-custom",
+            "base": "css",
+            "color": "purple-500",
+            "lightColor": "purple-300",
+            "folderNames": [
+                "css"
+            ]
+        },
+        {
+            "name": "js-custom",
+            "base": "javascript",
+            "color": "purple-500",
+            "lightColor": "purple-300",
+            "folderNames": [
+                "js"
+            ]
+        },
+        {
+            "name": "modules-custom",
+            "base": "plugin",
+            "color": "pink-500",
+            "lightColor": "pink-300",
+            "folderNames": [
+                "modules"
+            ]
+        },
     ],
 }
