@@ -33,6 +33,7 @@ deactivate
 ```bash
 source .venv/bin/activate
 pip install fastapi
+pip install pydantic-settings
 pip install python-dotenv
 pip install jinja2
 pip freeze > requirements.txt
@@ -100,6 +101,12 @@ async def admin_health(request: Request):
     <link href="{{ url_for('static', path='/css/base.css') }}" rel="stylesheet"> -> MALAMENT!!!!
     <link href="/static/css/base.css" rel="stylesheet"> -> BÉ!!!!!
 ```
+
+## Variables d'entorn
+
+- Amb la llibrería pydantic-settings instal·lada
+- Crear el fitxer src/app/configuration/settings.py
+- Crear el fitxer .env en el arrel del projecte
 
 
 ## Configure contenidors Docker per desplegar darrere de NGINX - GUNICORN - UVICORN sense TLS

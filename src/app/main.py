@@ -4,12 +4,14 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
+from .configuration.settings import settings
+
 app_folder = os.path.dirname(__file__)
 
 
 # API -> http://localhost/...
 
-app = FastAPI()
+app = FastAPI(title=settings.app_name, version=settings.app_version)
 
 
 @app.get("/health")
