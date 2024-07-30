@@ -59,8 +59,8 @@
         },
         {
             "name": "src-custom",
-            "base": "src",
-            "color": "blue-600",
+            "base": "project",
+            "color": "orange-600",
             "lightColor": "green-400",
             "folderNames": [
                 "src"

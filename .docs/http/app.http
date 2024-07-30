@@ -1,0 +1,14 @@
+@urlBase = http://localhost:8000
+
+
+### API HEALTH
+GET {{urlBase}}/health
+
+### ADMIN HEALTH (IN BROWSER)
+GET {{urlBase}}/admin/health
+
+### OPENAPI DOCS (IN BROWSER)
+GET {{urlBase}}/docs
+
+### OPENAPI REDOCS (IN BROWSER)
+GET {{urlBase}}/redoc
