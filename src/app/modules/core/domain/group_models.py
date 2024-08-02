@@ -1,0 +1,33 @@
+
+from uuid import uuid4
+from sqlmodel import Field, SQLModel
+
+
+class GroupSimpleBase(SQLModel):
+    code: str = Field(unique=True)
+    webname: str
+
+
+class GroupBase(GroupSimpleBase):
+    active: bool = True
+
+
+class Group(GroupBase, table=True):
+    __tablename__ = "groups"
+    id: str = Field(default=uuid4, primary_key=True)
+
+
+class GroupCreateCommand(GroupSimpleBase):
+    pass
+
+
+class GroupUpdateCommand(GroupBase):
+    pass
+
+
+class GroupSimpleResponse(GroupSimpleBase):
+    id: str
+
+
+class GroupResponse(GroupBase):
+    id: str

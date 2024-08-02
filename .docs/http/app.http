@@ -2,7 +2,7 @@
 
 
 ### API HEALTH
-GET {{urlBase}}/health
+GET {{urlBase}}/api/health
 
 ### ADMIN HEALTH (IN BROWSER)
 GET {{urlBase}}/admin/health
@@ -12,3 +12,6 @@ GET {{urlBase}}/docs
 
 ### OPENAPI REDOCS (IN BROWSER)
 GET {{urlBase}}/redoc
+
+### BORRAR
+GET {{urlBase}}/api/core/groups/test

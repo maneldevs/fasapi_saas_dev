@@ -3,18 +3,20 @@ from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from app.modules.core.api import router as core_router
 
 from .configuration.settings import settings
 
 app_folder = os.path.dirname(__file__)
 
 
-# API -> http://localhost/...
+# API -> http://localhost/api/...
 
 app = FastAPI(title=settings.app_name, version=settings.app_version)
+app.include_router(core_router)
 
 
-@app.get("/health")
+@app.get("/api/health")
 async def health() -> dict:
     return {"status": "UP"}
 

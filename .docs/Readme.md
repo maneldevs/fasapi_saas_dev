@@ -36,6 +36,9 @@ pip install fastapi
 pip install pydantic-settings
 pip install python-dotenv
 pip install jinja2
+pip install alembic
+pip install sql model
+pip install mysqlclient
 pip freeze > requirements.txt
 ```
 
@@ -104,9 +107,96 @@ async def admin_health(request: Request):
 
 ## Variables d'entorn
 
-- Amb la llibrería pydantic-settings instal·lada
+- Amb les llibreries pydantic-settings i python-dotenv instal·lades
 - Crear el fitxer src/app/configuration/settings.py
 - Crear el fitxer .env en el arrel del projecte
+
+## Database i Alembic
+
+- Comprovar que estan instal·lats alembic i sqlmodel
+
+- Crear els models en src/app/modules/core/domain/models.py
+
+```py
+from uuid import uuid4
+from sqlmodel import Field, SQLModel
+
+class Group(SQLModel, table=True):
+    __tablename__ = "groups"
+    id: str = Field(default=uuid4, primary_key=True)
+    code: str = Field(unique=True)
+    webname: str
+    active: bool = True
+```
+
+- Crear la base de dades (si estem en un devcontainer conectar amb Workbench al contenidor)
+
+- Iniciar alembic
+
+```bash
+alembic init src/alembic
+```
+
+- Afegir les variables d'entorn al .env (si es devcontainer vore els valors de la base de dades de docker-compose.yml)
+
+- Afegir las variables d'entorn al settings.py
+
+- Afegir la següent configuració al fitxer src/alembic/env.py
+
+```py
+from sqlmodel import SQLModel
+from src.app.configuration.settings import settings
+import src.app.modules.core.domain.models
+...
+DB_USERNAME = settings.db_username
+DB_PASSWORD = settings.db_password
+DB_HOSTNAME = settings.adb_hostname
+DB_PORT = settings.db_port
+DB_DATABASE = settings.db_name
+DB_URL = f"mysql://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOSTNAME}:{DB_PORT}/{DB_DATABASE}"
+...
+config = context.config
+config.set_main_option("sqlalchemy.url", DB_URL)
+...
+target_metadata = [SqlModel.metadata]
+```
+
+- Afegir la següent configuració al fitxer src/alembic/script.py.mako
+
+```py
+import sqlmodel
+```
+
+- Crear el fitxer de la migració
+
+```bash
+alembic revision --autogenerate -m "create groups table"
+```
+
+- Executar la migració
+
+```bash
+alembic upgrade head
+```
+
+- Configurar la connexió de la base de dades
+
+```py
+from sqlmodel import Session, create_engine
+from app.configuration.settings import settings
+
+DB_USERNAME = settings.db_username
+DB_PASSWORD = settings.db_password
+DB_HOSTNAME = settings.db_hostname
+DB_PORT = settings.db_port
+DB_DATABASE = settings.db_database
+DB_URL = f"mysql://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOSTNAME}:{DB_PORT}/{DB_DATABASE}"
+engine = create_engine(DB_URL)
+def get_session():
+    with Session(engine) as session:
+        yield session
+
+```
 
 
 ## Configure contenidors Docker per desplegar darrere de NGINX - GUNICORN - UVICORN sense TLS
