@@ -1,5 +1,6 @@
 from sqlmodel import Session, create_engine
-from app.configuration.settings import settings
+
+from src.app.configuration.settings import settings
 
 
 DB_USERNAME = settings.db_username

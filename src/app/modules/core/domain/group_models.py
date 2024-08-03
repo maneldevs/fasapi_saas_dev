@@ -1,5 +1,5 @@
 
-from uuid import uuid4
+import uuid
 from sqlmodel import Field, SQLModel
 
 
@@ -14,7 +14,7 @@ class GroupBase(GroupSimpleBase):
 
 class Group(GroupBase, table=True):
     __tablename__ = "groups"
-    id: str = Field(default=uuid4, primary_key=True)
+    id: str = Field(default=uuid.uuid4(), primary_key=True)
 
 
 class GroupCreateCommand(GroupSimpleBase):

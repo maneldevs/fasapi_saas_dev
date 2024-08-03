@@ -111,6 +111,57 @@ async def admin_health(request: Request):
 - Crear el fitxer src/app/configuration/settings.py
 - Crear el fitxer .env en el arrel del projecte
 
+## Excepcions y el seu manejament
+
+- Crear las excepciones en el fitxer `src/app/configuration/exceptions.py`
+
+```py
+class BaseError(Exception):
+    def __init__(self, type: str, msg: str, status_code: int, original_exception: Exception = None) -> None:
+        self.type = type
+        self.msg = msg
+        self.status_code = status_code
+        self.original_exception = original_exception
+
+class EntityAlreadyExistsError(BaseError):
+    def __init__(self, msg: str = "Entity already exists", original_exception: Exception = None) -> None:
+        super().__init__(type="database", msg=msg, status_code=400, original_exception=original_exception)
+
+```
+
+- Crear el handler en el fitxer `src/app/configuration/exception_handler.py`
+
+```py
+from fastapi import Request
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+from src.app.configuration.exceptions import BaseError
+
+async def base_handler(request: Request, exc: BaseError):
+    detail = {
+        "args": exc.original_exception.args,
+        "input": await request.json(),
+    }
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"type": exc.type, "msg": exc.msg, "status": exc.status_code, "detail": detail},
+    )
+
+async def validation_handler(request: Request, exc: RequestValidationError):
+    return JSONResponse(
+        status_code=422,
+        content={"type": "validation", "msg": "validation error", "status": 422, "detail": exc.errors()},
+    )
+
+```
+
+- Asignar els hendlers en el main:
+
+```py
+app.add_exception_handler(BaseError, handler.base_handler)
+app.add_exception_handler(RequestValidationError, handler.validation_handler)
+```
+
 ## Database i Alembic
 
 - Comprovar que estan instal·lats alembic i sqlmodel
@@ -183,7 +234,7 @@ alembic upgrade head
 
 ```py
 from sqlmodel import Session, create_engine
-from app.configuration.settings import settings
+from src.app.configuration.settings import settings
 
 DB_USERNAME = settings.db_username
 DB_PASSWORD = settings.db_password
@@ -197,6 +248,12 @@ def get_session():
         yield session
 
 ```
+
+- Crear els models (commands, responses i entitities) i el servici en `src/app/core/domain`
+
+- Crear el controller de l'api en `src/app/core/api`
+
+- Crear el repository en `src/app/core/persistence`
 
 
 ## Configure contenidors Docker per desplegar darrere de NGINX - GUNICORN - UVICORN sense TLS

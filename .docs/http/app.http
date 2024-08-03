@@ -12,6 +12,3 @@ GET {{urlBase}}/docs
 
 ### OPENAPI REDOCS (IN BROWSER)
 GET {{urlBase}}/redoc
-
-### BORRAR
-GET {{urlBase}}/api/core/groups/test

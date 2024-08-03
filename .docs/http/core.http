@@ -1,0 +1,9 @@
+@urlBase = http://localhost:8000/api/core
+
+## GROUP - CREATE
+POST {{urlBase}}/groups
+
+{
+    "code": "ainia",
+    "webname": "ainia"
+}
