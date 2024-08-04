@@ -7,6 +7,7 @@ from fastapi.templating import Jinja2Templates
 import src.app.configuration.exception_handler as handler
 from src.app.configuration.exceptions import BaseError
 from src.app.modules.core.api import router as core_router
+from src.app.modules.core.web import router as core_web_router
 
 from .configuration.settings import settings
 
@@ -32,10 +33,11 @@ admin = FastAPI()
 
 app.mount("/static", StaticFiles(directory=app_folder + "/resources/static"), name="static")
 app.mount("/admin", admin)
-
+admin.include_router(core_web_router)
 templates = Jinja2Templates(directory=app_folder + "/resources/templates")
 
 
 @admin.get("/health", response_class=HTMLResponse)
 async def admin_health(request: Request):
     return templates.TemplateResponse(request=request, name="health.html", context={})
+
