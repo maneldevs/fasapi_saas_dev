@@ -7,8 +7,8 @@ from src.app.configuration.exceptions import BaseError
 
 async def base_handler(request: Request, exc: BaseError):
     detail = {
-        "args": exc.original_exception.args,
-        "input": await request.json(),
+        "args": exc.original_exception.args if exc.original_exception else "<empty>",
+        "input": await request.json() if request.method == "POST" else "<empty>",
     }
     return JSONResponse(
         status_code=exc.status_code,

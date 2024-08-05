@@ -1,9 +1,14 @@
 @urlBase = http://localhost:8000/api/core
 
-## GROUP - CREATE
+
+### GROUP - READ BY ID
+GET {{urlBase}}/groups/b6c2e786-650d-46fb-a593-c6f53a680b9d
+
+### GROUP - CREATE
 POST {{urlBase}}/groups
 
 {
     "code": "ainia",
     "webname": "ainia"
 }
+

@@ -157,5 +157,14 @@
                 "api"
             ]
         },
+        {
+            "name": "web-custom",
+            "base": "global",
+            "color": "pink-400",
+            "lightColor": "pink-200",
+            "folderNames": [
+                "web"
+            ]
+        },
     ],
 }

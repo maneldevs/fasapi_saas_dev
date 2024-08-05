@@ -21,3 +21,7 @@ class GroupRepo:
             return group
         except IntegrityError as e:
             raise EntityAlreadyExistsError(original_exception=e)
+
+    def read_by_id(self, id: str) -> Group:
+        group = self.session.get(Group, id)
+        return group
