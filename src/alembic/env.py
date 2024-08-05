@@ -7,7 +7,7 @@ from sqlmodel import SQLModel
 from alembic import context
 
 from src.app.configuration.settings import settings
-import src.app.modules.core.domain.group_models
+import src.app.modules.core.domain.models
 
 DB_USERNAME = settings.db_username
 DB_PASSWORD = settings.db_password

@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import Depends
 
 from src.app.configuration.exceptions import EntityAlreadyExistsError, EntityNotFoundError
-from src.app.modules.core.domain.group_models import Group, GroupCreateCommand
+from src.app.modules.core.domain.models import Group, GroupCreateCommand
 from src.app.modules.core.persistence.group_repo import GroupRepo
 
 

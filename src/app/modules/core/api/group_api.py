@@ -1,7 +1,7 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, status
 
-from src.app.modules.core.domain.group_models import GroupCreateCommand, GroupResponse
+from src.app.modules.core.domain.models import GroupCreateCommand, GroupResponse
 from src.app.modules.core.domain.group_service import GroupService
 
 
