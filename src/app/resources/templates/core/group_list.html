@@ -1,0 +1,50 @@
+{% extends 'shared/content.html' %}
+
+{% set page = 'groups' %}
+
+{% block title_right %}
+<button class="btn btn-success">Create group</button>
+{% endblock title_right %}
+
+{% block main %}
+<form method="get" class="d-flex justify-content-end mb-3">
+  <div class="me-2">
+      <input type="text" class="form-control" name="target" placeholder="search" value="{{ request.query_params['target'] }}">
+  </div>
+  <div>
+      <button type="submit" class="btn btn-outline-info">Filter</button>
+    </div>
+  </div>
+</form>
+<div class="table-responsive"></div>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">code</th>
+      <th scope="col">webname</th>
+      <th scope="col">active</th>
+      <th scope="col" class="text-end"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in content %}
+    <tr>
+      <td>{{ item.code }}</td>
+      <td>{{ item.webname }}</td>
+      <td>
+        {% if item.active%}
+        <i class="text-success bi bi-check-circle-fill"></i>
+        {% else %}
+        <i class="text-danger bi bi-x-circle-fill"></i>
+        {% endif %}
+      </td>
+      <td class="text-end">
+        <button class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></button>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<!-- TODO mmr add pagination -->
+</div>
+{% endblock main %}
