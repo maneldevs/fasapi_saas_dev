@@ -42,8 +42,9 @@
   </div>
 </nav>
 <div class="container">
-  <div class="mb-4">
-    <h1 class="display-4">{% block title %}{{page|capitalize}}{% endblock  %}</h1>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="display-4">{% block title %}{{page|capitalize}}{% endblock title %}</h1>
+    <div>{% block title_right %}buttons here{% endblock title_right %}</div>
   </div>
   <div>
     {% block main %}{% endblock main %}
