@@ -16,4 +16,4 @@ GET {{urlBase}}/groups/b6c2e786-650d-46fb-a593-c6f53a680b9d
 GET {{urlBase}}/groups/index
 
 ### GROUP - READ PAGINATED
-GET {{urlBase}}/groups?page=1&size=1&direction=asc&order_field=code
+GET {{urlBase}}/groups?page=1&size=10&direction=asc&order_field=code&target=ainia

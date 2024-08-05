@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import Depends
 
 from src.app.configuration.exceptions import EntityAlreadyExistsError, EntityNotFoundError
-from src.app.modules.core.domain.models import Group, GroupCreateCommand, PageParams
+from src.app.modules.core.domain.models import Group, GroupCreateCommand, GroupFilter, PageParams
 from src.app.modules.core.persistence.group_repo import GroupRepo
 
 
@@ -30,7 +30,7 @@ class GroupService:
         groups = self.repo.read_all()
         return groups
 
-    def read_all_paginated(self, page_params: PageParams) -> tuple[list[Group], int]:
+    def read_all_paginated(self, page_params: PageParams, filter: GroupFilter) -> tuple[list[Group], int]:
         total = self.repo.count_all()
-        groups = self.repo.read_paginated(page_params)
+        groups = self.repo.read_paginated(page_params, filter)
         return (groups, total)

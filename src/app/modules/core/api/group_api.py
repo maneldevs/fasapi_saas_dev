@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, status
 
 from src.app.modules.core.domain.models import (
     GroupCreateCommand,
+    GroupFilter,
     GroupResponse,
     GroupSimpleResponse,
     PageParams,
@@ -21,8 +22,12 @@ async def create(command: GroupCreateCommand, service: Annotated[GroupService, D
 
 
 @router.get("/", response_model=PageResponse[GroupResponse])
-async def read(page_params: Annotated[PageParams, Depends()], service: Annotated[GroupService, Depends()]):
-    groups, total = service.read_all_paginated(page_params)
+async def read(
+    page_params: Annotated[PageParams, Depends()],
+    filter: Annotated[GroupFilter, Depends()],
+    service: Annotated[GroupService, Depends()],
+):
+    groups, total = service.read_all_paginated(page_params, filter)
     return PageResponse(page=page_params.page, size=page_params.size, total=total, content=groups)
 
 

@@ -4,6 +4,7 @@ import uuid
 from sqlmodel import Field, SQLModel
 from pydantic.generics import GenericModel
 
+''' Page '''
 
 T = TypeVar("T", bound=SQLModel)
 
@@ -25,6 +26,9 @@ class PageResponse(GenericModel, Generic[T]):
     size: int
     total: int
     content: list[T]
+
+
+''' Group '''
 
 
 class GroupSimpleBase(SQLModel):
@@ -55,3 +59,7 @@ class GroupSimpleResponse(GroupSimpleBase):
 
 class GroupResponse(GroupBase):
     id: str
+
+
+class GroupFilter(SQLModel):
+    target: str | None = None

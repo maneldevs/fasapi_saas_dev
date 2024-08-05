@@ -1,11 +1,11 @@
 from typing import Annotated
 from fastapi import Depends
-from sqlmodel import Session, select, func, col
+from sqlmodel import Session, select, func, col, or_
 from sqlalchemy.exc import IntegrityError
 
 from src.app.configuration.database import get_session
 from src.app.configuration.exceptions import EntityAlreadyExistsError
-from src.app.modules.core.domain.models import Group, PageParams
+from src.app.modules.core.domain.models import Group, GroupFilter, PageParams
 from src.app.modules.core.utils.paginator import Paginator
 
 
@@ -37,8 +37,10 @@ class GroupRepo:
         total = self.session.exec(stmt).one()
         return total
 
-    def read_paginated(self, page_params: PageParams):
+    def read_paginated(self, page_params: PageParams, filter: GroupFilter):
         stmt = select(Group)
+        if filter.target:
+            stmt = stmt.where(or_(col(Group.code).contains(filter.target), col(Group.webname).contains(filter.target)))
         stmt = Paginator(Group).paginate_query(stmt, page_params)
         groups = self.session.exec(stmt).all()
         return groups
