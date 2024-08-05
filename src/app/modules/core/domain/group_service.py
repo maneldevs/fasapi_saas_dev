@@ -3,8 +3,9 @@ from typing import Annotated
 from fastapi import Depends
 
 from src.app.configuration.exceptions import EntityAlreadyExistsError, EntityNotFoundError
-from src.app.modules.core.domain.models import Group, GroupCreateCommand, GroupFilter, PageParams
+from src.app.modules.core.domain.models import Group, GroupCreateCommand, GroupFilter
 from src.app.modules.core.persistence.group_repo import GroupRepo
+from src.app.modules.core.utils.paginator import PageParams
 
 
 class GroupService:

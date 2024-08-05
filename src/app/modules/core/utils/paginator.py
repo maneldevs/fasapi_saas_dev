@@ -1,10 +1,29 @@
+from enum import Enum
 from typing import Generic, TypeVar
-from sqlmodel import SQLModel
+from sqlmodel import Field, SQLModel
 from sqlmodel.sql.expression import SelectOfScalar
-from src.app.modules.core.domain.models import DirectionEnum, PageParams
 
 
 T = TypeVar("T", bound=SQLModel)
+
+
+class DirectionEnum(str, Enum):
+    asc = "asc"
+    desc = "desc"
+
+
+class PageParams(SQLModel):
+    page: int | None = Field(ge=1, default=1)
+    size: int | None = Field(ge=1, default=10)
+    order_field: str | None = "id"
+    direction: DirectionEnum | None = DirectionEnum.asc
+
+
+class PageResponse(SQLModel, Generic[T]):
+    page: int
+    size: int
+    total: int
+    content: list[T]
 
 
 class Paginator(Generic[T]):

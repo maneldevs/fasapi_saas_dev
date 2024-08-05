@@ -1,15 +1,9 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, status
 
-from src.app.modules.core.domain.models import (
-    GroupCreateCommand,
-    GroupFilter,
-    GroupResponse,
-    GroupSimpleResponse,
-    PageParams,
-    PageResponse,
-)
+from src.app.modules.core.domain.models import GroupCreateCommand, GroupFilter, GroupResponse, GroupSimpleResponse
 from src.app.modules.core.domain.group_service import GroupService
+from src.app.modules.core.utils.paginator import PageResponse, PageParams
 
 
 router = APIRouter(prefix="/api/core/groups", tags=["Core - Groups"])

@@ -5,8 +5,9 @@ from sqlalchemy.exc import IntegrityError
 
 from src.app.configuration.database import get_session
 from src.app.configuration.exceptions import EntityAlreadyExistsError
-from src.app.modules.core.domain.models import Group, GroupFilter, PageParams
+from src.app.modules.core.domain.models import Group, GroupFilter
 from src.app.modules.core.utils.paginator import Paginator
+from src.app.modules.core.utils.paginator import PageParams
 
 
 class GroupRepo:
