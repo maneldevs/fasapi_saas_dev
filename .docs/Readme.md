@@ -39,6 +39,8 @@ pip install jinja2
 pip install alembic
 pip install sql model
 pip install mysqlclient
+pip install requests 
+pip install pytest
 pip freeze > requirements.txt
 ```
 
@@ -254,6 +256,11 @@ def get_session():
 - Crear el controller de l'api en `src/app/core/api`
 
 - Crear el repository en `src/app/core/persistence`
+
+
+## Testing
+
+
 
 
 ## Configure contenidors Docker per desplegar darrere de NGINX - GUNICORN - UVICORN sense TLS

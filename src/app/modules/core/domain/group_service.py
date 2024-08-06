@@ -16,7 +16,7 @@ class GroupService:
     def create(self, command: GroupCreateCommand) -> Group:
         try:
             group = Group.model_validate(command)
-            return self.repo.save(group)
+            return self.repo.create(group)
         except EntityAlreadyExistsError as e:
             e.msg = "Group code already exists"
             raise e

@@ -5,8 +5,8 @@
 POST {{urlBase}}/groups
 
 {
-    "code": "ainia1",
-    "webname": "ainia1"
+    "code": "ainia3",
+    "webname": "ainia3"
 }
 
 ### GROUP - READ BY ID
