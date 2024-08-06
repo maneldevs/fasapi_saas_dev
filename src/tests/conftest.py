@@ -26,6 +26,12 @@ def client_fixture(session: Session):
     app.dependency_overrides.clear()
 
 
+@pytest.fixture(name="client_simple")
+def client_simple_fixture(session: Session):
+    client = TestClient(app)
+    return client
+
+
 @pytest.fixture(name="group_create_command")
 def group_create_command_fixture():
     return GroupCreateCommand(code="ABC-123", webname="ABC")
