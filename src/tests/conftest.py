@@ -4,7 +4,6 @@ from sqlmodel import SQLModel, Session, create_engine, StaticPool
 
 from src.app.configuration.database import get_session
 from src.app.main import app
-from src.app.modules.core.domain.models import Group, GroupCreateCommand
 
 
 @pytest.fixture(name="session")
@@ -30,13 +29,3 @@ def client_fixture(session: Session):
 def client_simple_fixture(session: Session):
     client = TestClient(app)
     return client
-
-
-@pytest.fixture(name="group_create_command")
-def group_create_command_fixture():
-    return GroupCreateCommand(code="ABC-123", webname="ABC")
-
-
-@pytest.fixture(name="group")
-def group_fixture():
-    return Group(id="abc-123-def-456", code="ABC-123", webname="ABC", active=True)

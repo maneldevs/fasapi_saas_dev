@@ -2,7 +2,8 @@ from fastapi.testclient import TestClient
 
 from src.app.main import app
 from src.app.modules.core.domain.group_service import GroupService
-from src.app.modules.core.domain.models import Group, GroupCreateCommand
+from src.app.modules.core.domain.models import GroupCreateCommand
+from src.tests.core.conftest import GroupServiceMock
 
 
 def test_integration_create_group_happy(client: TestClient, group_create_command: GroupCreateCommand):
@@ -16,12 +17,7 @@ def test_integration_create_group_happy(client: TestClient, group_create_command
     assert data["id"] is not None
 
 
-class GroupServiceMock:
-    def create(self, command: GroupCreateCommand) -> Group:
-        return Group(id="abc-123-def-456", code="ABC-123", webname="ABC", active=True)
-
-
-def test_unit_create_group_happy(client_simple: TestClient, group_create_command: GroupCreateCommand):
+def test_unit_create_group_happy(client_simple: TestClient, group_create_command: GroupCreateCommand, group_service):
     app.dependency_overrides[GroupService] = GroupServiceMock
     body = group_create_command.model_dump()
     response = client_simple.post("/api/core/groups", json=body)
