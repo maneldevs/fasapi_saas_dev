@@ -15,7 +15,7 @@ class GroupRepo:
     def __init__(self, session: Annotated[Session, Depends(get_session)]) -> None:
         self.session = session
 
-    def create(self, group: Group) -> Group:
+    def __save(self, group: Group) -> Group:
         try:
             self.session.add(group)
             self.session.commit()
@@ -45,3 +45,20 @@ class GroupRepo:
         stmt = Paginator(Group).paginate_query(stmt, page_params)
         groups = self.session.exec(stmt).all()
         return groups
+
+    def create(self, group: Group) -> Group:
+        return self.__save(group)
+
+    def update(self, id: str, group: Group):
+        group_in_db = self.read_by_id(id)
+        if (group_in_db is not None):
+            group_in_db.sqlmodel_update(group)
+            self.__save(group_in_db)
+        return group_in_db
+
+    def delete(self, id: str) -> Group:
+        group_in_db = self.read_by_id(id)
+        if (group_in_db is not None):
+            self.session.delete(group_in_db)
+            self.session.commit()
+        return group_in_db

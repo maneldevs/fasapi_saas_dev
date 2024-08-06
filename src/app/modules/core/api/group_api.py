@@ -1,7 +1,13 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, status
 
-from src.app.modules.core.domain.models import GroupCreateCommand, GroupFilter, GroupResponse, GroupSimpleResponse
+from src.app.modules.core.domain.models import (
+    GroupCreateCommand,
+    GroupFilter,
+    GroupResponse,
+    GroupSimpleResponse,
+    GroupUpdateCommand,
+)
 from src.app.modules.core.domain.group_service import GroupService
 from src.app.modules.core.utils.paginator import PageResponse, PageParams
 
@@ -35,3 +41,14 @@ async def read_index(service: Annotated[GroupService, Depends()]):
 async def read_by_id(id: str, service: Annotated[GroupService, Depends()]):
     group = service.read_by_id(id)
     return group
+
+
+@router.put("/{id}", response_model=GroupResponse)
+async def update(id: str, command: GroupUpdateCommand, service: Annotated[GroupService, Depends()]):
+    group = service.update(id, command)
+    return group
+
+
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete(id: str, service: Annotated[GroupService, Depends()]):
+    service.delete(id)
