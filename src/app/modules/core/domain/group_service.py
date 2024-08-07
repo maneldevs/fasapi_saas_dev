@@ -39,6 +39,7 @@ class GroupService:
     def update(self, id: str, command: GroupUpdateCommand):
         try:
             group = Group.model_validate(command)
+            group.id = id
             group_updated = self.repo.update(id, group)
             if (group_updated is None):
                 raise EntityNotFoundError(msg="Group not found")

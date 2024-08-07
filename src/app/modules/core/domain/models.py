@@ -16,23 +16,24 @@ class GroupBase(GroupSimpleBase):
 
 class Group(GroupBase, table=True):
     __tablename__ = "groups"
-    id: str = Field(default=str(uuid.uuid4()), primary_key=True)
+    id: str | None = Field(default=str(uuid.uuid4()), primary_key=True)
 
 
 class GroupCreateCommand(GroupSimpleBase):
     pass
 
 
-class GroupUpdateCommand(GroupBase):
-    pass
+class GroupUpdateCommand(GroupSimpleBase):
+    active: bool
 
 
 class GroupSimpleResponse(GroupSimpleBase):
     id: str
 
 
-class GroupResponse(GroupBase):
+class GroupResponse(GroupSimpleBase):
     id: str
+    active: bool
 
 
 class GroupFilter(SQLModel):

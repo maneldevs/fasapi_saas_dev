@@ -5,12 +5,12 @@
 POST {{urlBase}}/groups
 
 {
-    "code": "ainia3",
-    "webname": "ainia3"
+    "code": "ainia10",
+    "webname": "ainia10"
 }
 
 ### GROUP - READ BY ID
-GET {{urlBase}}/groups/b6c2e786-650d-46fb-a593-c6f53a680b9d
+GET {{urlBase}}/groups/d8405ea8-3c7e-4b82-abb6-7f6c2445c1f0
 
 ### GROUP - READ INDEX
 GET {{urlBase}}/groups/index
@@ -19,11 +19,12 @@ GET {{urlBase}}/groups/index
 GET {{urlBase}}/groups?page=1&size=10&direction=asc&order_field=code&target=ainia
 
 ### GROUP - UPDATE
-PUT {{urlBase}}/groups/419390fd-e26a-461f-80b1-1154ec65a93e
+PUT {{urlBase}}/groups/c998846c-3ee7-435c-9910-fb9b0b5ee372
 
 {
-    "code": "ainia2",
-    "webname": "ainia2"
+    "code": "ainia_otro",
+    "webname": "ainia_otro",
+    "active": "false"
 }
 
 ### GROUP - DELETE BY ID
