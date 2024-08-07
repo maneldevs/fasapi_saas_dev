@@ -17,4 +17,8 @@ async def form(
 ):
     groups, total = service.read_all_paginated(page_params, filter)
     page = PageResponse(page=page_params.page, size=page_params.size, total=total, content=groups)
-    return main.templates.TemplateResponse(request=request, name="core/group_list.html", context=page.model_dump())
+    context = page.model_dump()
+    context |= filter.model_dump()
+    context |= {"query_params": f"&size={page_params.size}&order_field={page_params.order_field}" +
+                f"&direction={page_params.direction.value}&target={filter.target if filter.target else ''}"}
+    return main.templates.TemplateResponse(request=request, name="core/group_list.html", context=context)

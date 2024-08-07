@@ -1,0 +1,22 @@
+{% set total_pages = (total // size) + 1 %}
+{% if total_pages > 1 %}
+<nav aria-label="Page navigation example">
+  <ul class="pagination">
+    <li class="page-item {{'disabled' if page == 1 else ''}}">
+      <a class="page-link" href="{{request.url.path + '?page=' + (page - 1)|string + query_params}}"
+        aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+      </a>
+    </li>
+    {% for p in range(1, total_pages + 1) %}
+    <li class="page-item {{'active' if p == page else ''}}"><a class="page-link"
+        href="{{request.url.path + '?page=' + p|string + query_params}}">{{p}}</a></li>
+    {% endfor %}
+    <li class="page-item {{'disabled' if page == total_pages else ''}}">
+      <a class="page-link" href="{{request.url.path + '?page=' + (page + 1)|string + query_params}}" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+{% endif %}
