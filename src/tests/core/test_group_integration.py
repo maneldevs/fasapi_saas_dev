@@ -9,13 +9,24 @@ BASE_URL: str = "/api/core/groups"
 """ Read """
 
 
-def test_id_read_happy(client: TestClient, groups_in_db: Group):
+def test_id_read_paginated_happy(client: TestClient, groups_in_db: Group):
     params = {"page": 2, "size": 1, "order_field": "code", "direction": "desc"}
     response = client.get(f"{BASE_URL}", params=params)
     data = response.json()
     assert data["page"] == 2
     assert data["size"] == 1
     assert data["total"] == 2
+    assert len(data["content"]) == 1
+    assert data["content"][0]["id"] == groups_in_db[0].id
+    assert data["content"][0]["code"] == groups_in_db[0].code
+    assert data["content"][0]["webname"] == groups_in_db[0].webname
+    assert data["content"][0]["active"] == groups_in_db[0].active
+
+
+def test_id_read_filtered_happy(client: TestClient, groups_in_db: Group):
+    params = {"target": "abc"}
+    response = client.get(f"{BASE_URL}", params=params)
+    data = response.json()
     assert len(data["content"]) == 1
     assert data["content"][0]["id"] == groups_in_db[0].id
     assert data["content"][0]["code"] == groups_in_db[0].code
