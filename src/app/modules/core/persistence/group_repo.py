@@ -1,4 +1,5 @@
 from typing import Annotated
+import uuid
 from fastapi import Depends
 from sqlmodel import Session, select, func, col, or_
 from sqlalchemy.exc import IntegrityError
@@ -47,6 +48,7 @@ class GroupRepo:
         return groups
 
     def create(self, group: Group) -> Group:
+        group.id = str(uuid.uuid4())
         return self.__save(group)
 
     def update(self, id: str, group: Group):

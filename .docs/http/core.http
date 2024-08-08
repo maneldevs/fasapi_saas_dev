@@ -1,12 +1,13 @@
 @urlBase = http://localhost:8000/api/core
 
+####################################################### GROUP ##########################################################
 
 ### GROUP - CREATE
 POST {{urlBase}}/groups
 
 {
-    "code": "ainia10",
-    "webname": "ainia10"
+    "code": "ainia12",
+    "webname": "ainia12"
 }
 
 ### GROUP - READ BY ID
@@ -29,3 +30,33 @@ PUT {{urlBase}}/groups/c998846c-3ee7-435c-9910-fb9b0b5ee372
 
 ### GROUP - DELETE BY ID
 DELETE {{urlBase}}/groups/419390fd-e26a-461f-80b1-1154ec65a93e
+
+####################################################### ROLE ###########################################################
+
+### ROLE - CREATE
+POST {{urlBase}}/roles
+
+{
+    "code": "role3",
+    "webname": "role 3"
+}
+
+### ROLE - READ BY ID
+GET {{urlBase}}/roles/d3bc9238-ca0a-47e7-adfd-f2dcb541e5e6
+
+### ROLE - READ INDEX
+GET {{urlBase}}/roles/index
+
+### ROLE - READ PAGINATED
+GET {{urlBase}}/roles?page=1&size=10&direction=asc&order_field=code&target=role
+
+### ROLE - UPDATE
+PUT {{urlBase}}/roles/375fdcab-4027-427d-9e1c-37eb3985cd6f
+
+{
+    "code": "user",
+    "webname": "user"
+}
+
+### ROLE - DELETE BY ID
+DELETE {{urlBase}}/roles/f4da1bae-edfb-4169-8272-12fd093fe727

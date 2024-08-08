@@ -1,8 +1,7 @@
-import uuid
 from sqlmodel import Field, SQLModel
 
 
-''' Group '''
+""" Group """
 
 
 class GroupSimpleBase(SQLModel):
@@ -16,7 +15,7 @@ class GroupBase(GroupSimpleBase):
 
 class Group(GroupBase, table=True):
     __tablename__ = "groups"
-    id: str | None = Field(default=str(uuid.uuid4()), primary_key=True)
+    id: str | None = Field(default=None, primary_key=True)
 
 
 class GroupCreateCommand(GroupSimpleBase):
@@ -37,4 +36,29 @@ class GroupResponse(GroupSimpleBase):
 
 
 class GroupFilter(SQLModel):
+    target: str | None = None
+
+
+""" Roles """
+
+
+class RoleBase(SQLModel):
+    code: str = Field(unique=True)
+    webname: str
+
+
+class Role(RoleBase, table=True):
+    __tablename__ = "roles"
+    id: str | None = Field(default=None, primary_key=True)
+
+
+class RoleCommand(RoleBase):
+    pass
+
+
+class RoleResponse(RoleBase):
+    id: str
+
+
+class RoleFilter(SQLModel):
     target: str | None = None
