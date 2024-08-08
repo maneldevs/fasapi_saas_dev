@@ -2,7 +2,7 @@ import pytest
 from sqlmodel import Session
 
 from src.app.modules.core.domain.group_service import GroupService
-from src.app.modules.core.domain.models import Group, GroupCreateCommand, GroupUpdateCommand
+from src.app.modules.core.domain.models import Group, GroupCreateCommand, GroupUpdateCommand, Role, RoleCommand
 from src.app.main import app
 
 
@@ -51,3 +51,33 @@ def group_service_fixture():
     app.dependency_overrides[GroupService] = GroupServiceMock
     yield
     app.dependency_overrides.clear()
+
+
+@pytest.fixture(name="role_command")
+def role_command_fixture():
+    return RoleCommand(code="ROLE1", webname="role1 ")
+
+
+@pytest.fixture(name="role")
+def role_fixture():
+    return Role(id="abc-123-def-456", code="ROLE1", webname="role 1")
+
+
+@pytest.fixture(name="role2")
+def role2_fixture():
+    return Role(id="ghi-123-jkl-456", code="ROLE2", webname="role 2")
+
+
+@pytest.fixture(name="role_in_db")
+def role_in_db_fixture(session: Session, role: Role):
+    session.add(role)
+    session.commit()
+    return role
+
+
+@pytest.fixture(name="roles_in_db")
+def roles_in_db_fixture(session: Session, role: Role, role2: Role):
+    session.add(role)
+    session.add(role2)
+    session.commit()
+    return [role, role2]

@@ -9,7 +9,7 @@ BASE_URL: str = "/api/core/groups"
 """ Read """
 
 
-def test_id_read_paginated_happy(client: TestClient, groups_in_db: Group):
+def test_id_read_paginated_happy(client: TestClient, groups_in_db: list[Group]):
     params = {"page": 2, "size": 1, "order_field": "code", "direction": "desc"}
     response = client.get(f"{BASE_URL}", params=params)
     data = response.json()
@@ -23,7 +23,7 @@ def test_id_read_paginated_happy(client: TestClient, groups_in_db: Group):
     assert data["content"][0]["active"] == groups_in_db[0].active
 
 
-def test_id_read_filtered_happy(client: TestClient, groups_in_db: Group):
+def test_id_read_filtered_happy(client: TestClient, groups_in_db: list[Group]):
     params = {"target": "abc"}
     response = client.get(f"{BASE_URL}", params=params)
     data = response.json()
@@ -34,7 +34,7 @@ def test_id_read_filtered_happy(client: TestClient, groups_in_db: Group):
     assert data["content"][0]["active"] == groups_in_db[0].active
 
 
-def test_id_read_none_no_params(client: TestClient, groups_in_db: Group):
+def test_id_read_none_no_params(client: TestClient, groups_in_db: list[Group]):
     response = client.get(f"{BASE_URL}")
     data = response.json()
     assert data["page"] == 1
@@ -52,7 +52,7 @@ def test_id_read_none_in_db(client: TestClient):
 """ Read index """
 
 
-def test_id_read_index_happy(client: TestClient, groups_in_db: Group):
+def test_id_read_index_happy(client: TestClient, groups_in_db: list[Group]):
     response = client.get(f"{BASE_URL}/index")
     data = response.json()
     assert response.status_code == 200
