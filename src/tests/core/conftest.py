@@ -26,11 +26,24 @@ def group_fixture():
     return Group(id="abc-123-def-456", code="ABC-123", webname="ABC", active=True)
 
 
+@pytest.fixture(name="group2")
+def group2_fixture():
+    return Group(id="ghi-123-jkl-456", code="GHI-123", webname="GHI", active=False)
+
+
 @pytest.fixture(name="group_in_db")
 def group_in_db_fixture(session: Session, group: Group):
     session.add(group)
     session.commit()
     return group
+
+
+@pytest.fixture(name="groups_in_db")
+def groups_in_db_fixture(session: Session, group: Group, group2: Group):
+    session.add(group)
+    session.add(group2)
+    session.commit()
+    return [group, group2]
 
 
 @pytest.fixture(name="group_service")
