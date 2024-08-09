@@ -1,0 +1,27 @@
+{% extends 'shared/content.html' %}
+
+{% set current_page = 'groups' %}
+
+{% block title %}
+Create group
+{% endblock title %}
+
+{% block title_right %}
+  <button type="submit" form="create-group-form" class="btn btn-primary">Save</button>
+{% endblock title_right %}
+
+{% block main %}
+<form id="create-group-form" method="post">
+  <div class="row g-3">
+    <div class="mb-3 col-md-6">
+      <label for="floatingInput" class="form-label text-small">code</label>
+      <input type="text" class="form-control" name="code">
+
+    </div>
+    <div class="mb-3 col-md-6">
+      <label for="floatingPassword" class="form-label">webname</label>
+      <input type="text" class="form-control" name="webname">
+    </div>
+  </div>
+</form>
+{% endblock main %}

@@ -4,8 +4,8 @@
   "settings": {
     "width": 3000,
     "height": 3000,
-    "scrollTop": -865.4148,
-    "scrollLeft": -846.6365,
+    "scrollTop": -931.4148,
+    "scrollLeft": -1010.6365,
     "zoomLevel": 0.9,
     "show": 508,
     "database": 4,
@@ -116,15 +116,15 @@
           "nze-w768ujUL5_ihSV6qp"
         ],
         "ui": {
-          "x": 1224.7208469381928,
-          "y": 807.335980623079,
+          "x": 1224.7208,
+          "y": 807.336,
           "zIndex": 62,
           "widthName": 60,
           "widthComment": 60,
-          "color": "#F44336"
+          "color": "#673AB7"
         },
         "meta": {
-          "updateAt": 1723105618893,
+          "updateAt": 1723118062511,
           "createAt": 1722190255272
         }
       },
@@ -1873,8 +1873,8 @@
           "columnIds": [
             "beZAKhzBJyLKUo7mlnDfj"
           ],
-          "x": 1224.7208469381928,
-          "y": 871.335980623079,
+          "x": 1224.7208,
+          "y": 871.336,
           "direction": 1
         },
         "end": {
@@ -1957,8 +1957,8 @@
           "columnIds": [
             "beZAKhzBJyLKUo7mlnDfj"
           ],
-          "x": 1574.7208469381928,
-          "y": 871.335980623079,
+          "x": 1574.7208,
+          "y": 871.336,
           "direction": 2
         },
         "end": {
@@ -2013,8 +2013,8 @@
           "columnIds": [
             "beZAKhzBJyLKUo7mlnDfj"
           ],
-          "x": 1399.7208469381928,
-          "y": 935.335980623079,
+          "x": 1399.7208,
+          "y": 935.336,
           "direction": 8
         },
         "end": {
@@ -2085,34 +2085,6 @@
         "meta": {
           "updateAt": 1722671861556,
           "createAt": 1722337435182
-        }
-      },
-      "MMVfjdWf2QaH7MVwW1QgJ": {
-        "id": "MMVfjdWf2QaH7MVwW1QgJ",
-        "identification": false,
-        "relationshipType": 4,
-        "startRelationshipType": 2,
-        "start": {
-          "tableId": "CuodJEI7LOB1-yKQzwy4Y",
-          "columnIds": [
-            "87CIzrBObXUpEmWzpFWom"
-          ],
-          "x": 836.1692101994671,
-          "y": 1048.8801002368912,
-          "direction": 1
-        },
-        "end": {
-          "tableId": "jQU4BurZL0wxGQAk4Jnk1",
-          "columnIds": [
-            "UgHpaPg3UjXN0hKz20Eu8"
-          ],
-          "x": 793.4892,
-          "y": 820.8767,
-          "direction": 2
-        },
-        "meta": {
-          "updateAt": 1722671863503,
-          "createAt": 1722337496820
         }
       },
       "Qr5xsQBgVdMOk9T6SLBYD": {
@@ -2237,15 +2209,15 @@
         "id": "xNdptckHNzBNzzTTSd243",
         "value": "scope can be conbinations of letters:\nCRUD \nEx: R or RU\n\nonly_owner means operations can be done only if current user is owner of the resource, so user_id is in the resource and it is the current user id",
         "ui": {
-          "x": 448.0313,
-          "y": 1740.2876,
+          "x": 661.3648,
+          "y": 1200.2875,
           "zIndex": 511,
           "width": 173,
           "height": 162,
           "color": ""
         },
         "meta": {
-          "updateAt": 1723103777610,
+          "updateAt": 1723118304900,
           "createAt": 1722671267162
         }
       }
@@ -2318,7 +2290,7 @@
       -1,
       {
         "name": 1722190266570,
-        "ui.color": 1722190385453
+        "ui.color": 1723118062510
       }
     ],
     "beZAKhzBJyLKUo7mlnDfj": [
@@ -3016,12 +2988,6 @@
         "comment": 1722337496819,
         "options(primaryKey)": 1722671863492
       }
-    ],
-    "MMVfjdWf2QaH7MVwW1QgJ": [
-      "relationshipEntities",
-      1722337496819,
-      1723105348751,
-      {}
     ],
     "1_YztIoU4qpqT0YDel6pZ": [
       "tableColumnEntities",

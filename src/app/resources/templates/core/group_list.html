@@ -3,13 +3,13 @@
 {% set current_page = 'groups' %}
 
 {% block title_right %}
-<button class="btn btn-success">Create group</button>
+<a class="btn btn-success" href="{{ url_for('group_create') }}">Create group</a>
 {% endblock title_right %}
 
 {% block main %}
 <form method="get" class="d-flex justify-content-end mb-3">
   <div class="me-2">
-    <input type="text" class="form-control" name="target" placeholder="search" value="{{ target }}">
+    <input type="text" class="form-control" name="target" placeholder="search" value="{{ target if target else '' }}">
   </div>
   <div>
     <button type="submit" class="btn btn-outline-info">Filter</button>
