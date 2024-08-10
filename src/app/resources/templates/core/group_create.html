@@ -1,3 +1,4 @@
+{% from 'shared/macros/form_control.html' import form_control %}
 {% extends 'shared/content.html' %}
 
 {% set current_page = 'groups' %}
@@ -14,24 +15,10 @@ Create group
 <form id="create-group-form" method="post">
   <div class="row g-3">
     <div class="mb-3 col-md-6">
-      <label for="floatingInput" class="form-label required">code</label>
-      <input type="text" class="form-control {{'is-invalid' if errors and errors.code else ''}}" name="code"
-        value="{{code}}">
-      {% if errors and errors.code %}
-      <div class="invalid-feedback">
-        {{errors.code}}
-      </div>
-      {% endif %}
+      {{ form_control("code", "text", errors.code if errors and errors.code else None, "code", code) }}
     </div>
     <div class="mb-3 col-md-6">
-      <label for="floatingPassword" class="form-label required">webname</label>
-      <input type="text" class="form-control {{'is-invalid' if errors and errors.webname else ''}}" name="webname"
-        value="{{webname}}">
-      {% if errors and errors.webname %}
-      <div class="invalid-feedback">
-        {{errors.webname}}
-      </div>
-      {% endif %}
+      {{ form_control("webname", "text", errors.webname if errors and errors.webname else None, "webname", webname) }}
     </div>
   </div>
 </form>

@@ -2,7 +2,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, status
 
 from src.app.modules.core.domain.models import RoleCommand, RoleFilter, RoleResponse
-from src.app.modules.core.domain.role_service import RoleService
+from src.app.modules.core.domain.services.role_service import RoleService
 from src.app.modules.core.utils.paginator import PageParams, PageResponse
 
 

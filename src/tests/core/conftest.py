@@ -1,7 +1,7 @@
 import pytest
 from sqlmodel import Session
 
-from src.app.modules.core.domain.group_service import GroupService
+from src.app.modules.core.domain.services.group_service import GroupService
 from src.app.modules.core.domain.models import Group, GroupCreateCommand, GroupUpdateCommand, Role, RoleCommand
 from src.app.main import app
 

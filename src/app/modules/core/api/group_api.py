@@ -8,7 +8,7 @@ from src.app.modules.core.domain.models import (
     GroupSimpleResponse,
     GroupUpdateCommand,
 )
-from src.app.modules.core.domain.group_service import GroupService
+from src.app.modules.core.domain.services.group_service import GroupService
 from src.app.modules.core.utils.paginator import PageResponse, PageParams
 
 

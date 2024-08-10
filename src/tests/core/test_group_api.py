@@ -2,7 +2,7 @@ from typing import Generator
 from fastapi.testclient import TestClient
 
 from src.app.main import app
-from src.app.modules.core.domain.group_service import GroupService
+from src.app.modules.core.domain.services.group_service import GroupService
 from src.app.modules.core.domain.models import GroupCreateCommand
 from src.tests.core.conftest import GroupServiceMock
 

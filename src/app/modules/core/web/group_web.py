@@ -2,10 +2,10 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import RedirectResponse
 from src.app import main
-from src.app.modules.core.domain.group_service import GroupService
+from src.app.modules.core.domain.services.group_service import GroupService
 from src.app.modules.core.domain.models import GroupCreateCommand, GroupFilter
 from src.app.modules.core.utils.paginator import PageParams, PageResponse
-from src.app.modules.core.web.forms import GroupCreateForm
+from src.app.modules.core.domain.forms import GroupCreateForm
 
 router = APIRouter(prefix="/core/groups")
 
@@ -18,6 +18,7 @@ async def group_list(
     service: Annotated[GroupService, Depends()],
     msg: str = None,
 ):
+    page_params.order_field = "code"
     groups, total = service.read_all_paginated(page_params, filter)
     page = PageResponse(page=page_params.page, size=page_params.size, total=total, content=groups)
     context = page.model_dump()
@@ -38,8 +39,6 @@ async def group_create(request: Request):
 @router.post("/create")
 async def group_create_perform(
     request: Request,
-    # code: Annotated[str, Form()],
-    # webname: Annotated[str, Form()],
     service: Annotated[GroupService, Depends()],
 ):
     form = GroupCreateForm(request)
