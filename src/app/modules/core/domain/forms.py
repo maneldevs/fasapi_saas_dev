@@ -22,10 +22,11 @@ class GroupCreateForm(Form):
         self.code: str | None = None
         self.webname: str | None = None
 
-    async def load(self) -> None:
+    async def load(self) -> dict:
         form = await self.request.form()
         self.code = form.get("code")
         self.webname = form.get("webname")
+        return self.to_dict()
 
     def is_valid(self) -> bool:
         valid = False
@@ -45,11 +46,12 @@ class GroupUpdateForm(Form):
         self.webname: str | None = None
         self.active: bool
 
-    async def load(self) -> None:
+    async def load(self) -> dict:
         form = await self.request.form()
         self.code = form.get("code")
         self.webname = form.get("webname")
         self.active = form.get("active") if form.get("active") else False
+        return self.to_dict()
 
     def is_valid(self) -> bool:
         valid = False

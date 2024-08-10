@@ -5,7 +5,7 @@ from src.app import main
 from src.app.modules.core.domain.services.group_service import GroupService
 from src.app.modules.core.domain.models import GroupCreateCommand, GroupFilter, GroupUpdateCommand
 from src.app.modules.core.utils.paginator import PageParams, PageResponse
-from src.app.modules.core.domain.forms import GroupCreateForm, GroupUpdateForm
+from src.app.modules.core.domain.forms import Form, GroupCreateForm, GroupUpdateForm
 
 router = APIRouter(prefix="/core/groups")
 
@@ -39,17 +39,9 @@ async def group_create(request: Request):
 @router.post("/create")
 async def group_create_perform(request: Request, service: Annotated[GroupService, Depends()]):
     form = GroupCreateForm(request)
-    await form.load()
-    form_data = form.to_dict()
-    if not form.is_valid():
-        return main.templates.TemplateResponse(request=request, name="core/group_create.html", context=form_data)
-    try:
-        service.create(GroupCreateCommand.model_validate(form_data))
-    except Exception as e:
-        context |= {"msg": e.msg, "type": "danger"}
-        return main.templates.TemplateResponse(request=request, name="core/group_create.html", context=form.__dict__)
-    redirect_ulr = request.url_for("group_list").include_query_params(msg="Successful operation")
-    return RedirectResponse(redirect_ulr, 303)
+    command = GroupCreateCommand.model_validate(await form.load())
+    params = {"command": command}
+    return await __group_save_perform(request, form, service.create, params, "core/group_create.html", "group_list")
 
 
 @router.get("/update/{id}")
@@ -61,14 +53,18 @@ async def group_update(request: Request, id: str, service: Annotated[GroupServic
 @router.post("/update/{id}")
 async def group_update_perform(request: Request, id: str, service: Annotated[GroupService, Depends()]):
     form = GroupUpdateForm(request)
-    await form.load()
-    form_data = form.to_dict()
-    if not form.is_valid():
-        return main.templates.TemplateResponse(request=request, name="core/group_update.html", context=form_data)
-    try:
-        service.update(id, GroupUpdateCommand.model_validate(form_data))
-    except Exception as e:
-        form_data |= {"msg": e.msg, "type": "danger"}
-        return main.templates.TemplateResponse(request=request, name="core/group_update.html", context=form_data)
-    redirect_ulr = request.url_for("group_list").include_query_params(msg="Successful operation")
-    return RedirectResponse(redirect_ulr, 303)
+    command = GroupUpdateCommand.model_validate(await form.load())
+    params = {"id": id, "command": command}
+    return await __group_save_perform(request, form, service.update, params, "core/group_update.html", "group_list")
+
+
+async def __group_save_perform(request: Request, form: Form, func, params, self_template_path, redirect_method_name):
+    form_data = await form.load()
+    if form.is_valid():
+        try:
+            func(**params)
+            redirect_ulr = request.url_for(redirect_method_name).include_query_params(msg="Successful operation")
+            return RedirectResponse(redirect_ulr, 303)
+        except Exception as e:
+            form_data |= {"msg": e.msg, "type": "danger"}
+    return main.templates.TemplateResponse(request=request, name=self_template_path, context=form_data)
