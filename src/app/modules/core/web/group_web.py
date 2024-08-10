@@ -2,7 +2,6 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import RedirectResponse
 from src.app import main
-from src.app.configuration.exceptions import EntityAlreadyExistsError
 from src.app.modules.core.domain.services.group_service import GroupService
 from src.app.modules.core.domain.models import GroupCreateCommand, GroupFilter, GroupUpdateCommand
 from src.app.modules.core.utils.paginator import PageParams, PageResponse
@@ -41,11 +40,10 @@ async def group_create(request: Request):
 async def group_create_perform(request: Request, service: Annotated[GroupService, Depends()]):
     form = GroupCreateForm(request)
     await form.load()
-    context = form.__dict__
+    form_data = form.to_dict()
     if not form.is_valid():
-        return main.templates.TemplateResponse(request=request, name="core/group_create.html", context=context)
+        return main.templates.TemplateResponse(request=request, name="core/group_create.html", context=form_data)
     try:
-        form_data = {"code": form.code, "webname": form.webname}
         service.create(GroupCreateCommand.model_validate(form_data))
     except Exception as e:
         context |= {"msg": e.msg, "type": "danger"}
@@ -64,14 +62,13 @@ async def group_update(request: Request, id: str, service: Annotated[GroupServic
 async def group_update_perform(request: Request, id: str, service: Annotated[GroupService, Depends()]):
     form = GroupUpdateForm(request)
     await form.load()
-    context = form.__dict__
+    form_data = form.to_dict()
     if not form.is_valid():
-        return main.templates.TemplateResponse(request=request, name="core/group_update.html", context=form.__dict__)
+        return main.templates.TemplateResponse(request=request, name="core/group_update.html", context=form_data)
     try:
-        form_data = {"code": form.code, "webname": form.webname, "active": form.active if form.active else False}
         service.update(id, GroupUpdateCommand.model_validate(form_data))
     except Exception as e:
-        context |= {"msg": e.msg, "type": "danger"}
-        return main.templates.TemplateResponse(request=request, name="core/group_update.html", context=form.__dict__)
+        form_data |= {"msg": e.msg, "type": "danger"}
+        return main.templates.TemplateResponse(request=request, name="core/group_update.html", context=form_data)
     redirect_ulr = request.url_for("group_list").include_query_params(msg="Successful operation")
     return RedirectResponse(redirect_ulr, 303)

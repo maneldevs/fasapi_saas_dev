@@ -12,6 +12,9 @@ class Form:
     def is_valid(self) -> bool:
         pass
 
+    def to_dict(self) -> dict:
+        return self.__dict__
+
 
 class GroupCreateForm(Form):
     def __init__(self, request: Request):
@@ -46,7 +49,7 @@ class GroupUpdateForm(Form):
         form = await self.request.form()
         self.code = form.get("code")
         self.webname = form.get("webname")
-        self.active = form.get("active")
+        self.active = form.get("active") if form.get("active") else False
 
     def is_valid(self) -> bool:
         valid = False
