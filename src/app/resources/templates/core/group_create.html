@@ -7,20 +7,31 @@ Create group
 {% endblock title %}
 
 {% block title_right %}
-  <button type="submit" form="create-group-form" class="btn btn-primary">Save</button>
+<button type="submit" form="create-group-form" class="btn btn-primary">Save</button>
 {% endblock title_right %}
 
 {% block main %}
 <form id="create-group-form" method="post">
   <div class="row g-3">
     <div class="mb-3 col-md-6">
-      <label for="floatingInput" class="form-label text-small">code</label>
-      <input type="text" class="form-control" name="code">
-
+      <label for="floatingInput" class="form-label required">code</label>
+      <input type="text" class="form-control {{'is-invalid' if errors and errors.code else ''}}" name="code"
+        value="{{code}}">
+      {% if errors and errors.code %}
+      <div class="invalid-feedback">
+        {{errors.code}}
+      </div>
+      {% endif %}
     </div>
     <div class="mb-3 col-md-6">
-      <label for="floatingPassword" class="form-label">webname</label>
-      <input type="text" class="form-control" name="webname">
+      <label for="floatingPassword" class="form-label required">webname</label>
+      <input type="text" class="form-control {{'is-invalid' if errors and errors.webname else ''}}" name="webname"
+        value="{{webname}}">
+      {% if errors and errors.webname %}
+      <div class="invalid-feedback">
+        {{errors.webname}}
+      </div>
+      {% endif %}
     </div>
   </div>
 </form>

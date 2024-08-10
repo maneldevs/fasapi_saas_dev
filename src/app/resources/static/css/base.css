@@ -1,4 +1,10 @@
 html,
 body {
   height: 100%;
+  width: 100%;
+}
+
+label.form-label.required:after {
+  content: "*";
+  color: red;
 }
