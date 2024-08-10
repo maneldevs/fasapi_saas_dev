@@ -42,6 +42,9 @@
         <a class="btn btn-sm btn-outline-primary" href="{{ url_for('group_update', id=item.id) }}">
           <i class="bi bi-pencil"></i>
         </a>
+        <button class="btn btn-sm btn-outline-danger" data-code={{item.code}} data-id={{item.id}} onclick="openDeleteModal(this)">
+          <i class="bi bi-trash"></i>
+        </button>
       </td>
     </tr>
     {% endfor %}
@@ -49,4 +52,40 @@
 </table>
 {% include 'shared/paginator.html' %}
 </div>
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Delete group {{code}}</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div>Perform delete operation to the group with code:</div>
+        <div id="codeElement"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <form method="post" action="{{url_for('group_delete_perform')}}">
+          <input type="hidden" id="idHidden" name="id" value="">
+          <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock main %}
+
+{% block scripts %}
+<script>
+  function openDeleteModal(me) {
+    const code = me.dataset.code
+    const id = me.dataset.id
+    const codeModalElement = document.getElementById("codeElement")
+    const idHiddenElement = document.getElementById("idHidden")
+    codeModalElement.innerHTML = code
+    idHiddenElement.value = id
+    const modal = new bootstrap.Modal(document.getElementById('deleteModal'))
+    modal.show()
+  }
+</script>
+{% endblock scripts %}
