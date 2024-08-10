@@ -17,34 +17,36 @@
   </div>
 </form>
 <div class="table-responsive"></div>
-  <table class="table">
-    <thead>
-      <tr>
-        <th scope="col">code</th>
-        <th scope="col">webname</th>
-        <th scope="col">active</th>
-        <th scope="col" class="text-end"></th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for item in content %}
-      <tr>
-        <td>{{ item.code }}</td>
-        <td>{{ item.webname }}</td>
-        <td>
-          {% if item.active%}
-          <i class="text-success bi bi-check-circle-fill"></i>
-          {% else %}
-          <i class="text-danger bi bi-x-circle-fill"></i>
-          {% endif %}
-        </td>
-        <td class="text-end">
-          <button class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></button>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  {% include 'shared/paginator.html' %}
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">code</th>
+      <th scope="col">webname</th>
+      <th scope="col">active</th>
+      <th scope="col" class="text-end"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in content %}
+    <tr>
+      <td>{{ item.code }}</td>
+      <td>{{ item.webname }}</td>
+      <td>
+        {% if item.active%}
+        <i class="text-success bi bi-check-circle-fill"></i>
+        {% else %}
+        <i class="text-danger bi bi-x-circle-fill"></i>
+        {% endif %}
+      </td>
+      <td class="text-end">
+        <a class="btn btn-sm btn-outline-primary" href="{{ url_for('group_update', id=item.id) }}">
+          <i class="bi bi-pencil"></i>
+        </a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% include 'shared/paginator.html' %}
 </div>
 {% endblock main %}

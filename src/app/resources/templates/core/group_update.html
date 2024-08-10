@@ -1,0 +1,39 @@
+{% from 'shared/macros/form_control.html' import form_control %}
+{% extends 'shared/content.html' %}
+
+{% set current_page = 'groups' %}
+
+{% block title %}
+Update group
+{% endblock title %}
+
+{% block title_right %}
+<button type="submit" form="update-group-form" class="btn btn-primary">Save</button>
+{% endblock title_right %}
+
+{% block main %}
+<form id="update-group-form" method="post">
+  <div class="row g-5 align-items-center mb-3">
+    <div class="col">
+      <label for="id" class="form-label">id</label>
+      <input type="text" class="form-control" name="id" value="{{id}}" disabled>
+    </div>
+  </div>
+  <div class="row g-3 mb-4">
+    <div class="col-md-6">
+      {{ form_control("code", "text", errors.code if errors and errors.code else None, "code", code) }}
+    </div>
+    <div class="col-md-6">
+      {{ form_control("webname", "text", errors.webname if errors and errors.webname else None, "webname", webname) }}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" role="switch" id="active" name="active" {{'checked' if active }}>
+        <label class="form-check-label" for="active">Active</label>
+      </div>
+    </div>
+  </div>
+</form>
+{% endblock main %}
