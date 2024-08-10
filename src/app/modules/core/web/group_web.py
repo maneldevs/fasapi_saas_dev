@@ -41,7 +41,7 @@ async def group_create_perform(request: Request, service: Annotated[GroupService
     form = GroupCreateForm(request)
     command = GroupCreateCommand.model_validate(await form.load())
     params = {"command": command}
-    return await __group_save_perform(request, form, service.create, params, "core/group_create.html", "group_list")
+    return await form.perform_operation(service.create, params, "core/group_create.html", "group_list")
 
 
 @router.get("/update/{id}")
@@ -55,7 +55,7 @@ async def group_update_perform(request: Request, id: str, service: Annotated[Gro
     form = GroupUpdateForm(request)
     command = GroupUpdateCommand.model_validate(await form.load())
     params = {"id": id, "command": command}
-    return await __group_save_perform(request, form, service.update, params, "core/group_update.html", "group_list")
+    return await form.perform_operation(service.update, params, "core/group_update.html", "group_list")
 
 
 async def __group_save_perform(request: Request, form: Form, func, params, self_template_path, redirect_method_name):

@@ -1,4 +1,7 @@
 from fastapi import Request
+from fastapi.responses import RedirectResponse
+
+from src.app import main
 
 
 class Form:
@@ -14,6 +17,19 @@ class Form:
 
     def to_dict(self) -> dict:
         return self.__dict__
+
+    async def perform_operation(self, func, params, self_template_path, redirect_method_name):
+        form_data = await self.load()
+        if self.is_valid():
+            try:
+                func(**params)
+                redirect_ulr = self.request.url_for(redirect_method_name).include_query_params(
+                    msg="Successful operation"
+                )
+                return RedirectResponse(redirect_ulr, 303)
+            except Exception as e:
+                form_data |= {"msg": e.msg, "type": "danger"}
+        return main.templates.TemplateResponse(request=self.request, name=self_template_path, context=form_data)
 
 
 class GroupCreateForm(Form):
