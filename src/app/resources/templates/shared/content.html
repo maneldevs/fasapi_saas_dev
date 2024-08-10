@@ -44,17 +44,17 @@
 <div class="container">
   <div class="d-sm-flex justify-content-between align-items-top mb-4">
     <h1 class="display-4">{% block title %}{{current_page|capitalize}}{% endblock title %}</h1>
-    {% if msg and msg|length > 0 %}
-    <div class="alert alert-{{type}} alert-dismissible fade show" role="alert">
-      {{msg}}
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    {% endif %}
     <div class="mt-2">{% block title_right %}{% endblock title_right %}</div>
   </div>
   <div>
     {% block main %}{% endblock main %}
   </div> 
+  {% if msg and msg|length > 0 %}
+  <div class="alert alert-{{type}} alert-dismissible fade show" role="alert" style="position: fixed; bottom: 10px;; right:10px">
+    {{msg}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endif %}
 </div>
 
 {% endblock content %}
