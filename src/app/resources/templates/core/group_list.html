@@ -1,4 +1,5 @@
 {% from 'shared/macros/modal_delete.html' import modal_delete with context %}
+{% from 'shared/macros/paginator.html' import paginator with context %}
 {% extends 'shared/content.html' %}
 
 {% set current_page = 'groups' %}
@@ -51,7 +52,7 @@
     {% endfor %}
   </tbody>
 </table>
-{% include 'shared/paginator.html' %}
+{{ paginator(total, size) }}
 </div>
 {{ modal_delete('Delete group', 'group_delete_perform') }}
 {% endblock main %}
