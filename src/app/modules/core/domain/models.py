@@ -86,22 +86,19 @@ class User(SQLModel, table=True):
 class UserBaseCommand(SQLModel):
     username: str
     password_raw: str
-
-
-class UserCreateCommand(UserBaseCommand):
     firstname: str | None = None
     lastname: str | None = None
     group_id: str | None = None
     role_id: str | None = None
 
 
+class UserCreateCommand(UserBaseCommand):
+    pass
+
+
 class UserUpdateCommand(UserBaseCommand):
-    firstname: str | None
-    lastname: str | None
     active: bool
     is_god: bool
-    group_id: str | None
-    role_id: str | None
 
 
 class UserBaseResponse(SQLModel):
@@ -113,7 +110,7 @@ class UserSimpleResponse(UserBaseResponse):
     pass
 
 
-class UserResponse(RoleBase):
+class UserResponse(UserSimpleResponse):
     firstname: str | None = None
     lastname: str | None = None
     active: bool = True

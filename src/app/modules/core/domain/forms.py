@@ -33,6 +33,9 @@ class Form:
         return main.templates.TemplateResponse(request=self.request, name=self_template_path, context=form_data)
 
 
+""" Group """
+
+
 class GroupCreateForm(Form):
     def __init__(self, request: Request):
         super().__init__(request)
@@ -81,6 +84,9 @@ class GroupUpdateForm(Form):
         return valid
 
 
+""" Role """
+
+
 class RoleForm(Form):
     def __init__(self, request: Request):
         super().__init__(request)
@@ -102,3 +108,7 @@ class RoleForm(Form):
         if not self.errors or len(self.errors) == 0:
             valid = True
         return valid
+
+
+""" User """
+

@@ -41,6 +41,7 @@ pip install sql model
 pip install mysqlclient
 pip install requests 
 pip install pytest
+pip install "passlib[bcrypt]"
 pip freeze > requirements.txt
 ```
 

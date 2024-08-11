@@ -6,8 +6,8 @@
 POST {{urlBase}}/groups
 
 {
-    "code": "ainia12",
-    "webname": "ainia12"
+    "code": "ainia",
+    "webname": "ainia"
 }
 
 ### GROUP - READ BY ID
@@ -23,9 +23,9 @@ GET {{urlBase}}/groups?page=1&size=10&direction=asc&order_field=code&target=aini
 PUT {{urlBase}}/groups/c998846c-3ee7-435c-9910-fb9b0b5ee372
 
 {
-    "code": "ainia_otro",
-    "webname": "ainia_otro",
-    "active": "false"
+    "code": "ainia",
+    "webname": "ainia",
+    "active": "true"
 }
 
 ### GROUP - DELETE BY ID
@@ -60,3 +60,15 @@ PUT {{urlBase}}/roles/375fdcab-4027-427d-9e1c-37eb3985cd6f
 
 ### ROLE - DELETE BY ID
 DELETE {{urlBase}}/roles/f4da1bae-edfb-4169-8272-12fd093fe727
+
+####################################################### USER ###########################################################
+
+### USER - CREATE
+POST {{urlBase}}/users
+
+{
+    "username": "otro",
+    "password_raw": "secret",
+    "firstname": "Otro",
+    "lastname": "Otro"
+}
