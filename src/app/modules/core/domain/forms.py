@@ -10,10 +10,11 @@ class Form:
         self.errors: dict[str, str] = {}
 
     async def load(self) -> None:
-        pass
+        await self.request.form()
+        return self.to_dict()
 
     def is_valid(self) -> bool:
-        pass
+        return True
 
     def to_dict(self) -> dict:
         return self.__dict__
@@ -75,25 +76,6 @@ class GroupUpdateForm(Form):
             self.errors["code"] = "code is required"
         if not self.webname or len(self.webname) == 0:
             self.errors["webname"] = "webname is required"
-        if not self.errors or len(self.errors) == 0:
-            valid = True
-        return valid
-
-
-class GroupDeleteForm(Form):
-    def __init__(self, request: Request):
-        super().__init__(request)
-        self.id: str | None = None
-
-    async def load(self) -> dict:
-        form = await self.request.form()
-        self.id = form.get("id")
-        return self.to_dict()
-
-    def is_valid(self) -> bool:
-        valid = False
-        if not self.id or len(self.id) == 0:
-            self.errors["id"] = "id is required"
         if not self.errors or len(self.errors) == 0:
             valid = True
         return valid

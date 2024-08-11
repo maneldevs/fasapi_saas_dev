@@ -4,7 +4,7 @@ from src.app import main
 from src.app.modules.core.domain.services.group_service import GroupService
 from src.app.modules.core.domain.models import GroupCreateCommand, GroupFilter, GroupUpdateCommand
 from src.app.modules.core.utils.paginator import PageParams, PageResponse
-from src.app.modules.core.domain.forms import GroupCreateForm, GroupDeleteForm, GroupUpdateForm
+from src.app.modules.core.domain.forms import Form, GroupCreateForm, GroupUpdateForm
 
 router = APIRouter(prefix="/core/groups")
 
@@ -57,17 +57,9 @@ async def group_update_perform(request: Request, id: str, service: Annotated[Gro
     return await form.perform_operation(service.update, params, "core/group_update.html", "group_list")
 
 
-@router.post("/delete")
-async def group_delete_perform(request: Request, service: Annotated[GroupService, Depends()]):
-    # form = await request.form()
-    # try:
-    #     service.delete(form.get("id"))
-    #     redirect_ulr = request.url_for("group_list").include_query_params(msg="Successful operation")
-    #     return RedirectResponse(redirect_ulr, 303)
-    # except Exception as e:
-    #     context = {"msg": e.msg, "type": "danger"}
-    #     return main.templates.TemplateResponse(request=request, name=group_list, context=context)
-    form = GroupDeleteForm(request)
+@router.post("/delete/{id}")
+async def group_delete_perform(request: Request, id: str, service: Annotated[GroupService, Depends()]):
+    form = Form(request)
     await form.load()
-    params = {"id": form.id}
+    params = {"id": id}
     return await form.perform_operation(service.delete, params, "core/group_list.html", "group_list")
