@@ -1,0 +1,36 @@
+{% macro modal_delete(title, action_base) %}
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">{{title}}</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div>Are you sure to delete the following entity?</div>
+        <strong id="codeElement"></strong>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <form method="post" action="{{url_for(action_base, id=0)}}" id="deleteForm">
+          <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  function openDeleteModal(me) {
+    const code = me.dataset.code
+    const id = me.dataset.id
+    const codeModalElement = document.getElementById("codeElement")
+    const deleteForm = document.getElementById("deleteForm")
+    const lastUrl = deleteForm.getAttribute("action")
+    const baseUrl = lastUrl.substr(0, lastUrl.lastIndexOf("/") + 1)
+    codeModalElement.innerHTML = code
+    deleteForm.setAttribute("action", baseUrl + id)
+    const modal = new bootstrap.Modal(document.getElementById('deleteModal'))
+    modal.show()
+  }
+</script>
+{% endmacro %}

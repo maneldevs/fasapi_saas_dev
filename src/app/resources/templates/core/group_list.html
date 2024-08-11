@@ -1,3 +1,4 @@
+{% from 'shared/macros/modal_delete.html' import modal_delete with context %}
 {% extends 'shared/content.html' %}
 
 {% set current_page = 'groups' %}
@@ -52,41 +53,5 @@
 </table>
 {% include 'shared/paginator.html' %}
 </div>
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Delete group {{code}}</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div>Perform delete operation to the group with code:</div>
-        <div id="codeElement"></div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <form method="post" action="{{url_for('group_delete_perform', id=0)}}" id="deleteForm">
-          <button type="submit" class="btn btn-danger">Delete</button>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
+{{ modal_delete('Delete group', 'group_delete_perform') }}
 {% endblock main %}
-
-{% block scripts %}
-<script>
-  function openDeleteModal(me) {
-    const code = me.dataset.code
-    const id = me.dataset.id
-    const codeModalElement = document.getElementById("codeElement")
-    const deleteForm = document.getElementById("deleteForm")
-    const lastUrl = deleteForm.getAttribute("action")
-    const baseUrl = lastUrl.substr(0, lastUrl.lastIndexOf("/") + 1)
-    codeModalElement.innerHTML = code
-    deleteForm.setAttribute("action", baseUrl + id)
-    const modal = new bootstrap.Modal(document.getElementById('deleteModal'))
-    modal.show()
-  }
-</script>
-{% endblock scripts %}
