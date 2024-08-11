@@ -1,0 +1,50 @@
+{% from 'shared/macros/modal_delete.html' import modal_delete with context %}
+{% from 'shared/macros/paginator.html' import paginator with context %}
+{% extends 'shared/content.html' %}
+
+{% set current_page = 'roles' %}
+
+{% block title_right %}
+<a class="btn btn-success" href="{{ url_for('role_create') }}">Create role</a>
+{% endblock title_right %}
+
+{% block main %}
+<form method="get" class="d-flex justify-content-end mb-3">
+  <div class="me-2">
+    <input type="text" class="form-control" name="target" placeholder="search" value="{{ target if target else '' }}">
+  </div>
+  <div>
+    <button type="submit" class="btn btn-outline-info">Filter</button>
+  </div>
+  </div>
+</form>
+<div class="table-responsive"></div>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">code</th>
+      <th scope="col">webname</th>
+      <th scope="col" class="text-end"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in content %}
+    <tr>
+      <td>{{ item.code }}</td>
+      <td>{{ item.webname }}</td>
+      <td class="text-end">
+        <a class="btn btn-sm btn-outline-primary" href="{{ url_for('role_update', id=item.id) }}">
+          <i class="bi bi-pencil"></i>
+        </a>
+        <button class="btn btn-sm btn-outline-danger" data-code={{item.code}} data-id={{item.id}} onclick="openDeleteModal(this)">
+          <i class="bi bi-trash"></i>
+        </button>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{{ paginator(total, size) }}
+</div>
+{{ modal_delete('Delete role', 'role_delete_perform') }}
+{% endblock main %}

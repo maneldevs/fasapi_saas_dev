@@ -1,0 +1,31 @@
+{% from 'shared/macros/form_control.html' import form_control %}
+{% extends 'shared/content.html' %}
+
+{% set current_page = 'roles' %}
+
+{% block title %}
+Update role
+{% endblock title %}
+
+{% block title_right %}
+<button type="submit" form="update-role-form" class="btn btn-primary">Save</button>
+{% endblock title_right %}
+
+{% block main %}
+<form id="update-role-form" method="post">
+  <div class="row g-5 align-items-center mb-3">
+    <div class="col">
+      <label for="id" class="form-label">id</label>
+      <input type="text" class="form-control" name="id" value="{{id}}" disabled>
+    </div>
+  </div>
+  <div class="row g-3 mb-4">
+    <div class="col-md-6">
+      {{ form_control("code", "text", errors.code if errors and errors.code else None, "code", code) }}
+    </div>
+    <div class="col-md-6">
+      {{ form_control("webname", "text", errors.webname if errors and errors.webname else None, "webname", webname) }}
+    </div>
+  </div>
+</form>
+{% endblock main %}
