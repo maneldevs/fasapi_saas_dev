@@ -31,7 +31,7 @@ class GroupRepo:
         return group
 
     def read_all(self) -> list[Group]:
-        stmt = select(Group)
+        stmt = select(Group).order_by("code")
         groups = self.session.exec(stmt).all()
         return groups
 
