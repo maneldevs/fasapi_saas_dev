@@ -4,6 +4,7 @@ import uuid
 from fastapi import Depends
 from sqlmodel import Session, or_, select, func, col
 from sqlalchemy.exc import IntegrityError
+from sqlmodel.sql.expression import SelectOfScalar
 
 from src.app.configuration.database import get_session
 from src.app.configuration.exceptions import EntityAlreadyExistsError
@@ -30,8 +31,26 @@ class UserRepo:
         total = self.session.exec(stmt).one()
         return total
 
+    def count_all_paginated(self, filter: UserFilter) -> int:
+        stmt = select(func.count(col(User.id)))
+        stmt = self.__apply_filter(stmt, filter)
+        total = self.session.exec(stmt).one()
+        return total
+
     def read_paginated(self, page_params: PageParams, filter: UserFilter) -> list[User]:
         stmt = select(User)
+        stmt = self.__apply_filter(stmt, filter)
+        stmt = Paginator(User).paginate_query(stmt, page_params)
+        users = self.session.exec(stmt).all()
+        for user in users:
+            self.session.refresh(user)
+        return users
+
+    def create(self, user: User) -> User:
+        user.id = str(uuid.uuid4())
+        return self.__save(user)
+
+    def __apply_filter(self, stmt: SelectOfScalar[User], filter: UserFilter):
         if filter.target:
             stmt = stmt.where(
                 or_(
@@ -46,12 +65,4 @@ class UserRepo:
             stmt = stmt.where(User.is_god == filter.is_god)
         if filter.group_id:
             stmt = stmt.where(User.group_id == filter.group_id)
-        stmt = Paginator(User).paginate_query(stmt, page_params)
-        users = self.session.exec(stmt).all()
-        for user in users:
-            self.session.refresh(user)
-        return users
-
-    def create(self, user: User) -> User:
-        user.id = str(uuid.uuid4())
-        return self.__save(user)
+        return stmt

@@ -1,9 +1,9 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, Request
 from src.app import main
-from src.app.modules.core.domain.models import RoleCommand, RoleFilter
+from src.app.modules.core.domain.models import RoleCommand, RoleFilter, RoleResponse
 from src.app.modules.core.domain.services.role_service import RoleService
-from src.app.modules.core.utils.paginator import PageParams, PageResponse
+from src.app.modules.core.utils.paginator import PageParams, PageParser
 from src.app.modules.core.domain.forms import Form, RoleForm
 
 router = APIRouter(prefix="/core/roles")
@@ -19,14 +19,8 @@ async def role_list(
 ):
     page_params.order_field = "code"
     roles, total = service.read_all_paginated(page_params, filter)
-    page = PageResponse(page=page_params.page, size=page_params.size, total=total, content=roles)
-    context = page.model_dump()
-    context |= filter.model_dump()
-    context |= {
-        "query_params": f"&size={page_params.size}&order_field={page_params.order_field}"
-        + f"&direction={page_params.direction.value}&target={filter.target if filter.target else ''}"
-    }
-    context |= {"msg": msg, "type": "success"}
+    parser = PageParser(roles, RoleResponse)
+    context = parser.generate_web_context(page_params, total, filter, msg)
     return main.templates.TemplateResponse(request=request, name="core/role_list.html", context=context)
 
 

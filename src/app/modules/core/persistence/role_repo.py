@@ -3,6 +3,7 @@ import uuid
 from fastapi import Depends
 from sqlmodel import Session, select, func, col, or_
 from sqlalchemy.exc import IntegrityError
+from sqlmodel.sql.expression import SelectOfScalar
 
 from src.app.configuration.database import get_session
 from src.app.configuration.exceptions import EntityAlreadyExistsError
@@ -39,10 +40,15 @@ class RoleRepo:
         total = self.session.exec(stmt).one()
         return total
 
+    def count_all_filtered(self, filter: RoleFilter) -> int:
+        stmt = select(func.count(col(Role.id)))
+        stmt = self.__apply_filter(stmt, filter)
+        total = self.session.exec(stmt).one()
+        return total
+
     def read_paginated(self, page_params: PageParams, filter: RoleFilter):
         stmt = select(Role)
-        if filter.target:
-            stmt = stmt.where(or_(col(Role.code).contains(filter.target), col(Role.webname).contains(filter.target)))
+        stmt = self.__apply_filter(stmt, filter)
         stmt = Paginator(Role).paginate_query(stmt, page_params)
         roles = self.session.exec(stmt).all()
         return roles
@@ -64,3 +70,8 @@ class RoleRepo:
             self.session.delete(role_in_db)
             self.session.commit()
         return role_in_db
+
+    def __apply_filter(self, stmt: SelectOfScalar[Role], filter: RoleFilter):
+        if filter.target:
+            stmt = stmt.where(or_(col(Role.code).contains(filter.target), col(Role.webname).contains(filter.target)))
+        return stmt

@@ -23,4 +23,4 @@ async def read(
 ):
     users, total = service.read_all_paginated(page_params, filter)
     parser = PageParser(users, UserResponse)
-    return parser.generate_page_response(page=page_params.page, size=page_params.size, total=total, content=users)
+    return parser.generate_page_response(page=page_params.page, size=page_params.size, total=total)

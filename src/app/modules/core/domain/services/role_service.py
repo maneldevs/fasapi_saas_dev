@@ -32,7 +32,7 @@ class RoleService:
         return roles
 
     def read_all_paginated(self, page_params: PageParams, filter: RoleFilter) -> tuple[list[Role], int]:
-        total = self.repo.count_all()
+        total = self.repo.count_all_filtered(filter)
         roles = self.repo.read_paginated(page_params, filter)
         return (roles, total)
 

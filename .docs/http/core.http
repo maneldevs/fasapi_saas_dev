@@ -75,5 +75,5 @@ POST {{urlBase}}/users
     "role_id": "d3bc9238-ca0a-47e7-adfd-f2dcb541e5e6"
 }
 
-### ROLE - READ PAGINATED
-GET {{urlBase}}/users?page=1&size=10&direction=asc&order_field=username&target=manuel
+### USER - READ PAGINATED
+GET {{urlBase}}/users?page=1&size=10&direction=asc&order_field=username&active=False

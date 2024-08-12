@@ -29,7 +29,7 @@ async def read(
 ):
     groups, total = service.read_all_paginated(page_params, filter)
     parser = PageParser(groups, GroupResponse)
-    return parser.generate_page_response(page=page_params.page, size=page_params.size, total=total, content=groups)
+    return parser.generate_page_response(page=page_params.page, size=page_params.size, total=total)
 
 
 @router.get("/index", response_model=list[GroupSimpleResponse])

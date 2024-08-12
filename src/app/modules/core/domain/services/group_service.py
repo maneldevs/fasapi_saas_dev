@@ -32,7 +32,7 @@ class GroupService:
         return groups
 
     def read_all_paginated(self, page_params: PageParams, filter: GroupFilter) -> tuple[list[Group], int]:
-        total = self.repo.count_all()
+        total = self.repo.count_all_filetered(filter)
         groups = self.repo.read_paginated(page_params, filter)
         return (groups, total)
 

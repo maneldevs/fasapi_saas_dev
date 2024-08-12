@@ -3,6 +3,7 @@ import uuid
 from fastapi import Depends
 from sqlmodel import Session, select, func, col, or_
 from sqlalchemy.exc import IntegrityError
+from sqlmodel.sql.expression import SelectOfScalar
 
 from src.app.configuration.database import get_session
 from src.app.configuration.exceptions import EntityAlreadyExistsError
@@ -39,10 +40,15 @@ class GroupRepo:
         total = self.session.exec(stmt).one()
         return total
 
+    def count_all_filetered(self, filter: GroupFilter) -> int:
+        stmt = select(func.count(col(Group.id)))
+        stmt = self.__apply_filter(stmt, filter)
+        total = self.session.exec(stmt).one()
+        return total
+
     def read_paginated(self, page_params: PageParams, filter: GroupFilter):
         stmt = select(Group)
-        if filter.target:
-            stmt = stmt.where(or_(col(Group.code).contains(filter.target), col(Group.webname).contains(filter.target)))
+        stmt = self.__apply_filter(stmt, filter)
         stmt = Paginator(Group).paginate_query(stmt, page_params)
         groups = self.session.exec(stmt).all()
         return groups
@@ -64,3 +70,8 @@ class GroupRepo:
             self.session.delete(group_in_db)
             self.session.commit()
         return group_in_db
+
+    def __apply_filter(self, stmt: SelectOfScalar[Group], filter: GroupFilter):
+        if filter.target:
+            stmt = stmt.where(or_(col(Group.code).contains(filter.target), col(Group.webname).contains(filter.target)))
+        return stmt

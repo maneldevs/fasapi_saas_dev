@@ -17,6 +17,9 @@
           <a class="nav-link {{'active' if current_page == 'roles'}}" aria-current="page" href="{{ url_for('role_list') }}">Roles</a>
         </li>
         <li class="nav-item">
+          <a class="nav-link {{'active' if current_page == 'users'}}" aria-current="page" href="{{ url_for('user_list') }}">Users</a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link {{'active' if current_page == 'modules'}}" aria-current="page" href="#">Modules</a>
         </li>
         <li class="nav-item">
