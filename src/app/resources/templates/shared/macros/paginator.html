@@ -1,5 +1,5 @@
 {% macro paginator(total, size) %}
-{% set total_pages = (total // size) + 1 if total else 0 %}
+{% set total_pages = ((total - 1) // size ) + 1 if total else 0 %}
 {% if total_pages > 1 %}
 <nav aria-label="Page navigation example">
   <ul class="pagination">
