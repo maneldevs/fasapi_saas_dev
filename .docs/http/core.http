@@ -48,7 +48,7 @@ GET {{urlBase}}/roles/d3bc9238-ca0a-47e7-adfd-f2dcb541e5e6
 GET {{urlBase}}/roles/index
 
 ### ROLE - READ PAGINATED
-GET {{urlBase}}/roles?page=1&size=10&direction=asc&order_field=code&target=role
+GET {{urlBase}}/roles?page=1&size=10&direction=asc&order_field=code&target=admin
 
 ### ROLE - UPDATE
 PUT {{urlBase}}/roles/375fdcab-4027-427d-9e1c-37eb3985cd6f
@@ -67,8 +67,13 @@ DELETE {{urlBase}}/roles/f4da1bae-edfb-4169-8272-12fd093fe727
 POST {{urlBase}}/users
 
 {
-    "username": "otro",
+    "username": "otro2",
     "password_raw": "secret",
-    "firstname": "Otro",
-    "lastname": "Otro"
+    "firstname": "otro1",
+    "lastname": "Máñez Ramón",
+    "group_id": "59af182f-0bee-43b9-9f6c-d325691950e2",
+    "role_id": "d3bc9238-ca0a-47e7-adfd-f2dcb541e5e6"
 }
+
+### ROLE - READ PAGINATED
+GET {{urlBase}}/users?page=1&size=10&direction=asc&order_field=username&target=manuel

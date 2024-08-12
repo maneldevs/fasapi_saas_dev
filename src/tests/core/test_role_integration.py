@@ -93,15 +93,15 @@ def test_i_create_group_happy(client: TestClient, session: Session, role_command
     body = role_command.model_dump()
     response = client.post(BASE_URL, json=body)
     data = response.json()
-    group_created = session.get(Role, {data["id"]})
+    created = session.get(Role, {data["id"]})
     assert response.status_code == 201
-    assert group_created is not None
+    assert created is not None
     assert data["code"] == role_command.code
     assert data["webname"] == role_command.webname
     assert data["id"] is not None
-    assert data["code"] == group_created.code
-    assert data["webname"] == group_created.webname
-    assert data["id"] == group_created.id
+    assert data["code"] == created.code
+    assert data["webname"] == created.webname
+    assert data["id"] == created.id
 
 
 def test_i_create_group_no_code(client: TestClient, role_command: RoleCommand):

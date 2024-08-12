@@ -115,7 +115,7 @@ class UserResponse(UserSimpleResponse):
     lastname: str | None = None
     active: bool = True
     is_god: bool = False
-    group: GroupSimpleResponse | None = None
+    group: GroupResponse | None = None
     role: RoleResponse | None = None
 
 

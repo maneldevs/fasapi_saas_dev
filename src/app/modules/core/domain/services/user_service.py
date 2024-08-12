@@ -3,11 +3,12 @@ from typing import Annotated
 from fastapi import Depends
 
 from src.app.configuration.exceptions import EntityAlreadyExistsError, EntityNotFoundError
-from src.app.modules.core.domain.models import User, UserCreateCommand
+from src.app.modules.core.domain.models import User, UserCreateCommand, UserFilter
 from src.app.modules.core.persistence.group_repo import GroupRepo
 from src.app.modules.core.persistence.role_repo import RoleRepo
 from src.app.modules.core.persistence.user_repo import UserRepo
 from src.app.modules.core.utils.crypto import get_password_hash
+from src.app.modules.core.utils.paginator import PageParams
 
 
 class UserService:
@@ -29,6 +30,11 @@ class UserService:
         except EntityAlreadyExistsError as e:
             e.msg = "User code already exists"
             raise e
+
+    def read_all_paginated(self, page_params: PageParams, filter: UserFilter) -> tuple[list[User], int]:
+        total = self.repo.count_all()
+        users = self.repo.read_paginated(page_params, filter)
+        return (users, total)
 
     def __validate_and_deserialize(self, command):
         if command.role_id:

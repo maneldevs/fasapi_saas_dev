@@ -9,7 +9,7 @@ from src.app.modules.core.domain.models import (
     GroupUpdateCommand,
 )
 from src.app.modules.core.domain.services.group_service import GroupService
-from src.app.modules.core.utils.paginator import PageResponse, PageParams
+from src.app.modules.core.utils.paginator import PageParser, PageResponse, PageParams
 
 
 router = APIRouter(prefix="/api/core/groups", tags=["Core - Groups"])
@@ -28,7 +28,8 @@ async def read(
     service: Annotated[GroupService, Depends()],
 ):
     groups, total = service.read_all_paginated(page_params, filter)
-    return PageResponse(page=page_params.page, size=page_params.size, total=total, content=groups)
+    parser = PageParser(groups, GroupResponse)
+    return parser.generate_page_response(page=page_params.page, size=page_params.size, total=total, content=groups)
 
 
 @router.get("/index", response_model=list[GroupSimpleResponse])

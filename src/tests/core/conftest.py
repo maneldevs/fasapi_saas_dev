@@ -2,8 +2,19 @@ import pytest
 from sqlmodel import Session
 
 from src.app.modules.core.domain.services.group_service import GroupService
-from src.app.modules.core.domain.models import Group, GroupCreateCommand, GroupUpdateCommand, Role, RoleCommand
+from src.app.modules.core.domain.models import (
+    Group,
+    GroupCreateCommand,
+    GroupUpdateCommand,
+    Role,
+    RoleCommand,
+    User,
+    UserCreateCommand,
+)
 from src.app.main import app
+
+
+""" Group """
 
 
 class GroupServiceMock:
@@ -53,6 +64,9 @@ def group_service_fixture():
     app.dependency_overrides.clear()
 
 
+""" Role """
+
+
 @pytest.fixture(name="role_command")
 def role_command_fixture():
     return RoleCommand(code="ROLE1", webname="role1 ")
@@ -81,3 +95,40 @@ def roles_in_db_fixture(session: Session, role: Role, role2: Role):
     session.add(role2)
     session.commit()
     return [role, role2]
+
+
+""" User """
+
+
+@pytest.fixture(name="user_create_command")
+def user_create_command_fixture(role_in_db: Role, group_in_db: Group):
+    return UserCreateCommand(
+        username="Myusername",
+        password_raw="secret",
+        firstname="Myfirstname",
+        lastname="MyLastname",
+        group_id=group_in_db.id,
+        role_id=role_in_db.id,
+    )
+
+
+@pytest.fixture(name="user")
+def user_fixture():
+    return User(
+        id="abc-123-def-456",
+        username="Myusername",
+        password="secret_encoded",
+        firstname="Myfirstname",
+        lastname="MyLastname",
+        group_id="abc-123-def-456",
+        role_id="abc-123-def-456"
+    )
+
+
+@pytest.fixture(name="user_in_db")
+def user_in_db_fixture(session: Session, user: User, role_in_db: Role, group_in_db: Group):
+    user.role_id = role_in_db.id
+    user.group_id = group_in_db.id
+    session.add(user)
+    session.commit()
+    return user

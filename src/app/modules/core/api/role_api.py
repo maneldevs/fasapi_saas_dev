@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, status
 
 from src.app.modules.core.domain.models import RoleCommand, RoleFilter, RoleResponse
 from src.app.modules.core.domain.services.role_service import RoleService
-from src.app.modules.core.utils.paginator import PageParams, PageResponse
+from src.app.modules.core.utils.paginator import PageParams, PageParser, PageResponse
 
 
 router = APIRouter(prefix="/api/core/roles", tags=["Core - Roles"])
@@ -22,7 +22,8 @@ async def read(
     service: Annotated[RoleService, Depends()],
 ):
     roles, total = service.read_all_paginated(page_params, filter)
-    return PageResponse(page=page_params.page, size=page_params.size, total=total, content=roles)
+    parser = PageParser(roles, RoleResponse)
+    return parser.generate_page_response(page=page_params.page, size=page_params.size, total=total, content=roles)
 
 
 @router.get("/index", response_model=list[RoleResponse])
