@@ -85,13 +85,12 @@ GET {{urlBase}}/users/index
 GET {{urlBase}}/users?page=1&size=10&direction=asc&order_field=username&active=False
 
 ### USER - UPDATE
-PUT {{urlBase}}/users/e07f3ff2-4036-40a7-98a0-98950403592c
+PUT {{urlBase}}/users/784874f7-7abf-431e-a85a-1dfd8096913a
 
 {
     "username": "otro2",
-    "password_raw": "secret",
     "firstname": "otro2",
-    "lastname": "Otro2 otro2",
+    "lastname": "Otro2 otro3",
     "active": true,
     "is_god": true,
     "group_id": null,

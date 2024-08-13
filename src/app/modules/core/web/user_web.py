@@ -2,8 +2,9 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Request
 from src.app import main
 from src.app.modules.core.domain.forms import Form
-from src.app.modules.core.domain.models import GroupSimpleResponse, UserFilter, UserResponse
+from src.app.modules.core.domain.models import GroupSimpleResponse, RoleResponse, UserFilter, UserResponse
 from src.app.modules.core.domain.services.group_service import GroupService
+from src.app.modules.core.domain.services.role_service import RoleService
 from src.app.modules.core.domain.services.user_service import UserService
 from src.app.modules.core.utils.paginator import PageParams, PageParser
 
@@ -24,16 +25,21 @@ async def user_list(
     users, total = service.read_all_paginated(page_params, filter)
     parser = PageParser(users, UserResponse)
     context = parser.generate_web_context(page_params, total, filter, msg)
-    groups_in_db = service_group.read_all()
-    parser = PageParser(groups_in_db, GroupSimpleResponse)
-    groups = parser.parse_list()
+    groups = __fetch_groups(service_group)
     context |= {"groups": groups}
     return main.templates.TemplateResponse(request=request, name="core/user_list.html", context=context)
 
 
 @router.get("/create")
-async def user_create(request: Request):
-    return main.templates.TemplateResponse(request=request, name="core/user_create.html", context={})
+async def user_create(
+    request: Request,
+    service_group: Annotated[GroupService, Depends()],
+    service_role: Annotated[RoleService, Depends()],
+):
+    groups = __fetch_groups(service_group)
+    roles = __fetch_roles(service_role)
+    context = {"groups": groups, "roles": roles}
+    return main.templates.TemplateResponse(request=request, name="core/user_create.html", context=context)
 
 
 @router.post("/delete/{id}")
@@ -42,3 +48,17 @@ async def user_delete_perform(request: Request, id: str, service: Annotated[User
     await form.load()
     params = {"id": id}
     return await form.perform_operation(service.delete, params, "core/user_list.html", "user_list")
+
+
+def __fetch_groups(service_group: GroupService):
+    groups_in_db = service_group.read_all()
+    parser = PageParser(groups_in_db, GroupSimpleResponse)
+    groups = parser.parse_list()
+    return groups
+
+
+def __fetch_roles(service_role: RoleService):
+    roles_in_db = service_role.read_all()
+    parser = PageParser(roles_in_db, RoleResponse)
+    roles = parser.parse_list()
+    return roles

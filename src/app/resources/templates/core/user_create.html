@@ -14,23 +14,40 @@ Create user
 {% block main %}
 <form id="create-user-form" method="post">
     <div class="row g-3">
-        <div class="mb-3 col-md-6">
+        <div class="mb-2 col-md-6">
             {{ form_control("username", "text", errors.username if errors and errors.usename else None, "username",
             username, true) }}
         </div>
-        <div class="mb-3 col-md-6">
+        <div class="mb-2 col-md-6">
             {{ form_control("password", "password", errors.password_raw if errors and errors.password_raw else None,
             "password_raw", password_raw, true) }}
         </div>
-        <div class="mb-3 col-md-6">
+        <div class="mb-2 col-md-6">
             {{ form_control("firstname", "text", errors.firstname if errors and errors.firstname else None, "firstname",
             firstname) }}
         </div>
-        <div class="mb-3 col-md-6">
+        <div class="mb-2 col-md-6">
             {{ form_control("lastname", "text", errors.lastname if errors and errors.lastname else None, "lastname",
             lastname) }}
         </div>
-        <!-- TODO mmr group and role -->
+        <div class="mb-2 col-md-6">
+            <label class="form-label">group</label>
+            <select class="form-select" name="group_id">
+                <option value="{{null}}"></option>
+                {% for g in groups %}
+                <option value="{{g.id}}" {{'selected' if g.id==group_id}}>{{ g.code + ' - ' + g.webname }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-2 col-md-6">
+            <label class="form-label">role</label>
+            <select class="form-select" name="role_id">
+                <option value="{{null}}"></option>
+                {% for r in roles %}
+                <option value="{{r.id}}" {{'selected' if r.id==role_id}}>{{ r.code + ' - ' + r.webname }}</option>
+                {% endfor %}
+            </select>
+        </div>
     </div>
 </form>
 {% endblock main %}
