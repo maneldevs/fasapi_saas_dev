@@ -67,7 +67,7 @@ DELETE {{urlBase}}/roles/f4da1bae-edfb-4169-8272-12fd093fe727
 POST {{urlBase}}/users
 
 {
-    "username": "otro4",
+    "username": "otro8",
     "password_raw": "secret",
     "firstname": "otro1",
     "lastname": "Máñez Ramón",
@@ -88,7 +88,7 @@ GET {{urlBase}}/users?page=1&size=10&direction=asc&order_field=username&active=F
 PUT {{urlBase}}/users/784874f7-7abf-431e-a85a-1dfd8096913a
 
 {
-    "username": "otro7",
+    "username": "otro8",
     "password_raw": "secret",
     "firstname": "otro2",
     "lastname": "Otro2 otro3",

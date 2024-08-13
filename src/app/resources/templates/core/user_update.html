@@ -1,0 +1,75 @@
+{% from 'shared/macros/form_control.html' import form_control %}
+{% extends 'shared/content.html' %}
+
+{% set current_page = 'users' %}
+
+{% block title %}
+Update user
+{% endblock title %}
+
+{% block title_right %}
+<button type="submit" form="update-user-form" class="btn btn-primary">Save</button>
+{% endblock title_right %}
+
+{% block main %}
+<form id="update-user-form" method="post">
+  <div class="row g-5 align-items-center mb-3">
+    <div class="col">
+      <label for="id" class="form-label">id</label>
+      <input type="text" class="form-control" name="id" value="{{id}}" disabled>
+    </div>
+  </div>
+  <div class="row g-3 mb-3">
+    <div class="mb-2 col-md-6">
+      {{ form_control("username", "text", errors.username if errors and errors.usename else None, "username",
+      username, true) }}
+    </div>
+    <div class="mb-2 col-md-6">
+      {{ form_control("password", "password", errors.password_raw if errors and errors.password_raw else None,
+      "password_raw", password_raw, true) }}
+    </div>
+    <div class="mb-2 col-md-6">
+      {{ form_control("firstname", "text", errors.firstname if errors and errors.firstname else None, "firstname",
+      firstname) }}
+    </div>
+    <div class="mb-2 col-md-6">
+      {{ form_control("lastname", "text", errors.lastname if errors and errors.lastname else None, "lastname",
+      lastname) }}
+    </div>
+    <div class="mb-2 col-md-6">
+      <label class="form-label">group</label>
+      <select class="form-select" name="group_id">
+        <option value="{{null}}"></option>
+        {% for g in groups %}
+        <option value="{{g.id}}" {{'selected' if g.id==group_id}}>{{ g.code + ' - ' + g.webname }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="mb-2 col-md-6">
+      <label class="form-label">role</label>
+      <select class="form-select" name="role_id">
+        <option value="{{null}}"></option>
+        {% for r in roles %}
+        <option value="{{r.id}}" {{'selected' if r.id==role_id}}>{{ r.code + ' - ' + r.webname }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" role="switch" id="active" name="active" {{'checked' if active
+          }}>
+        <label class="form-check-label" for="active">active</label>
+      </div>
+    </div>
+    <div class="col">
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" role="switch" id="is_god" name="is_god" {{'checked' if is_god
+          }}>
+        <label class="form-check-label" for="active">is god</label>
+      </div>
+    </div>
+  </div>
+</form>
+{% endblock main %}

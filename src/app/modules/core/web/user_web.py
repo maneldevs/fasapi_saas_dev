@@ -42,6 +42,22 @@ async def user_create(
     return main.templates.TemplateResponse(request=request, name="core/user_create.html", context=context)
 
 
+@router.get("/update/{id}")
+async def user_update(
+    request: Request,
+    id: str,
+    service: Annotated[UserService, Depends()],
+    service_group: Annotated[GroupService, Depends()],
+    service_role: Annotated[RoleService, Depends()],
+):
+    user = service.read_by_id(id)
+    groups = __fetch_groups(service_group)
+    roles = __fetch_roles(service_role)
+    context = {"groups": groups, "roles": roles}
+    context |= user.model_dump()
+    return main.templates.TemplateResponse(request=request, name="core/user_update.html", context=context)
+
+
 @router.post("/delete/{id}")
 async def user_delete_perform(request: Request, id: str, service: Annotated[UserService, Depends()]):
     form = Form(request)
