@@ -125,6 +125,19 @@ def user_fixture():
     )
 
 
+@pytest.fixture(name="user2")
+def user2_fixture():
+    return User(
+        id="ghi-123-jkl-456",
+        username="Otherusername",
+        password="secret_encoded",
+        firstname="Otherfirstname",
+        lastname="OtherLastname",
+        group_id="abc-123-def-456",
+        role_id="abc-123-def-456"
+    )
+
+
 @pytest.fixture(name="user_in_db")
 def user_in_db_fixture(session: Session, user: User, role_in_db: Role, group_in_db: Group):
     user.role_id = role_in_db.id
@@ -132,3 +145,15 @@ def user_in_db_fixture(session: Session, user: User, role_in_db: Role, group_in_
     session.add(user)
     session.commit()
     return user
+
+
+@pytest.fixture(name="users_in_db")
+def users_in_db_fixture(session: Session, user: User, user2: User, role_in_db: Role, group_in_db: Group):
+    user.role_id = role_in_db.id
+    user.group_id = group_in_db.id
+    user2.role_id = role_in_db.id
+    user2.group_id = group_in_db.id
+    session.add(user)
+    session.add(user2)
+    session.commit()
+    return [user, user2]

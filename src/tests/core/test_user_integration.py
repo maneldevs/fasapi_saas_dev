@@ -6,7 +6,121 @@ from src.app.modules.core.domain.models import User, UserCreateCommand
 
 BASE_URL: str = "/api/core/users"
 
+
 """ Read """
+
+
+def test_id_read_paginated_happy(client: TestClient, users_in_db: list[User]):
+    params = {"page": 2, "size": 1, "order_field": "username", "direction": "desc"}
+    response = client.get(f"{BASE_URL}", params=params)
+    data = response.json()
+    assert data["page"] == 2
+    assert data["size"] == 1
+    assert data["total"] == 2
+    assert len(data["content"]) == 1
+    assert data["content"][0]["id"] == users_in_db[0].id
+    assert data["content"][0]["username"] == users_in_db[0].username
+    assert data["content"][0]["firstname"] == users_in_db[0].firstname
+    assert data["content"][0]["lastname"] == users_in_db[0].lastname
+    assert data["content"][0]["active"] == users_in_db[0].active
+    assert data["content"][0]["is_god"] == users_in_db[0].is_god
+    assert data["content"][0]["role"]["id"] == users_in_db[0].role.id
+    assert data["content"][0]["role"]["code"] == users_in_db[0].role.code
+    assert data["content"][0]["role"]["webname"] == users_in_db[0].role.webname
+    assert data["content"][0]["group"]["id"] == users_in_db[0].group.id
+    assert data["content"][0]["group"]["code"] == users_in_db[0].group.code
+    assert data["content"][0]["group"]["webname"] == users_in_db[0].group.webname
+    assert data["content"][0]["group"]["active"] == users_in_db[0].group.active
+
+
+def test_id_read_filtered_by_multiple_params_happy(client: TestClient, users_in_db: list[User]):
+    group_id = users_in_db[0].group_id
+    params = {"target": "u", "active": True, "is_god": False, "group_id": group_id}
+    response = client.get(f"{BASE_URL}", params=params)
+    data = response.json()
+    assert len(data["content"]) == 2
+
+
+def test_id_read_filtered_by_multiple_params_no_matches(client: TestClient, users_in_db: list[User]):
+    group_id = "nonexistent"
+    params = {"target": "u", "active": True, "is_god": False, "group_id": group_id}
+    response = client.get(f"{BASE_URL}", params=params)
+    data = response.json()
+    assert len(data["content"]) == 0
+
+
+def test_id_read_filtered_by_target_happy(client: TestClient, users_in_db: list[User]):
+    params = {"target": "my"}
+    response = client.get(f"{BASE_URL}", params=params)
+    data = response.json()
+    assert len(data["content"]) == 1
+    assert data["content"][0]["id"] == users_in_db[0].id
+
+
+def test_id_read_filtered_by_target_no_matches(client: TestClient, users_in_db: list[User]):
+    params = {"target": "."}
+    response = client.get(f"{BASE_URL}", params=params)
+    data = response.json()
+    assert len(data["content"]) == 0
+
+
+def test_id_read_filtered_by_group_id_happy(client: TestClient, users_in_db: list[User]):
+    group_id = users_in_db[0].group_id
+    params = {"group_id": group_id}
+    response = client.get(f"{BASE_URL}", params=params)
+    data = response.json()
+    assert len(data["content"]) == 2
+
+
+def test_id_read_filtered_by_group_id_no_matches(client: TestClient, users_in_db: list[User]):
+    group_id = "non_existent"
+    params = {"group_id": group_id}
+    response = client.get(f"{BASE_URL}", params=params)
+    data = response.json()
+    assert len(data["content"]) == 0
+
+
+def test_id_read_filtered_by_active_happy(client: TestClient, users_in_db: list[User]):
+    params = {"active": True}
+    response = client.get(f"{BASE_URL}", params=params)
+    data = response.json()
+    assert len(data["content"]) == 2
+
+
+def test_id_read_filtered_by_active_no_matches(client: TestClient, users_in_db: list[User]):
+    params = {"active": False}
+    response = client.get(f"{BASE_URL}", params=params)
+    data = response.json()
+    assert len(data["content"]) == 0
+
+
+def test_id_read_filtered_by_is_god_happy(client: TestClient, users_in_db: list[User]):
+    params = {"is_god": False}
+    response = client.get(f"{BASE_URL}", params=params)
+    data = response.json()
+    assert len(data["content"]) == 2
+
+
+def test_id_read_filtered_by_is_god_no_matches(client: TestClient, users_in_db: list[User]):
+    params = {"is_god": True}
+    response = client.get(f"{BASE_URL}", params=params)
+    data = response.json()
+    assert len(data["content"]) == 0
+
+
+def test_id_read_no_params(client: TestClient, users_in_db: list[User]):
+    response = client.get(f"{BASE_URL}")
+    data = response.json()
+    assert data["page"] == 1
+    assert data["size"] == 10
+    assert data["total"] == 2
+    assert len(data["content"]) == 2
+
+
+def test_id_read_none_in_db(client: TestClient):
+    response = client.get(f"{BASE_URL}")
+    data = response.json()
+    assert len(data["content"]) == 0
 
 
 """ Read index """
