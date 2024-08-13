@@ -1,6 +1,7 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, Request
 from src.app import main
+from src.app.modules.core.domain.forms import Form
 from src.app.modules.core.domain.models import GroupSimpleResponse, UserFilter, UserResponse
 from src.app.modules.core.domain.services.group_service import GroupService
 from src.app.modules.core.domain.services.user_service import UserService
@@ -28,3 +29,11 @@ async def user_list(
     groups = parser.parse_list()
     context |= {"groups": groups}
     return main.templates.TemplateResponse(request=request, name="core/user_list.html", context=context)
+
+
+@router.post("/delete/{id}")
+async def user_delete_perform(request: Request, id: str, service: Annotated[UserService, Depends()]):
+    form = Form(request)
+    await form.load()
+    params = {"id": id}
+    return await form.perform_operation(service.delete, params, "core/user_list.html", "user_list")

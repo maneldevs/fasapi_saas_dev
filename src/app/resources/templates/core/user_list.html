@@ -70,20 +70,19 @@
         <i class="text-danger bi bi-x-circle-fill"></i>
         {% endif %}
       </td>
-      <!-- TODO mmr add buttons -->
-      <!-- <td class="text-end">
-        <a class="btn btn-sm btn-outline-primary" href="{{ url_for('group_update', id=item.id) }}">
+      <td class="text-end">
+        <!-- <a class="btn btn-sm btn-outline-primary" href="{{ url_for('group_update', id=item.id) }}">
           <i class="bi bi-pencil"></i>
-        </a>
-        <button class="btn btn-sm btn-outline-danger" data-code={{item.code}} data-id={{item.id}} onclick="openDeleteModal(this)">
+        </a> -->
+        <button class="btn btn-sm btn-outline-danger" data-code="{{item.code}}" data-id="{{item.id}}" onclick="openDeleteModal(this)">
           <i class="bi bi-trash"></i>
         </button>
-      </td> -->
+      </td>
     </tr>
     {% endfor %}
   </tbody>
 </table>
 {{ paginator(total, size) }}
 </div>
-<!-- {{ modal_delete('Delete group', 'group_delete_perform') }} -->
+{{ modal_delete('Delete user', 'user_delete_perform') }}
 {% endblock main %}
