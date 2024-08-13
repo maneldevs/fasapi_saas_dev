@@ -75,5 +75,28 @@ POST {{urlBase}}/users
     "role_id": "d3bc9238-ca0a-47e7-adfd-f2dcb541e5e6"
 }
 
+### USER - READ BY ID
+GET {{urlBase}}/users/4f7dfe00-dc48-4a95-8336-04510f2568ba
+
+### USER - READ INDEX
+GET {{urlBase}}/users/index
+
 ### USER - READ PAGINATED
 GET {{urlBase}}/users?page=1&size=10&direction=asc&order_field=username&active=False
+
+### USER - UPDATE
+PUT {{urlBase}}/users/e07f3ff2-4036-40a7-98a0-98950403592c
+
+{
+    "username": "otro2",
+    "password_raw": "secret",
+    "firstname": "otro2",
+    "lastname": "Otro2 otro2",
+    "active": true,
+    "is_god": true,
+    "group_id": null,
+    "role_id": "d3bc9238-ca0a-47e7-adfd-f2dcb541e5e6"
+}
+
+### USER - DELETE BY ID
+DELETE {{urlBase}}/users/935cf464-313c-49c1-a1a5-5d16a0a8da97

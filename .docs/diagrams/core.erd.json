@@ -4,8 +4,8 @@
   "settings": {
     "width": 3000,
     "height": 3000,
-    "scrollTop": -931.4148,
-    "scrollLeft": -1010.6365,
+    "scrollTop": -1151.4148,
+    "scrollLeft": -484.6365,
     "zoomLevel": 0.9,
     "show": 508,
     "database": 4,
@@ -2087,64 +2087,6 @@
           "createAt": 1722337435182
         }
       },
-      "Qr5xsQBgVdMOk9T6SLBYD": {
-        "id": "Qr5xsQBgVdMOk9T6SLBYD",
-        "identification": false,
-        "relationshipType": 4,
-        "startRelationshipType": 2,
-        "start": {
-          "tableId": "jQU4BurZL0wxGQAk4Jnk1",
-          "columnIds": [
-            "09TZ06SMOAgRS1ILZbLAa"
-          ],
-          "x": 793.4892,
-          "y": 820.8767,
-          "direction": 2
-        },
-        "end": {
-          "tableId": "Kbu4DCkvixT-7BNFXC495",
-          "columnIds": [
-            "ot-_5Xzy0HuEIVjIWnC0f"
-          ],
-          "x": 1210.8348,
-          "y": 754.4563,
-          "direction": 1
-        },
-        "meta": {
-          "updateAt": 1723105363443,
-          "createAt": 1723105363443
-        }
-      },
-      "WnD9W5C4A0CmOXYwZCYTr": {
-        "id": "WnD9W5C4A0CmOXYwZCYTr",
-        "identification": false,
-        "relationshipType": 4,
-        "startRelationshipType": 2,
-        "start": {
-          "tableId": "Kbu4DCkvixT-7BNFXC495",
-          "columnIds": [
-            "CsGFdm2HzKEEWFyScZJYO",
-            "laZw7iZM0C_lJFG-fHeZ9"
-          ],
-          "x": 1280.8348,
-          "y": 747.2063,
-          "direction": 1
-        },
-        "end": {
-          "tableId": "jQU4BurZL0wxGQAk4Jnk1",
-          "columnIds": [
-            "6aZrilrdgtGyBLoZBOk0i",
-            "GMZLX-h__IR3dha2GSQYf"
-          ],
-          "x": 793.4892,
-          "y": 832.8767,
-          "direction": 2
-        },
-        "meta": {
-          "updateAt": 1723105379704,
-          "createAt": 1723105379704
-        }
-      },
       "Puqz5m8-W_AYas-ARs5Tb": {
         "id": "Puqz5m8-W_AYas-ARs5Tb",
         "identification": false,
@@ -2207,7 +2149,7 @@
     "memoEntities": {
       "xNdptckHNzBNzzTTSd243": {
         "id": "xNdptckHNzBNzzTTSd243",
-        "value": "scope can be conbinations of letters:\nCRUD \nEx: R or RU\n\nonly_owner means operations can be done only if current user is owner of the resource, so user_id is in the resource and it is the current user id",
+        "value": "scope can be conbinations of letters:\nCRUD\nEx: R or RU\n\nonly_owner means operations can be done only if current user is owner of the resource, so user_id is in the resource and it is the current user id",
         "ui": {
           "x": 661.3648,
           "y": 1200.2875,
@@ -2217,7 +2159,7 @@
           "color": ""
         },
         "meta": {
-          "updateAt": 1723118304900,
+          "updateAt": 1723534482772,
           "createAt": 1722671267162
         }
       }
@@ -3041,7 +2983,7 @@
       1722671267160,
       -1,
       {
-        "value": 1722671531702
+        "value": 1723534482771
       }
     ],
     "09TZ06SMOAgRS1ILZbLAa": [
@@ -3078,12 +3020,6 @@
         "comment": 1723105363439
       }
     ],
-    "Qr5xsQBgVdMOk9T6SLBYD": [
-      "relationshipEntities",
-      1723105363439,
-      1723105368923,
-      {}
-    ],
     "6aZrilrdgtGyBLoZBOk0i": [
       "tableColumnEntities",
       1723105379702,
@@ -3107,12 +3043,6 @@
         "default": 1723105379702,
         "comment": 1723105379702
       }
-    ],
-    "WnD9W5C4A0CmOXYwZCYTr": [
-      "relationshipEntities",
-      1723105379702,
-      1723105564290,
-      {}
     ],
     "sjkUbI0ehqacazCI3UUq8": [
       "tableColumnEntities",

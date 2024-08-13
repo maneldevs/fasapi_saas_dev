@@ -34,14 +34,14 @@ async def read_index(service: Annotated[RoleService, Depends()]):
 
 @router.get("/{id}", response_model=RoleResponse)
 async def read_by_id(id: str, service: Annotated[RoleService, Depends()]):
-    roles = service.read_by_id(id)
-    return roles
+    role = service.read_by_id(id)
+    return role
 
 
 @router.put("/{id}", response_model=RoleResponse)
 async def update(id: str, command: RoleCommand, service: Annotated[RoleService, Depends()]):
-    roles = service.update(id, command)
-    return roles
+    role = service.update(id, command)
+    return role
 
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)

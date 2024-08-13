@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import Depends
 
 from src.app.configuration.exceptions import EntityAlreadyExistsError, EntityNotFoundError
-from src.app.modules.core.domain.models import User, UserCreateCommand, UserFilter
+from src.app.modules.core.domain.models import User, UserCreateCommand, UserFilter, UserUpdateCommand
 from src.app.modules.core.persistence.group_repo import GroupRepo
 from src.app.modules.core.persistence.role_repo import RoleRepo
 from src.app.modules.core.persistence.user_repo import UserRepo
@@ -31,10 +31,37 @@ class UserService:
             e.msg = "User code already exists"
             raise e
 
+    def read_by_id(self, id: str) -> User:
+        user = self.repo.read_by_id(id)
+        if user is None:
+            raise EntityNotFoundError(msg="User not found")
+        return user
+
+    def read_all(self) -> list[User]:
+        users = self.repo.read_all()
+        return users
+
     def read_all_paginated(self, page_params: PageParams, filter: UserFilter) -> tuple[list[User], int]:
         total = self.repo.count_all()
         users = self.repo.read_paginated(page_params, filter)
         return (users, total)
+
+    def update(self, id: str, command: UserUpdateCommand):
+        try:
+            user = self.__validate_and_deserialize(command)
+            user.id = id
+            user_updated = self.repo.update(id, user)
+            if (user_updated is None):
+                raise EntityNotFoundError(msg="User not found")
+            return user_updated
+        except EntityAlreadyExistsError as e:
+            e.msg = "User code already exists"
+            raise e
+
+    def delete(self, id: str) -> None:
+        user = self.repo.delete(id)
+        if (user is None):
+            raise EntityNotFoundError(msg="User not found")
 
     def __validate_and_deserialize(self, command):
         if command.role_id:

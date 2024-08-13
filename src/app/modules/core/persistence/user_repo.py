@@ -17,15 +17,6 @@ class UserRepo:
     def __init__(self, session: Annotated[Session, Depends(get_session)]) -> None:
         self.session = session
 
-    def __save(self, user: User) -> User:
-        try:
-            self.session.add(user)
-            self.session.commit()
-            self.session.refresh(user)
-            return user
-        except IntegrityError as e:
-            raise EntityAlreadyExistsError(original_exception=e)
-
     def count_all(self) -> int:
         stmt = select(func.count(col(User.id)))
         total = self.session.exec(stmt).one()
@@ -36,6 +27,15 @@ class UserRepo:
         stmt = self.__apply_filter(stmt, filter)
         total = self.session.exec(stmt).one()
         return total
+
+    def read_by_id(self, id: str) -> User:
+        user = self.session.get(User, id)
+        return user
+
+    def read_all(self) -> list[User]:
+        stmt = select(User)
+        users = self.session.exec(stmt).all()
+        return users
 
     def read_paginated(self, page_params: PageParams, filter: UserFilter) -> list[User]:
         stmt = select(User)
@@ -49,6 +49,29 @@ class UserRepo:
     def create(self, user: User) -> User:
         user.id = str(uuid.uuid4())
         return self.__save(user)
+
+    def update(self, id: str, user: User):
+        user_in_db = self.read_by_id(id)
+        if (user_in_db is not None):
+            user_in_db.sqlmodel_update(user)
+            self.__save(user_in_db)
+        return user_in_db
+
+    def delete(self, id: str) -> User:
+        user_in_db = self.read_by_id(id)
+        if (user_in_db is not None):
+            self.session.delete(user_in_db)
+            self.session.commit()
+        return user_in_db
+
+    def __save(self, user: User) -> User:
+        try:
+            self.session.add(user)
+            self.session.commit()
+            self.session.refresh(user)
+            return user
+        except IntegrityError as e:
+            raise EntityAlreadyExistsError(original_exception=e)
 
     def __apply_filter(self, stmt: SelectOfScalar[User], filter: UserFilter):
         if filter.target:
