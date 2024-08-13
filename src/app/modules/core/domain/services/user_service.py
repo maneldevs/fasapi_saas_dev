@@ -25,7 +25,8 @@ class UserService:
 
     def create(self, command: UserCreateCommand) -> User:
         try:
-            user = self.__validate_and_deserialize(command)
+            self.__validate(command)
+            user = User.model_validate(command, update={"password": get_password_hash(command.password_raw)})
             return self.repo.create(user)
         except EntityAlreadyExistsError as e:
             e.msg = "User code already exists"
@@ -48,7 +49,9 @@ class UserService:
 
     def update(self, id: str, command: UserUpdateCommand):
         try:
-            user = self.__validate_and_deserialize(command)
+            self.__validate(command)
+            password = get_password_hash(command.password_raw) if (command.password_raw) else "nopass"
+            user = User.model_validate(command, update={"password": password})
             user.id = id
             user_updated = self.repo.update(id, user)
             if (user_updated is None):
@@ -63,7 +66,7 @@ class UserService:
         if (user is None):
             raise EntityNotFoundError(msg="User not found")
 
-    def __validate_and_deserialize(self, command):
+    def __validate(self, command) -> None:
         if command.role_id:
             role = self.role_repo.read_by_id(command.role_id)
             if role is None:
@@ -72,5 +75,3 @@ class UserService:
             group = self.group_repo.read_by_id(command.group_id)
             if group is None:
                 raise EntityNotFoundError(msg="Group not found")
-        user = User.model_validate(command, update={"password": get_password_hash(command.password_raw)})
-        return user

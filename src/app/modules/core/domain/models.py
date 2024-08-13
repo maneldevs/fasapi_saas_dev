@@ -85,7 +85,6 @@ class User(SQLModel, table=True):
 
 class UserBaseCommand(SQLModel):
     username: str
-    password_raw: str
     firstname: str | None = None
     lastname: str | None = None
     group_id: str | None = None
@@ -93,10 +92,11 @@ class UserBaseCommand(SQLModel):
 
 
 class UserCreateCommand(UserBaseCommand):
-    pass
+    password_raw: str
 
 
 class UserUpdateCommand(UserBaseCommand):
+    password_raw: str | None = None
     active: bool
     is_god: bool
 

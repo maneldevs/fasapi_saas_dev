@@ -52,6 +52,8 @@ class UserRepo:
 
     def update(self, id: str, user: User):
         user_in_db = self.read_by_id(id)
+        if user.password == "nopass":
+            user.password = user_in_db.password
         if (user_in_db is not None):
             user_in_db.sqlmodel_update(user)
             self.__save(user_in_db)
