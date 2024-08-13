@@ -1,0 +1,36 @@
+{% from 'shared/macros/form_control.html' import form_control %}
+{% extends 'shared/content.html' %}
+
+{% set current_page = 'users' %}
+
+{% block title %}
+Create user
+{% endblock title %}
+
+{% block title_right %}
+<button type="submit" form="create-user-form" class="btn btn-primary">Save</button>
+{% endblock title_right %}
+
+{% block main %}
+<form id="create-user-form" method="post">
+    <div class="row g-3">
+        <div class="mb-3 col-md-6">
+            {{ form_control("username", "text", errors.username if errors and errors.usename else None, "username",
+            username, true) }}
+        </div>
+        <div class="mb-3 col-md-6">
+            {{ form_control("password", "password", errors.password_raw if errors and errors.password_raw else None,
+            "password_raw", password_raw, true) }}
+        </div>
+        <div class="mb-3 col-md-6">
+            {{ form_control("firstname", "text", errors.firstname if errors and errors.firstname else None, "firstname",
+            firstname) }}
+        </div>
+        <div class="mb-3 col-md-6">
+            {{ form_control("lastname", "text", errors.lastname if errors and errors.lastname else None, "lastname",
+            lastname) }}
+        </div>
+        <!-- TODO mmr group and role -->
+    </div>
+</form>
+{% endblock main %}

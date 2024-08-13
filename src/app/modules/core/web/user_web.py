@@ -31,6 +31,11 @@ async def user_list(
     return main.templates.TemplateResponse(request=request, name="core/user_list.html", context=context)
 
 
+@router.get("/create")
+async def user_create(request: Request):
+    return main.templates.TemplateResponse(request=request, name="core/user_create.html", context={})
+
+
 @router.post("/delete/{id}")
 async def user_delete_perform(request: Request, id: str, service: Annotated[UserService, Depends()]):
     form = Form(request)

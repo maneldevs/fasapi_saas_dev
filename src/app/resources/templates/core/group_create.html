@@ -15,10 +15,10 @@ Create group
 <form id="create-group-form" method="post">
   <div class="row g-3">
     <div class="mb-3 col-md-6">
-      {{ form_control("code", "text", errors.code if errors and errors.code else None, "code", code) }}
+      {{ form_control("code", "text", errors.code if errors and errors.code else None, "code", code, true) }}
     </div>
     <div class="mb-3 col-md-6">
-      {{ form_control("webname", "text", errors.webname if errors and errors.webname else None, "webname", webname) }}
+      {{ form_control("webname", "text", errors.webname if errors and errors.webname else None, "webname", webname, true) }}
     </div>
   </div>
 </form>
