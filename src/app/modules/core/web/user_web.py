@@ -2,7 +2,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Request
 from src.app import main
 from src.app.modules.core.domain.forms import Form
-from src.app.modules.core.domain.models import GroupSimpleResponse, RoleResponse, UserFilter, UserResponse
+from src.app.modules.core.domain.models import GroupSimpleResponse, RoleResponse, UserResponse, UserWebFilter
 from src.app.modules.core.domain.services.group_service import GroupService
 from src.app.modules.core.domain.services.role_service import RoleService
 from src.app.modules.core.domain.services.user_service import UserService
@@ -16,7 +16,7 @@ router = APIRouter(prefix="/core/users")
 async def user_list(
     request: Request,
     page_params: Annotated[PageParams, Depends()],
-    filter: Annotated[UserFilter, Depends()],
+    filter: Annotated[UserWebFilter, Depends()],
     service: Annotated[UserService, Depends()],
     service_group: Annotated[GroupService, Depends()],
     msg: str = None,

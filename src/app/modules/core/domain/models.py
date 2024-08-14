@@ -1,3 +1,4 @@
+from typing import Optional
 from sqlmodel import Field, SQLModel, Relationship
 
 
@@ -121,6 +122,13 @@ class UserResponse(UserSimpleResponse):
 
 class UserFilter(SQLModel):
     target: str | None = None
-    active: bool | None = None
+    active: Optional[bool] = None
     is_god: bool | None = None
+    group_id: str | None = None
+
+
+class UserWebFilter(SQLModel):
+    target: str | None = None
+    active: bool | None = True
+    is_god: bool | None = False
     group_id: str | None = None
