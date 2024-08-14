@@ -129,6 +129,11 @@ class UserFilter(SQLModel):
 
 class UserWebFilter(SQLModel):
     target: str | None = None
-    active: bool | None = True
-    is_god: bool | None = False
+    active: str | None = None
+    is_god: str | None = None
     group_id: str | None = None
+
+    def parseToUserFilter(self):
+        active = None if self.active == "None" else self.active
+        is_god = None if self.is_god == "None" else self.is_god
+        return UserFilter(target=self.target, active=active, is_god=is_god, group_id=self.group_id)

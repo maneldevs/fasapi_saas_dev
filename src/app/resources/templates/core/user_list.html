@@ -31,17 +31,19 @@
     <div class="input-group">
       <label class="input-group-text"><i class=" bi bi-check"></i></label>
       <select class="form-select" name="active" >
-          <option value="{{true}}" {{'selected' if active == true}}>active</option>
-          <option value="{{false}}" {{'selected' if active == false}}>inactive</option>
+        <option value="None" {{'selected' if active == 'None'}}>all</option>
+        <option value="{{true}}" {{'selected' if active == 'True'}}>active</option>
+        <option value="{{false}}" {{'selected' if active == 'False'}}>inactive</option>
       </select>
     </div>
   </div>
   <div class="me-2 mb-2">
     <div class="input-group">
-      <label class="input-group-text"><i class=" bi bi-god"></i></label>
+      <label class="input-group-text"><i class="bi bi-god"></i></label>
       <select class="form-select" name="is_god" >
-          <option value="{{false}}" {{'selected' if is_god == false}}>no god</option>
-          <option value="{{true}}" {{'selected' if is_god == true}}>is god</option>
+        <option value="None" {{'selected' if active == 'None'}}>all</option>
+        <option value="{{true}}" {{'selected' if is_god == 'True'}}>is god</option>
+        <option value="{{false}}" {{'selected' if is_god == 'False'}}>no god</option>
       </select>
     </div>
   </div>

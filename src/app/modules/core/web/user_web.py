@@ -2,7 +2,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Request
 from src.app import main
 from src.app.modules.core.domain.forms import Form
-from src.app.modules.core.domain.models import GroupSimpleResponse, RoleResponse, UserResponse, UserWebFilter
+from src.app.modules.core.domain.models import (GroupSimpleResponse, RoleResponse, UserResponse, UserWebFilter)
 from src.app.modules.core.domain.services.group_service import GroupService
 from src.app.modules.core.domain.services.role_service import RoleService
 from src.app.modules.core.domain.services.user_service import UserService
@@ -22,7 +22,7 @@ async def user_list(
     msg: str = None,
 ):
     page_params.order_field = "username"
-    users, total = service.read_all_paginated(page_params, filter)
+    users, total = service.read_all_paginated(page_params, filter.parseToUserFilter())
     parser = PageParser(users, UserResponse)
     context = parser.generate_web_context(page_params, total, filter, msg)
     groups = __fetch_groups(service_group)
