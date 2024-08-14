@@ -10,6 +10,7 @@ from src.app.modules.core.domain.models import (
     RoleCommand,
     User,
     UserCreateCommand,
+    UserUpdateCommand,
 )
 from src.app.main import app
 
@@ -109,6 +110,20 @@ def user_create_command_fixture(role_in_db: Role, group_in_db: Group):
         lastname="MyLastname",
         group_id=group_in_db.id,
         role_id=role_in_db.id,
+    )
+
+
+@pytest.fixture(name="user_update_command")
+def user_update_command_fixture(roles_in_db: Role, groups_in_db: Group):
+    return UserUpdateCommand(
+        username="MyusernameChanged",
+        password_raw="secretChanged",
+        firstname="MyfirstnameChanged",
+        lastname="MyLastnameChanged",
+        active=False,
+        is_god=True,
+        group_id=groups_in_db[1].id,
+        role_id=roles_in_db[1].id,
     )
 
 
