@@ -1,8 +1,14 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, Request
 from src.app import main
-from src.app.modules.core.domain.forms import Form
-from src.app.modules.core.domain.models import (GroupSimpleResponse, RoleResponse, UserResponse, UserWebFilter)
+from src.app.modules.core.domain.forms import Form, UserCreateForm
+from src.app.modules.core.domain.models import (
+    GroupSimpleResponse,
+    RoleResponse,
+    UserCreateCommand,
+    UserResponse,
+    UserWebFilter,
+)
 from src.app.modules.core.domain.services.group_service import GroupService
 from src.app.modules.core.domain.services.role_service import RoleService
 from src.app.modules.core.domain.services.user_service import UserService
@@ -40,6 +46,14 @@ async def user_create(
     roles = __fetch_roles(service_role)
     context = {"groups": groups, "roles": roles}
     return main.templates.TemplateResponse(request=request, name="core/user_create.html", context=context)
+
+
+@router.post("/create")
+async def user_create_perform(request: Request, service: Annotated[UserService, Depends()]):
+    form = UserCreateForm(request)
+    command = UserCreateCommand.model_validate(await form.load())
+    params = {"command": command}
+    return await form.perform_operation(service.create, params, "core/user_create.html", "user_list")
 
 
 @router.get("/update/{id}")
