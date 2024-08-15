@@ -31,8 +31,6 @@ class Form:
                 return RedirectResponse(redirect_ulr, 303)
             except Exception as e:
                 context |= {"msg": e.msg, "type": "danger"}
-        # redirect_ulr = self.request.url_for("user_create").include_query_params(msg="e.msg")
-        # return RedirectResponse(redirect_ulr, 303)
         return main.templates.TemplateResponse(request=self.request, name=self_template_path, context=context)
 
 
@@ -142,6 +140,39 @@ class UserCreateForm(Form):
             self.errors["username"] = "username is required"
         if not self.password_raw or len(self.password_raw) == 0:
             self.errors["password_raw"] = "password is required"
+        if not self.errors or len(self.errors) == 0:
+            valid = True
+        return valid
+
+
+class UserUpdateForm(Form):
+    def __init__(self, request: Request):
+        super().__init__(request)
+        self.username: str
+        self.password_raw: str | None
+        self.firstname: str | None = None
+        self.lastname: str | None = None
+        self.group_id: str | None = None
+        self.role_id: str | None = None
+        self.active: bool
+        self.is_god: bool
+
+    async def load(self) -> dict:
+        form = await self.request.form()
+        self.username = form.get("username")
+        self.password_raw = form.get("password_raw") if form.get("password_raw") else None
+        self.firstname = form.get("firstname")
+        self.lastname = form.get("lastname")
+        self.group_id = form.get("group_id") if form.get("group_id") else None
+        self.role_id = form.get("role_id") if form.get("role_id") else None
+        self.active = form.get("active") if form.get("active") else False
+        self.is_god = form.get("is_god") if form.get("is_god") else False
+        return self.to_dict()
+
+    def is_valid(self) -> bool:
+        valid = False
+        if not self.username or len(self.username) == 0:
+            self.errors["username"] = "username is required"
         if not self.errors or len(self.errors) == 0:
             valid = True
         return valid

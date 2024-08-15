@@ -48,7 +48,8 @@ async def group_update_perform(request: Request, id: str, service: Annotated[Gro
     form = GroupUpdateForm(request)
     command = GroupUpdateCommand.model_validate(await form.load())
     params = {"id": id, "command": command}
-    return await form.perform_operation(service.update, params, "core/group_update.html", "group_list")
+    context = {"id": id}
+    return await form.perform_operation(service.update, params, "core/group_update.html", "group_list", context)
 
 
 @router.post("/delete/{id}")

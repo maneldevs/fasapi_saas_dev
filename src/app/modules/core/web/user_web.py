@@ -1,12 +1,13 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, Request
 from src.app import main
-from src.app.modules.core.domain.forms import Form, UserCreateForm
+from src.app.modules.core.domain.forms import Form, UserCreateForm, UserUpdateForm
 from src.app.modules.core.domain.models import (
     GroupSimpleResponse,
     RoleResponse,
     UserCreateCommand,
     UserResponse,
+    UserUpdateCommand,
     UserWebFilter,
 )
 from src.app.modules.core.domain.services.group_service import GroupService
@@ -78,6 +79,23 @@ async def user_update(
     context = {"groups": groups, "roles": roles}
     context |= user.model_dump()
     return main.templates.TemplateResponse(request=request, name="core/user_update.html", context=context)
+
+
+@router.post("/update/{id}")
+async def user_update_perform(
+    request: Request,
+    id: str,
+    service: Annotated[UserService, Depends()],
+    service_group: Annotated[GroupService, Depends()],
+    service_role: Annotated[RoleService, Depends()],
+):
+    form = UserUpdateForm(request)
+    command = UserUpdateCommand.model_validate(await form.load())
+    params = {"id": id, "command": command}
+    groups = __fetch_groups(service_group)
+    roles = __fetch_roles(service_role)
+    context = {"id": id, "groups": groups, "roles": roles}
+    return await form.perform_operation(service.update, params, "core/user_update.html", "user_list", context)
 
 
 @router.post("/delete/{id}")

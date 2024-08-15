@@ -48,7 +48,8 @@ async def role_update_perform(request: Request, id: str, service: Annotated[Role
     form = RoleForm(request)
     command = RoleCommand.model_validate(await form.load())
     params = {"id": id, "command": command}
-    return await form.perform_operation(service.update, params, "core/role_update.html", "role_list")
+    context = {"id": id}
+    return await form.perform_operation(service.update, params, "core/role_update.html", "role_list", context)
 
 
 @router.post("/delete/{id}")
