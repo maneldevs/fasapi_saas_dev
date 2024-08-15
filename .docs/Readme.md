@@ -42,6 +42,7 @@ pip install mysqlclient
 pip install requests 
 pip install pytest
 pip install "passlib[bcrypt]"
+pip install pyjwt
 pip freeze > requirements.txt
 ```
 

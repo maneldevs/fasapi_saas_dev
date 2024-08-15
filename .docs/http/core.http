@@ -100,3 +100,11 @@ PUT {{urlBase}}/users/784874f7-7abf-431e-a85a-1dfd8096913a
 
 ### USER - DELETE BY ID
 DELETE {{urlBase}}/users/935cf464-313c-49c1-a1a5-5d16a0a8da97
+
+####################################################### AUTH ###########################################################
+
+POST {{urlBase}}/auth
+Content-Type: application/x-www-form-urlencoded
+
+username=mmanez
+&password=secret

@@ -14,3 +14,8 @@ class EntityAlreadyExistsError(BaseError):
 class EntityNotFoundError(BaseError):
     def __init__(self, msg: str = "Entity not found", original_exception: Exception = None) -> None:
         super().__init__(type="not found", msg=msg, status_code=404, original_exception=original_exception)
+
+
+class CredentialsError(BaseError):
+    def __init__(self, msg: str = "Incorrect username or password", original_exception: Exception = None) -> None:
+        super().__init__(type="credentials", msg=msg, status_code=401, original_exception=original_exception)

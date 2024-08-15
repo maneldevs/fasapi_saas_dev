@@ -9,6 +9,9 @@ class Settings(BaseSettings):
     db_hostname: str
     db_port: str
     db_database: str
+    access_token_expire_minutes: int
+    secret_key: str
+    algorithm: str
 
     model_config = SettingsConfigDict(env_file=".env")
 

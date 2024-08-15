@@ -28,9 +28,13 @@ class UserRepo:
         total = self.session.exec(stmt).one()
         return total
 
-    def read_by_id(self, id: str) -> User:
+    def read_by_id(self, id: str) -> User | None:
         user = self.session.get(User, id)
         return user
+
+    def read_by_username(self, username: str) -> User | None:
+        stmt = select(User).where(User.username == username)
+        return self.session.exec(stmt).first()
 
     def read_all(self) -> list[User]:
         stmt = select(User)

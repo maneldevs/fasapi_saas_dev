@@ -2,6 +2,23 @@ from typing import Optional
 from sqlmodel import Field, SQLModel, Relationship
 
 
+""" Auth """
+
+
+class Login(SQLModel):
+    access_token: str
+    token_type: str | None = "bearer"
+
+
+class LoginCommand(SQLModel):
+    username: str
+    password: str
+
+
+class LoginResponse(Login):
+    pass
+
+
 """ Group """
 
 

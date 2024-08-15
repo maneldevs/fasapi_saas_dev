@@ -4,8 +4,8 @@
   "settings": {
     "width": 3000,
     "height": 3000,
-    "scrollTop": -1151.4148,
-    "scrollLeft": -484.6365,
+    "scrollTop": -1250.4148,
+    "scrollLeft": -632.6365,
     "zoomLevel": 0.9,
     "show": 508,
     "database": 4,
@@ -1585,27 +1585,27 @@
           "widthDefault": 60
         },
         "meta": {
-          "updateAt": 1722671223633,
+          "updateAt": 1723739887896,
           "createAt": 1722671074321
         }
       },
       "ZHIkqtnkOVhHvKYXKfGrX": {
         "id": "ZHIkqtnkOVhHvKYXKfGrX",
         "tableId": "RM5cANTB1oHaLQap0W-S1",
-        "name": "only_owner",
+        "name": "scope_owner",
         "comment": "",
-        "dataType": "BOOL",
-        "default": "false",
+        "dataType": "VARCHAR",
+        "default": "",
         "options": 8,
         "ui": {
           "keys": 0,
-          "widthName": 62,
+          "widthName": 71,
           "widthComment": 60,
           "widthDataType": 60,
           "widthDefault": 60
         },
         "meta": {
-          "updateAt": 1722671242097,
+          "updateAt": 1723739849201,
           "createAt": 1722671135875
         }
       },
@@ -1854,7 +1854,7 @@
           "columnIds": [
             "1_tl_B2935q-0pU4dvlvr"
           ],
-          "x": 1006.9366487388352,
+          "x": 1011.4366487388352,
           "y": 1212.4811230916082,
           "direction": 8
         },
@@ -1882,7 +1882,7 @@
           "columnIds": [
             "vFEruDE9KiFgSV4D0XOJe"
           ],
-          "x": 1182.9366487388352,
+          "x": 1191.9366487388352,
           "y": 1124.4811230916082,
           "direction": 2
         },
@@ -2149,7 +2149,7 @@
     "memoEntities": {
       "xNdptckHNzBNzzTTSd243": {
         "id": "xNdptckHNzBNzzTTSd243",
-        "value": "scope can be conbinations of letters:\nCRUD\nEx: R or RU\n\nonly_owner means operations can be done only if current user is owner of the resource, so user_id is in the resource and it is the current user id",
+        "value": "scope and scope_owner can be conbinations of letters:\nCRUD\nEx: R or RU\n\nscope_owner means operations can be done only if current user is owner of the resource, so user_id is in the resource and it is the current user id",
         "ui": {
           "x": 661.3648,
           "y": 1200.2875,
@@ -2159,7 +2159,7 @@
           "color": ""
         },
         "meta": {
-          "updateAt": 1723534482772,
+          "updateAt": 1723739879817,
           "createAt": 1722671267162
         }
       }
@@ -2962,7 +2962,7 @@
       1722671074321,
       -1,
       {
-        "name": 1722671101474,
+        "name": 1723739887896,
         "dataType": 1722671117685,
         "options(notNull)": 1722671223632
       }
@@ -2972,10 +2972,10 @@
       1722671135874,
       -1,
       {
-        "name": 1722671197517,
-        "dataType": 1722671215526,
+        "name": 1723739828720,
+        "dataType": 1723739841426,
         "options(notNull)": 1722671224871,
-        "default": 1722671242096
+        "default": 1723739849200
       }
     ],
     "xNdptckHNzBNzzTTSd243": [
@@ -2983,7 +2983,7 @@
       1722671267160,
       -1,
       {
-        "value": 1723534482771
+        "value": 1723739879817
       }
     ],
     "09TZ06SMOAgRS1ILZbLAa": [
