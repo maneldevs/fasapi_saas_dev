@@ -49,11 +49,19 @@ async def user_create(
 
 
 @router.post("/create")
-async def user_create_perform(request: Request, service: Annotated[UserService, Depends()]):
+async def user_create_perform(
+    request: Request,
+    service: Annotated[UserService, Depends()],
+    service_group: Annotated[GroupService, Depends()],
+    service_role: Annotated[RoleService, Depends()],
+):
     form = UserCreateForm(request)
     command = UserCreateCommand.model_validate(await form.load())
     params = {"command": command}
-    return await form.perform_operation(service.create, params, "core/user_create.html", "user_list")
+    groups = __fetch_groups(service_group)
+    roles = __fetch_roles(service_role)
+    context = {"groups": groups, "roles": roles}
+    return await form.perform_operation(service.create, params, "core/user_create.html", "user_list", context)
 
 
 @router.get("/update/{id}")

@@ -19,8 +19,9 @@ class Form:
     def to_dict(self) -> dict:
         return self.__dict__
 
-    async def perform_operation(self, func, params, self_template_path, redirect_method_name):
-        form_data = await self.load()
+    async def perform_operation(self, func, params, self_template_path, redirect_method_name, extra_context={}):
+        context = await self.load()
+        context |= extra_context
         if self.is_valid():
             try:
                 func(**params)
@@ -29,10 +30,10 @@ class Form:
                 )
                 return RedirectResponse(redirect_ulr, 303)
             except Exception as e:
-                form_data |= {"msg": e.msg, "type": "danger"}
+                context |= {"msg": e.msg, "type": "danger"}
         # redirect_ulr = self.request.url_for("user_create").include_query_params(msg="e.msg")
         # return RedirectResponse(redirect_ulr, 303)
-        return main.templates.TemplateResponse(request=self.request, name=self_template_path, context=form_data)
+        return main.templates.TemplateResponse(request=self.request, name=self_template_path, context=context)
 
 
 """ Group """
