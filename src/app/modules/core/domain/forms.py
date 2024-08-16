@@ -34,6 +34,32 @@ class Form:
         return main.templates.TemplateResponse(request=self.request, name=self_template_path, context=context)
 
 
+""" Auth """
+
+
+class LoginForm(Form):
+    def __init__(self, request: Request):
+        super().__init__(request)
+        self.username = str
+        self.password = str
+
+    async def load(self) -> dict:
+        form = await self.request.form()
+        self.username = form.get("username")
+        self.password = form.get("password")
+        return self.to_dict()
+
+    def is_valid(self) -> bool:
+        valid = False
+        if not self.username or len(self.username) == 0:
+            self.errors["username"] = "username is required"
+        if not self.password or len(self.password) == 0:
+            self.errors["password"] = "password is required"
+        if not self.errors or len(self.errors) == 0:
+            valid = True
+        return valid
+
+
 """ Group """
 
 
