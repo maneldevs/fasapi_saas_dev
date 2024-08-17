@@ -3,7 +3,7 @@ from fastapi import Depends, Cookie, Header
 from fastapi.security import OAuth2PasswordBearer
 
 from src.app.configuration.settings import settings
-from src.app.configuration.exceptions import ForbiddenError, TokenInvalidError
+from src.app.modules.core.utils.exceptions import ForbiddenError, TokenInvalidError
 from src.app.modules.core.domain.models import User
 from src.app.modules.core.persistence.user_repo import UserRepo
 from src.app.modules.core.utils import crypto

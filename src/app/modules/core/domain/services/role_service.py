@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import Depends
 
-from src.app.configuration.exceptions import EntityAlreadyExistsError, EntityNotFoundError
+from src.app.modules.core.utils.exceptions import EntityAlreadyExistsError, EntityNotFoundError
 from src.app.modules.core.domain.models import Role, RoleCommand, RoleFilter
 from src.app.modules.core.persistence.role_repo import RoleRepo
 from src.app.modules.core.utils.paginator import PageParams

@@ -4,6 +4,7 @@ from sqlmodel import SQLModel, Session, create_engine, StaticPool
 
 from src.app.configuration.database import get_session
 from src.app.main import app
+from src.app.modules.core.domain.dependencies import principal
 
 
 @pytest.fixture(name="session")
@@ -19,7 +20,11 @@ def client_fixture(session: Session):
     def get_session_override():
         return session
 
+    def principal_override():
+        return None  # TODO mmr cambiar açò per tornar un user. Aquesta línia deshabilita la authorizació en els tests
+
     app.dependency_overrides[get_session] = get_session_override
+    app.dependency_overrides[principal] = principal_override
     client = TestClient(app)
     yield client
     app.dependency_overrides.clear()

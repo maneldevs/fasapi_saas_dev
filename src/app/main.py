@@ -6,7 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import src.app.configuration.exception_handler as handler
 import src.app.configuration.exception_handler_admin as handler_admin
-from src.app.configuration.exceptions import BaseError
+from src.app.modules.core.utils.exceptions import BaseError
 from src.app.modules.core.api import router as core_router
 from src.app.modules.core.web import router as core_web_router
 

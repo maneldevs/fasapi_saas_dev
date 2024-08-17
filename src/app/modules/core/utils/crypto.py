@@ -2,7 +2,7 @@ from datetime import datetime, timedelta, timezone
 from passlib.context import CryptContext
 import jwt
 
-from src.app.configuration.exceptions import TokenInvalidError
+from src.app.modules.core.utils.exceptions import TokenInvalidError
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

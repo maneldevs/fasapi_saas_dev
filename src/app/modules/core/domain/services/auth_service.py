@@ -4,7 +4,7 @@ from typing import Annotated
 from fastapi import Depends
 
 from src.app.configuration.settings import settings
-from src.app.configuration.exceptions import CredentialsError
+from src.app.modules.core.utils.exceptions import CredentialsError
 from src.app.modules.core.domain.models import Login, LoginCommand, User
 from src.app.modules.core.persistence.user_repo import UserRepo
 from src.app.modules.core.utils.crypto import create_access_token, verify_password
