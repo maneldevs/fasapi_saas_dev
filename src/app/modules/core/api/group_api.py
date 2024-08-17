@@ -1,6 +1,7 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, status
 
+from src.app.modules.core.domain.dependencies import Principal_god
 from src.app.modules.core.domain.models import (
     GroupCreateCommand,
     GroupFilter,
@@ -33,7 +34,7 @@ async def read(
 
 
 @router.get("/index", response_model=list[GroupSimpleResponse])
-async def read_index(service: Annotated[GroupService, Depends()]):
+async def read_index(service: Annotated[GroupService, Depends()], principal: Principal_god):
     groups = service.read_all()
     return groups
 

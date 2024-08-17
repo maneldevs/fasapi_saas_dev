@@ -2,6 +2,8 @@ from datetime import datetime, timedelta, timezone
 from passlib.context import CryptContext
 import jwt
 
+from src.app.configuration.exceptions import TokenInvalidError
+
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
@@ -25,4 +27,11 @@ def create_access_token(data: dict, secret: str, algorithm: str, expires_delta: 
 
 
 def decode_token(token: str, secret: str, algorithm: str) -> dict:
-    return jwt.decode(token, secret, algorithms=[algorithm])
+    payload = {}
+    try:
+        payload: dict = jwt.decode(token, secret, algorithms=[algorithm])
+    except jwt.ExpiredSignatureError:
+        raise TokenInvalidError("Token expired")
+    except jwt.InvalidTokenError:
+        raise TokenInvalidError
+    return payload

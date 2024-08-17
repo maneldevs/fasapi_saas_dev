@@ -19,3 +19,13 @@ class EntityNotFoundError(BaseError):
 class CredentialsError(BaseError):
     def __init__(self, msg: str = "Incorrect username or password", original_exception: Exception = None) -> None:
         super().__init__(type="credentials", msg=msg, status_code=401, original_exception=original_exception)
+
+
+class TokenInvalidError(BaseError):
+    def __init__(self, msg: str = "Token invalid", original_exception: Exception = None) -> None:
+        super().__init__(type="unathenticated", msg=msg, status_code=401, original_exception=original_exception)
+
+
+class ForbiddenError(BaseError):
+    def __init__(self, msg: str = "Forbidden", original_exception: Exception = None) -> None:
+        super().__init__(type="forbidden", msg=msg, status_code=403, original_exception=original_exception)

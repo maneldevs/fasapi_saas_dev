@@ -5,7 +5,7 @@ from fastapi import Depends
 
 from src.app.configuration.settings import settings
 from src.app.configuration.exceptions import CredentialsError
-from src.app.modules.core.domain.models import Login, LoginCommand
+from src.app.modules.core.domain.models import Login, LoginCommand, User
 from src.app.modules.core.persistence.user_repo import UserRepo
 from src.app.modules.core.utils.crypto import create_access_token, verify_password
 
@@ -19,9 +19,9 @@ class AuthService:
         self.__verify_credentials(command)
         return self.__generate_access_token(command.username)
 
-    def __verify_credentials(self, command: LoginCommand) -> bool:
+    def __verify_credentials(self, command: LoginCommand) -> User:
         user = self.user_repo.read_by_username(command.username)
-        if not user or not verify_password(command.password, user.password):
+        if not user or not user.active or not verify_password(command.password, user.password):
             raise CredentialsError("Invalid credentials")
 
     def __generate_access_token(self, username: str) -> str:

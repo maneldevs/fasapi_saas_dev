@@ -166,6 +166,15 @@
                 "web"
             ]
         },
+        {
+            "name": "utils-custom",
+            "base": "utils",
+            "color": "pink-400",
+            "lightColor": "pink-200",
+            "folderNames": [
+                "utils"
+            ]
+        },
     ],
     "python.testing.pytestArgs": [
         "src"

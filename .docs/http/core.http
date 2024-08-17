@@ -1,4 +1,5 @@
 @urlBase = http://localhost:8000/api/core
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtbWFuZXoiLCJleHAiOjE3MjM5ODA3ODJ9.ERaxruDP_pIUs08Hme9Fd5DJaDAvaOmW52PQDP4TIJY
 
 ####################################################### GROUP ##########################################################
 
@@ -15,6 +16,7 @@ GET {{urlBase}}/groups/d8405ea8-3c7e-4b82-abb6-7f6c2445c1f0
 
 ### GROUP - READ INDEX
 GET {{urlBase}}/groups/index
+Authorization: Bearer {{token}}
 
 ### GROUP - READ PAGINATED
 GET {{urlBase}}/groups?page=1&size=10&direction=asc&order_field=code&target=ainia

@@ -1,6 +1,7 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, Request
 from src.app import main
+from src.app.modules.core.domain.dependencies import principal_god
 from src.app.modules.core.domain.services.group_service import GroupService
 from src.app.modules.core.domain.models import GroupCreateCommand, GroupFilter, GroupResponse, GroupUpdateCommand
 from src.app.modules.core.utils.paginator import PageParams, PageParser
@@ -9,7 +10,7 @@ from src.app.modules.core.domain.forms import Form, GroupCreateForm, GroupUpdate
 router = APIRouter(prefix="/core/groups")
 
 
-@router.get("/")
+@router.get("/", dependencies=[Depends(principal_god)])
 async def group_list(
     request: Request,
     page_params: Annotated[PageParams, Depends()],

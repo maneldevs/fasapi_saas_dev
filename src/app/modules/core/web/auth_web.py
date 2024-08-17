@@ -10,7 +10,7 @@ router = APIRouter(prefix="/core/auth")
 
 
 @router.get("/", response_class=HTMLResponse)
-async def login(request: Request):
+async def admin_login(request: Request):
     return main.templates.TemplateResponse(request=request, name="core/login.html", context={})
 
 
