@@ -1,12 +1,13 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, Request
 from src.app import main
+from src.app.modules.core.domain.dependencies import principal_god
 from src.app.modules.core.domain.models import RoleCommand, RoleFilter, RoleResponse
 from src.app.modules.core.domain.services.role_service import RoleService
 from src.app.modules.core.utils.paginator import PageParams, PageParser
 from src.app.modules.core.domain.forms import Form, RoleForm
 
-router = APIRouter(prefix="/core/roles")
+router = APIRouter(prefix="/core/roles", dependencies=[Depends(principal_god)])
 
 
 @router.get("/")

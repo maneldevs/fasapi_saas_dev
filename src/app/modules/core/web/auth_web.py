@@ -29,3 +29,11 @@ async def admin_login_perform(request: Request, service: Annotated[AuthService, 
         except Exception as e:
             context |= {"msg": e.msg, "type": "danger"}
     return main.templates.TemplateResponse(request=request, name="core/login.html", context=context)
+
+
+@router.get("/logout")
+async def admin_logout(request: Request):
+    redirect_ulr = request.url_for("admin_login")
+    response = RedirectResponse(redirect_ulr, 303)
+    response.delete_cookie("token")
+    return response

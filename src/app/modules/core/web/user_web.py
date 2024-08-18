@@ -1,6 +1,7 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, Request
 from src.app import main
+from src.app.modules.core.domain.dependencies import principal_god
 from src.app.modules.core.domain.forms import Form, UserCreateForm, UserUpdateForm
 from src.app.modules.core.domain.models import (
     GroupSimpleResponse,
@@ -16,7 +17,7 @@ from src.app.modules.core.domain.services.user_service import UserService
 from src.app.modules.core.utils.paginator import PageParams, PageParser
 
 
-router = APIRouter(prefix="/core/users")
+router = APIRouter(prefix="/core/users", dependencies=[Depends(principal_god)])
 
 
 @router.get("/")

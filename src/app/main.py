@@ -4,10 +4,12 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from starlette.middleware.base import BaseHTTPMiddleware
 import src.app.configuration.exception_handler as handler
 import src.app.configuration.exception_handler_admin as handler_admin
 from src.app.modules.core.utils.exceptions import BaseError
 from src.app.modules.core.api import router as core_router
+from src.app.modules.core.utils.middleware import AddUsernameMiddleware
 from src.app.modules.core.web import router as core_web_router
 
 from .configuration.settings import settings
@@ -37,6 +39,8 @@ app.mount("/admin", admin)
 admin.include_router(core_web_router)
 templates = Jinja2Templates(directory=app_folder + "/resources/templates")
 admin.add_exception_handler(BaseError, handler_admin.base_handler)
+add_username_middleware = AddUsernameMiddleware()
+admin.add_middleware(BaseHTTPMiddleware, dispatch=add_username_middleware)
 
 
 @admin.get("/health", response_class=HTMLResponse)

@@ -7,10 +7,10 @@ from src.app.modules.core.domain.models import GroupCreateCommand, GroupFilter, 
 from src.app.modules.core.utils.paginator import PageParams, PageParser
 from src.app.modules.core.domain.forms import Form, GroupCreateForm, GroupUpdateForm
 
-router = APIRouter(prefix="/core/groups")
+router = APIRouter(prefix="/core/groups", dependencies=[Depends(principal_god)])
 
 
-@router.get("/", dependencies=[Depends(principal_god)])
+@router.get("/")
 async def group_list(
     request: Request,
     page_params: Annotated[PageParams, Depends()],
