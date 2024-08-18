@@ -1,0 +1,52 @@
+{% extends 'shared/content.html' %}
+
+{% set current_page = 'index' %}
+
+{% block title %}
+<h1 class="display-4">Welcome to SAAS Dev</h1>
+{% endblock title %}
+
+{% block title_right %}
+
+{% endblock title_right %}
+
+{% block main %}
+<div class="row g-md-5">
+  <div class="col-md-6 col-lg-4">
+    <div class="card text-center text-bg-light mb-3">
+      <div class="card-body">
+        <h5 class="card-title">Groups</h5>
+        <h3 class="card-text">{{group_count or 0}}</h3>
+        <a href="{{ url_for('group_list') }}" class="btn btn-outline-secondary"><i class="bi bi-eye"></i></a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 col-lg-4">
+    <div class="card text-center text-bg-light mb-3" >
+      <div class="card-body">
+        <h5 class="card-title">Roles</h5>
+        <h3 class="card-text">{{role_count or 0}}</h3>
+        <a href="{{ url_for('role_list') }}" class="btn btn-outline-secondary"><i class="bi bi-eye"></i></a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 col-lg-4">
+    <div class="card text-center text-bg-light mb-3" >
+      <div class="card-body">
+        <h5 class="card-title">Users</h5>
+        <h3 class="card-text">{{user_count or 0}}</h3>
+        <a href="{{ url_for('user_list') }}" class="btn btn-outline-secondary"><i class="bi bi-eye"></i></a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 col-lg-4">
+    <div class="card text-center text-bg-light mb-3" >
+      <div class="card-body">
+        <h5 class="card-title">Modules</h5>
+        <h3 class="card-text">{{module_count or 0}}</h3>
+        <a href="#" class="btn btn-outline-secondary"><i class="bi bi-eye"></i></a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock main %}

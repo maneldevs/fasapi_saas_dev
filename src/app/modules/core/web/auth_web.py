@@ -22,7 +22,7 @@ async def admin_login_perform(request: Request, service: Annotated[AuthService, 
         try:
             command = LoginCommand.model_validate(context)
             token = service.authenticate(command)
-            redirect_ulr = request.url_for("group_list").include_query_params(msg="Successful operation")
+            redirect_ulr = request.url_for("admin_index").include_query_params(msg="Successful operation")
             response = RedirectResponse(redirect_ulr, 303)
             response.set_cookie("token", token.access_token, httponly=True)
             return response

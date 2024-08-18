@@ -154,3 +154,13 @@ class UserWebFilter(SQLModel):
         active = None if self.active == "None" else self.active
         is_god = None if self.is_god == "None" else self.is_god
         return UserFilter(target=self.target, active=active, is_god=is_god, group_id=self.group_id)
+
+
+""" Statistics """
+
+
+class EntitiesCountResponse(SQLModel):
+    group_count: int = 0
+    role_count: int = 0
+    user_count: int = 0
+    module_count: int = 0
