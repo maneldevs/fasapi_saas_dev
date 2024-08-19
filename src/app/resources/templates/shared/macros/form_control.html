@@ -1,7 +1,7 @@
 {% macro form_control(control_label, control_type, error, field_name, field_value, required=false) %}
 <label for="floatingInput" class="form-label {{'required' if required}}">{{control_label}}</label>
 <input type="{{control_type}}" class="form-control {{'is-invalid' if error else ''}}" name="{{field_name}}"
-    value="{{field_value}}">
+    value="{{field_value if field_value}}">
 {% if error %}
 <div class="invalid-feedback">
     {{error}}

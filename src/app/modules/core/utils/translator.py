@@ -18,3 +18,6 @@ class Translator:
     def t(self, key: str, locale: str, **kwargs: dict[str, str]):
         translation = self.get_translation(key, locale)
         return translation.format(**kwargs)
+    
+    # def t_errors(self, errors: list[]):
+    #     pass

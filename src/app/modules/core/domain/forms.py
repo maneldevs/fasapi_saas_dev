@@ -53,9 +53,9 @@ class LoginForm(Form):
     def is_valid(self) -> bool:
         valid = False
         if not self.username or len(self.username) == 0:
-            self.errors["username"] = "username is required"
+            self.errors["username"] = tr.t("username is required", self.request.state.locale)
         if not self.password or len(self.password) == 0:
-            self.errors["password"] = "password is required"
+            self.errors["password"] = tr.t("password is required", self.request.state.locale)
         if not self.errors or len(self.errors) == 0:
             valid = True
         return valid
@@ -79,9 +79,13 @@ class GroupCreateForm(Form):
     def is_valid(self) -> bool:
         valid = False
         if not self.code or len(self.code) == 0:
-            self.errors["code"] = "code is required"
+            self.errors["code"] = (
+                tr.t("code", self.request.state.locale) + " " + tr.t("is required", self.request.state.locale)
+            )
         if not self.webname or len(self.webname) == 0:
-            self.errors["webname"] = "webname is required"
+            self.errors["webname"] = (
+                tr.t("webname", self.request.state.locale) + " " + tr.t("is required", self.request.state.locale)
+            )
         if not self.errors or len(self.errors) == 0:
             valid = True
         return valid
@@ -104,9 +108,13 @@ class GroupUpdateForm(Form):
     def is_valid(self) -> bool:
         valid = False
         if not self.code or len(self.code) == 0:
-            self.errors["code"] = "code is required"
+            self.errors["code"] = (
+                tr.t("code", self.request.state.locale) + " " + tr.t("is required", self.request.state.locale)
+            )
         if not self.webname or len(self.webname) == 0:
-            self.errors["webname"] = "webname is required"
+            self.errors["webname"] = (
+                tr.t("webname", self.request.state.locale) + " " + tr.t("is required", self.request.state.locale)
+            )
         if not self.errors or len(self.errors) == 0:
             valid = True
         return valid
@@ -130,9 +138,13 @@ class RoleForm(Form):
     def is_valid(self) -> bool:
         valid = False
         if not self.code or len(self.code) == 0:
-            self.errors["code"] = "code is required"
+            self.errors["code"] = (
+                tr.t("code", self.request.state.locale) + " " + tr.t("is required", self.request.state.locale)
+            )
         if not self.webname or len(self.webname) == 0:
-            self.errors["webname"] = "webname is required"
+            self.errors["webname"] = (
+                tr.t("webname", self.request.state.locale) + " " + tr.t("is required", self.request.state.locale)
+            )
         if not self.errors or len(self.errors) == 0:
             valid = True
         return valid
@@ -164,9 +176,13 @@ class UserCreateForm(Form):
     def is_valid(self) -> bool:
         valid = False
         if not self.username or len(self.username) == 0:
-            self.errors["username"] = "username is required"
+            self.errors["username"] = (
+                tr.t("username", self.request.state.locale) + " " + tr.t("is required", self.request.state.locale)
+            )
         if not self.password_raw or len(self.password_raw) == 0:
-            self.errors["password_raw"] = "password is required"
+            self.errors["password_raw"] = (
+                tr.t("password", self.request.state.locale) + " " + tr.t("is required", self.request.state.locale)
+            )
         if not self.errors or len(self.errors) == 0:
             valid = True
         return valid
@@ -199,7 +215,9 @@ class UserUpdateForm(Form):
     def is_valid(self) -> bool:
         valid = False
         if not self.username or len(self.username) == 0:
-            self.errors["username"] = "username is required"
+            self.errors["username"] = (
+                tr.t("username", self.request.state.locale) + " " + tr.t("is required", self.request.state.locale)
+            )
         if not self.errors or len(self.errors) == 0:
             valid = True
         return valid
