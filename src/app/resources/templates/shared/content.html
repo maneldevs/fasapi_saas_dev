@@ -11,19 +11,23 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link {{'active' if current_page == 'groups'}}" aria-current="page" href="{{ url_for('group_list') }}">Groups</a>
+          <a class="nav-link {{'active' if current_page == 'groups'}}" aria-current="page"
+            href="{{ url_for('group_list') }}">{{ _t("groups", request.state.locale )|capitalize }}</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {{'active' if current_page == 'roles'}}" aria-current="page" href="{{ url_for('role_list') }}">Roles</a>
+          <a class="nav-link {{'active' if current_page == 'roles'}}" aria-current="page"
+            href="{{ url_for('role_list') }}">{{ _t("roles", request.state.locale )|capitalize }}</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {{'active' if current_page == 'users'}}" aria-current="page" href="{{ url_for('user_list') }}">Users</a>
+          <a class="nav-link {{'active' if current_page == 'users'}}" aria-current="page"
+            href="{{ url_for('user_list') }}">{{ _t("users", request.state.locale )|capitalize }}</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {{'active' if current_page == 'modules'}}" aria-current="page" href="#">Modules</a>
+          <a class="nav-link {{'active' if current_page == 'modules'}}" aria-current="page" href="#">{{ _t("modules", request.state.locale )|capitalize }}</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {{'active' if current_page == 'configurations'}}" aria-current="page" href="#">Configurations</a>
+          <a class="nav-link {{'active' if current_page == 'configurations'}}" aria-current="page"
+            href="#">{{ _t("configurations", request.state.locale )|capitalize }}</a>
         </li>
       </ul>
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
@@ -32,8 +36,7 @@
             {{request.state.principal_username or "anonymous"}}
           </a>
           <ul class="dropdown-menu dropdown-menu-end">
-            <!-- TODO mmr form to remove token and go to login -->
-            <li><a class="dropdown-item" href="{{ url_for('admin_logout')}}">Logout</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('admin_logout')}}">{{ _t("logout", request.state.locale) }}</a></li>
           </ul>
         </li>
       </ul>
@@ -42,14 +45,16 @@
 </nav>
 <div class="container">
   <div class="d-sm-flex justify-content-between align-items-top mb-4">
-    <h1 class="display-4">{% block title %}{{current_page|capitalize}}{% endblock title %}</h1>
+    <h1 class="display-4">{% block title %}{{_t(current_page, request.state.locale)|capitalize}}{% endblock title %}
+    </h1>
     <div class="mt-2">{% block title_right %}{% endblock title_right %}</div>
   </div>
   <div>
     {% block main %}{% endblock main %}
-  </div> 
+  </div>
   {% if msg and msg|length > 0 %}
-  <div class="alert alert-{{type}} alert-dismissible fade show" role="alert" style="position: fixed; bottom: 10px;; right:10px">
+  <div class="alert alert-{{type}} alert-dismissible fade show" role="alert"
+    style="position: fixed; bottom: 10px;; right:10px">
     {{msg}}
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
   </div>

@@ -4,34 +4,34 @@
 {% set current_page = 'users' %}
 
 {% block title %}
-Create user
+{{ _t("Create", request.state.locale )}} {{ _t("user", request.state.locale )}}
 {% endblock title %}
 
 {% block title_right %}
-<button type="submit" form="create-user-form" class="btn btn-primary">Save</button>
+<button type="submit" form="create-user-form" class="btn btn-primary">{{ _t("Save", request.state.locale ) }}</button>
 {% endblock title_right %}
 
 {% block main %}
 <form id="create-user-form" method="post">
     <div class="row g-3">
         <div class="mb-2 col-md-6">
-            {{ form_control("username", "text", errors.username if errors and errors.username else None, "username",
+            {{ form_control(_t("username", request.state.locale), "text", errors.username if errors and errors.username else None, "username",
             username, true) }}
         </div>
         <div class="mb-2 col-md-6">
-            {{ form_control("password", "password", errors.password_raw if errors and errors.password_raw else None,
+            {{ form_control(_t("password", request.state.locale), "password", errors.password_raw if errors and errors.password_raw else None,
             "password_raw", password_raw, true) }}
         </div>
         <div class="mb-2 col-md-6">
-            {{ form_control("firstname", "text", errors.firstname if errors and errors.firstname else None, "firstname",
+            {{ form_control(_t("firstname", request.state.locale), "text", errors.firstname if errors and errors.firstname else None, "firstname",
             firstname) }}
         </div>
         <div class="mb-2 col-md-6">
-            {{ form_control("lastname", "text", errors.lastname if errors and errors.lastname else None, "lastname",
+            {{ form_control(_t("lastname", request.state.locale), "text", errors.lastname if errors and errors.lastname else None, "lastname",
             lastname) }}
         </div>
         <div class="mb-2 col-md-6">
-            <label class="form-label">group</label>
+            <label class="form-label">{{ _t("group", request.state.locale) }}</label>
             <select class="form-select" name="group_id">
                 <option value="{{null}}"></option>
                 {% for g in groups %}
@@ -40,7 +40,7 @@ Create user
             </select>
         </div>
         <div class="mb-2 col-md-6">
-            <label class="form-label">role</label>
+            <label class="form-label">{{ _t("role", request.state.locale) }}</label>
             <select class="form-select" name="role_id">
                 <option value="{{null}}"></option>
                 {% for r in roles %}

@@ -5,7 +5,9 @@
 {% set current_page = 'users' %}
 
 {% block title_right %}
-<a class="btn btn-success" href="{{ url_for('user_create') }}">Create user</a>
+<a class="btn btn-success" href="{{ url_for('user_create') }}">
+  {{ _t("Create", request.state.locale )}} {{ _t("user", request.state.locale )}}
+</a>
 {% endblock title_right %}
 
 {% block main %}
@@ -48,7 +50,7 @@
     </div>
   </div>
   <div>
-    <button type="submit" class="btn btn-outline-info">Filter</button>
+    <button type="submit" class="btn btn-outline-info">{{ _t("Filter", request.state.locale )}}</button>
   </div>
   </div>
 </form>

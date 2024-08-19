@@ -5,7 +5,9 @@
 {% set current_page = 'roles' %}
 
 {% block title_right %}
-<a class="btn btn-success" href="{{ url_for('role_create') }}">Create role</a>
+<a class="btn btn-success" href="{{ url_for('role_create') }}">
+  {{ _t("Create", request.state.locale )}} {{ _t("role", request.state.locale )}}
+</a>
 {% endblock title_right %}
 
 {% block main %}
@@ -17,7 +19,7 @@
     </div>
   </div>
   <div>
-    <button type="submit" class="btn btn-outline-info">Filter</button>
+    <button type="submit" class="btn btn-outline-info">{{ _t("Filter", request.state.locale )}}</button>
   </div>
   </div>
 </form>
@@ -25,8 +27,8 @@
 <table class="table">
   <thead>
     <tr>
-      <th scope="col">code</th>
-      <th scope="col">webname</th>
+      <th scope="col">{{ _t("code", request.state.locale) }}</th>
+      <th scope="col">{{ _t("webname", request.state.locale) }}</th>
       <th scope="col" class="text-end"></th>
     </tr>
   </thead>

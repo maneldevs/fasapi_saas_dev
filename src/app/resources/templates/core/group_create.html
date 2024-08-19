@@ -4,21 +4,21 @@
 {% set current_page = 'groups' %}
 
 {% block title %}
-Create group
+{{ _t("Create", request.state.locale )}} {{ _t("group", request.state.locale )}}
 {% endblock title %}
 
 {% block title_right %}
-<button type="submit" form="create-group-form" class="btn btn-primary">Save</button>
+<button type="submit" form="create-group-form" class="btn btn-primary">{{ _t("Save", request.state.locale ) }}</button>
 {% endblock title_right %}
 
 {% block main %}
 <form id="create-group-form" method="post">
   <div class="row g-3">
     <div class="mb-3 col-md-6">
-      {{ form_control("code", "text", errors.code if errors and errors.code else None, "code", code, true) }}
+      {{ form_control(_t("code", request.state.locale ), "text", errors.code if errors and errors.code else None, "code", code, true) }}
     </div>
     <div class="mb-3 col-md-6">
-      {{ form_control("webname", "text", errors.webname if errors and errors.webname else None, "webname", webname, true) }}
+      {{ form_control(_t("webname", request.state.locale ), "text", errors.webname if errors and errors.webname else None, "webname", webname, true) }}
     </div>
   </div>
 </form>

@@ -14,6 +14,7 @@ from src.app.modules.core.utils.middleware import AddUsernameMiddleware
 from src.app.modules.core.web import router as core_web_router
 
 from .configuration.settings import settings
+from .configuration.lang import tr
 
 app_folder = os.path.dirname(__file__)
 
@@ -38,6 +39,7 @@ app.mount("/static", StaticFiles(directory=app_folder + "/resources/static"), na
 app.mount("/admin", admin)
 admin.include_router(core_web_router)
 templates = Jinja2Templates(directory=app_folder + "/resources/templates")
+templates.env.globals['_t'] = tr.t
 admin.add_exception_handler(BaseError, handler_admin.base_handler)
 add_username_middleware = AddUsernameMiddleware()
 admin.add_middleware(BaseHTTPMiddleware, dispatch=add_username_middleware)

@@ -1,5 +1,5 @@
 class Translator:
-    def __init__(self, source: dict[str, dict[str, str]], default_locale: str = "es_ES") -> None:
+    def __init__(self, source: dict[str, dict[str, str]], default_locale: str = "en_US") -> None:
         self.source = source
         self.default_locale = default_locale
 
