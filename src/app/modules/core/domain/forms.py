@@ -2,6 +2,7 @@ from fastapi import Request
 from fastapi.responses import RedirectResponse
 
 from src.app import main
+from src.app.configuration.lang import tr
 
 
 class Form:
@@ -26,7 +27,7 @@ class Form:
             try:
                 func(**params)
                 redirect_ulr = self.request.url_for(redirect_method_name).include_query_params(
-                    msg="Successful operation"
+                    msg=tr.t("Successful operation", self.request.state.locale)
                 )
                 return RedirectResponse(redirect_ulr, 303)
             except Exception as e:

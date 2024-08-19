@@ -9,6 +9,7 @@ translations = {
         "Incorrect username or password": "Incorrect username or password",
         "Invalid credentials": "Invalid credentials",
         "Not found": "{entity} not found",
+        "Successful operation": "Successful operation",
         "Token expired": "Token expired",
         "Token invalid": "Token invalid",
     },
@@ -20,6 +21,7 @@ translations = {
         "Incorrect username or password": "Usuario o contraseña incorrectos",
         "Invalid credentials": "Credenciales no válidas",
         "Not found": "{entity} no existe",
+        "Successful operation": "Operación realizada con éxito",
         "Token expired": "Token caducado",
         "Token invalid": "Token no válido",
     }

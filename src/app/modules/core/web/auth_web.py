@@ -5,6 +5,7 @@ from src.app import main
 from src.app.modules.core.domain.forms import LoginForm
 from src.app.modules.core.domain.models import LoginCommand
 from src.app.modules.core.domain.services.auth_service import AuthService
+from src.app.configuration.lang import tr
 
 router = APIRouter(prefix="/core/auth")
 
@@ -22,7 +23,9 @@ async def admin_login_perform(request: Request, service: Annotated[AuthService, 
         try:
             command = LoginCommand.model_validate(context)
             token = service.authenticate(command)
-            redirect_ulr = request.url_for("admin_index").include_query_params(msg="Successful operation")
+            redirect_ulr = request.url_for("admin_index").include_query_params(
+                msg=tr.t("Successful operation", request.state.locale)
+            )
             response = RedirectResponse(redirect_ulr, 303)
             response.set_cookie("token", token.access_token, httponly=True)
             return response
