@@ -6,6 +6,17 @@
 - L'objectiu d'aquesta aplicació és el desenvolupament de la llibrería Fastapi SAAS Core.
 - Aquesta aplicació simula un projecte que usa la llibreria esmentada.
 - La llibrería s'afegirà com un submòdul de git
+- Les característiques son:
+  - Traducció de api: validation i errors
+  - Traducció de web: validation, errors, etiquetes del frontend etiquetes i missatges de èxit
+  - Web d'administració
+  - Paginació
+  - Arquitectura per capes
+  - Tests d'integració
+  - Manejament d'excepcions
+  - Variables d'entorn
+  - Desentrrotllament i desplegament en contenidors de Docker
+  - Base de dades i migracions
 
 
 ## Crear el projecte
@@ -258,6 +269,142 @@ def get_session():
 - Crear el controller de l'api en `src/app/core/api`
 
 - Crear el repository en `src/app/core/persistence`
+
+
+## Traducció
+
+- Crear el fitxer de traducció en `src/app/modules/core/utils/translator.py`:
+
+```py
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:  # pragma: no cover
+    from pydantic.error_wrappers import ErrorDict
+
+
+class Translator:
+    def __init__(self, source: dict[str, dict[str, str]], default_locale: str = "en_US") -> None:
+        self.source = source
+        self.default_locale = default_locale
+
+    def get_allowed_locales(self) -> list[str]:
+        return self.source.keys()
+
+    def get_dictionary(self, locale: str):
+        return self.source[locale]
+
+    def get_translation(self, key: str, locale: str):
+        if locale not in self.get_allowed_locales():
+            locale = self.default_locale
+        dictionary = self.get_dictionary(locale)
+        return dictionary.get(key, key)
+
+    def t(self, key: str, locale: str, **kwargs: dict[str, str]):
+        translation = self.get_translation(key, locale)
+        return translation.format(**kwargs)
+
+    def t_errors(self, errors: list["ErrorDict"], locale: str):
+        result = []
+        for error in errors:
+            message = error["msg"]
+            translated_message = self.t(message, locale)
+            error["msg"] = translated_message
+            result.append(error)
+        return result
+```
+
+- Configuració: Crear el fitxer lang.py en `src/app/configuration/lang.py`:
+
+```py
+from src.app.modules.core.utils.translator import Translator
+
+translations = {
+    "en_US": {
+        "active": "active",
+    },
+    "es_ES": {
+        "active": "activo",
+    }
+}
+
+tr = Translator(source=translations, default_locale="es_ES")
+```
+
+- Crear la dependència per obtindre el locale del header o de query params en `src/app/modules/core/domain/dependencies.py`:
+
+```py
+def locale_header(accept_language: Annotated[str | None, Header()] = None) -> str | None:
+    locale = accept_language[:5].replace("-", "_") if accept_language else None
+    return locale
+
+
+def locale_query(locale: Annotated[str | None, Query()] = None) -> str | None:
+    return locale
+
+
+def get_locale(
+    request: Request,
+    locale_query: Annotated[str | None, Depends(locale_query)],
+    locale_header: Annotated[str | None, Depends(locale_header)],
+) -> str | None:
+    locale = locale_query or locale_header or "en_US"
+    request.state.locale = locale
+    return locale
+
+Locale = Annotated[str, Depends(get_locale)]
+```
+
+- Us en un servici:
+
+```py
+from src.app.configuration.lang import tr
+
+class AuthService:
+
+    def __init__(self, user_repo: Annotated[UserRepo, Depends()], locale: Locale) -> None:
+        self.user_repo = user_repo
+        self.locale = locale
+...
+    tr.t("Invalid credentials", self.locale)
+```
+
+- Us en un controller:
+
+```py
+@router.post("/", response_class=HTMLResponse)
+async def my_router(request: Request):
+  ...
+  msg=tr.t("Successful operation", request.state.locale)
+  ...
+```
+
+- Us en validacions: afegir el següent en el content del validation handler `src/app/configuration/exception_handler.py`:
+
+```py
+async def validation_handler(request: Request, exc: RequestValidationError):
+  ...
+  "detail": tr.t_errors(exc.errors(), request.state.locale)
+ ...
+```
+
+- Us en exceptions afegir el següent en el content del base handler:
+
+```py
+async def base_handler(request: Request, exc: BaseError):
+  ...
+  "msg": tr.t(exc.msg, request.state.locale),
+  ...
+```
+
+- En Jinja2: En el main `/src/app/main.py` afegir:
+
+```py
+app = FastAPI(title=settings.app_name, version=settings.app_version, dependencies=[Depends(get_locale)])
+
+admin = FastAPI(dependencies=[Depends(get_locale)])
+
+templates = Jinja2Templates(directory=app_folder + "/resources/templates")
+templates.env.globals['_t'] = tr.t
+```
 
 
 ## Testing
