@@ -7,7 +7,7 @@
 POST {{urlBase}}/groups
 
 {
-    "code": "ainia",
+    "code": "ainia1",
     "webname": "ainia"
 }
 

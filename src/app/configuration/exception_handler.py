@@ -29,5 +29,10 @@ async def base_handler(request: Request, exc: BaseError):
 async def validation_handler(request: Request, exc: RequestValidationError):
     return JSONResponse(
         status_code=422,
-        content={"type": "validation", "msg": "validation error", "status": 422, "detail": exc.errors()},
+        content={
+            "type": "validation",
+            "msg": "validation error",
+            "status": 422,
+            "detail": tr.t_errors(exc.errors(), request.state.locale),
+        },
     )
