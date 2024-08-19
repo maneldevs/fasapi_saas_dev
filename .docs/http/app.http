@@ -2,10 +2,12 @@
 
 
 ### API HEALTH
-GET {{urlBase}}/api/health
+GET {{urlBase}}/api/health?locale=es-ES
+Accept-Language: es-ES,es;q=0.9,en;q=0.8
 
 ### ADMIN HEALTH (IN BROWSER)
 GET {{urlBase}}/admin/health
+
 
 ### OPENAPI DOCS (IN BROWSER)
 GET {{urlBase}}/docs

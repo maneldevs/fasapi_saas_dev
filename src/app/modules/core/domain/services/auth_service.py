@@ -4,16 +4,19 @@ from typing import Annotated
 from fastapi import Depends
 
 from src.app.configuration.settings import settings
+from src.app.modules.core.domain.dependencies import Locale
 from src.app.modules.core.utils.exceptions import CredentialsError
 from src.app.modules.core.domain.models import Login, LoginCommand, User
 from src.app.modules.core.persistence.user_repo import UserRepo
 from src.app.modules.core.utils.crypto import create_access_token, verify_password
+from src.app.configuration.lang import tr
 
 
 class AuthService:
 
-    def __init__(self, user_repo: Annotated[UserRepo, Depends()]) -> None:
+    def __init__(self, user_repo: Annotated[UserRepo, Depends()], locale: Locale) -> None:
         self.user_repo = user_repo
+        self.locale = locale
 
     def authenticate(self, command: LoginCommand) -> Login:
         self.__verify_credentials(command)
@@ -22,7 +25,7 @@ class AuthService:
     def __verify_credentials(self, command: LoginCommand) -> User:
         user = self.user_repo.read_by_username(command.username)
         if not user or not user.active or not verify_password(command.password, user.password):
-            raise CredentialsError("Invalid credentials")
+            raise CredentialsError(tr.t("Invalid credentials", self.locale))
 
     def __generate_access_token(self, username: str) -> str:
         data = {"sub": username}

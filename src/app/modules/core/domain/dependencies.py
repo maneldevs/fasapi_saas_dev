@@ -1,5 +1,5 @@
 from typing import Annotated
-from fastapi import Depends, Cookie, Header
+from fastapi import Depends, Cookie, Header, Query, Request
 from fastapi.security import OAuth2PasswordBearer
 
 from src.app.configuration.settings import settings
@@ -53,3 +53,25 @@ def principal_god(principal: Principal):
 
 
 Principal_god = Annotated[User, Depends(principal_god)]
+
+
+def locale_header(accept_language: Annotated[str | None, Header()] = None) -> str | None:
+    locale = accept_language[:5].replace("-", "_") if accept_language else None
+    return locale
+
+
+def locale_query(locale: Annotated[str | None, Query()] = None) -> str | None:
+    return locale
+
+
+def get_locale(
+    request: Request,
+    locale_query: Annotated[str | None, Depends(locale_query)],
+    locale_header: Annotated[str | None, Depends(locale_header)],
+) -> str | None:
+    locale = locale_query or locale_header or "en_US"
+    request.state.locale = locale
+    return locale
+
+
+Locale = Annotated[str, Depends(get_locale)]

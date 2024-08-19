@@ -3,6 +3,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from src.app.modules.core.utils.exceptions import BaseError
+from src.app.configuration.lang import tr
 
 
 async def base_handler(request: Request, exc: BaseError):
@@ -16,7 +17,12 @@ async def base_handler(request: Request, exc: BaseError):
     }
     return JSONResponse(
         status_code=exc.status_code,
-        content={"type": exc.type, "msg": exc.msg, "status": exc.status_code, "detail": detail},
+        content={
+            "type": exc.type,
+            "msg": tr.t(exc.msg, request.state.locale),
+            "status": exc.status_code,
+            "detail": detail,
+        },
     )
 
 

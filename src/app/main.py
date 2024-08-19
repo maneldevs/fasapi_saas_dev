@@ -1,5 +1,5 @@
 import os
-from fastapi import FastAPI, Request
+from fastapi import Depends, FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
@@ -7,6 +7,7 @@ from fastapi.templating import Jinja2Templates
 from starlette.middleware.base import BaseHTTPMiddleware
 import src.app.configuration.exception_handler as handler
 import src.app.configuration.exception_handler_admin as handler_admin
+from src.app.modules.core.domain.dependencies import get_locale
 from src.app.modules.core.utils.exceptions import BaseError
 from src.app.modules.core.api import router as core_router
 from src.app.modules.core.utils.middleware import AddUsernameMiddleware
@@ -16,10 +17,9 @@ from .configuration.settings import settings
 
 app_folder = os.path.dirname(__file__)
 
-
 # API -> http://localhost/api/...
 
-app = FastAPI(title=settings.app_name, version=settings.app_version)
+app = FastAPI(title=settings.app_name, version=settings.app_version, dependencies=[Depends(get_locale)])
 app.include_router(core_router)
 app.add_exception_handler(BaseError, handler.base_handler)
 app.add_exception_handler(RequestValidationError, handler.validation_handler)
@@ -32,7 +32,7 @@ async def health() -> dict:
 
 # ADMIN WEB ->   # http://localhost/admin/...
 
-admin = FastAPI()
+admin = FastAPI(dependencies=[Depends(get_locale)])
 
 app.mount("/static", StaticFiles(directory=app_folder + "/resources/static"), name="static")
 app.mount("/admin", admin)
