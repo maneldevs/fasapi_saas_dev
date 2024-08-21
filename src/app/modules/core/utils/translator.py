@@ -1,8 +1,3 @@
-from typing import TYPE_CHECKING
-if TYPE_CHECKING:  # pragma: no cover
-    from pydantic.error_wrappers import ErrorDict
-
-
 class Translator:
     def __init__(self, source: dict[str, dict[str, str]], default_locale: str = "en_US") -> None:
         self.source = source
@@ -24,9 +19,10 @@ class Translator:
         translation = self.get_translation(key, locale)
         return translation.format(**kwargs)
 
-    def t_errors(self, errors: list["ErrorDict"], locale: str):
+    def t_errors(self, errors: list[dict], locale: str):
         result = []
         for error in errors:
+            print(type(error))
             message = error["msg"]
             translated_message = self.t(message, locale)
             error["msg"] = translated_message
