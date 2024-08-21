@@ -48,7 +48,7 @@ class GroupService:
                 raise EntityNotFoundError(msg=tr.t("Not found", self.locale, entity=id))
             return group_updated
         except EntityAlreadyExistsError as e:
-            e.msg = "Group code already exists"
+            e.msg = tr.t("Already exists", self.locale, entity=command.code)
             raise e
 
     def delete(self, id: str) -> None:

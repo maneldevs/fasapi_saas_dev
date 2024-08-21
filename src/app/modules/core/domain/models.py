@@ -23,8 +23,8 @@ class LoginResponse(Login):
 
 
 class GroupSimpleBase(SQLModel):
-    code: str = Field(unique=True)
-    webname: str
+    code: str = Field(unique=True, min_length=3)
+    webname: str = Field(min_length=3)
 
 
 class GroupBase(GroupSimpleBase):
@@ -44,12 +44,13 @@ class GroupUpdateCommand(GroupSimpleBase):
     active: bool
 
 
-class GroupSimpleResponse(GroupSimpleBase):
-    id: str
+class GroupSimpleResponse(SQLModel):
+    id: str | None = None
+    code: str | None = None
+    webname: str | None = None
 
 
-class GroupResponse(GroupSimpleBase):
-    id: str
+class GroupResponse(GroupSimpleResponse):
     active: bool
 
 
