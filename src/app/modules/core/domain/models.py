@@ -11,8 +11,8 @@ class Login(SQLModel):
 
 
 class LoginCommand(SQLModel):
-    username: str
-    password: str
+    username: str = Field(min_length=3)
+    password: str = Field(min_length=3)
 
 
 class LoginResponse(Login):

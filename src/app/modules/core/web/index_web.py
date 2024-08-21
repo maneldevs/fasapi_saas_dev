@@ -10,6 +10,8 @@ router = APIRouter(prefix="/core", dependencies=[Depends(principal_god)])
 
 
 @router.get("/")
-async def admin_index(request: Request, service: Annotated[StatisticsService, Depends()]):
+async def admin_index(request: Request, service: Annotated[StatisticsService, Depends()], msg: str = None):
     context = service.counts().model_dump()
+    if (msg):
+        context |= {"msg": msg, "type": "success"}
     return main.templates.TemplateResponse(request=request, name="core/index.html", context=context)

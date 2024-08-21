@@ -9,14 +9,8 @@ from src.app.configuration.lang import tr
 
 T = TypeVar("T", bound=SQLModel)
 
-
-# TODO mmr Refactorizar: 
-    # borrar is_valid
-    # refactorizar perform operation method en dos métodos y llamarlos de manera separada desde el controller (descomentarlos líneas 35 a 62)
-    # pasar los params desde el controller (que serán el id (si no es create y el command que lo habrá obtenido el controller de la validación (1er método separado)
-
 class Form(Generic[T]):
-    def __init__(self, request: Request, model_type: Type[T], self_path: str = ""):
+    def __init__(self, request: Request, model_type: Type[T], self_path: str):
         self.model_type = model_type
         self.self_path = self_path
         self.request: Request = request
@@ -32,56 +26,24 @@ class Form(Generic[T]):
     def to_dict(self) -> dict:
         return self.__dict__
 
-    # async def validate(self, extra_context={}) -> tuple[SQLModel, dict[str, str], Response, dict]:
-    #     context = await self.load()
-    #     context |= extra_context
-    #     errors_dict = {}
-    #     try:
-    #         if self.model_type is not None:
-    #             command = self.model_type.model_validate(await self.load())
-    #     except ValidationError as exc:
-    #         errors = exc.errors()
-    #         for error in errors:
-    #             errors_dict[error["loc"][0]] = tr.t(error["msg"], self.request.state.locale)
-    #             context |= {'errors': errors_dict}
-    #     return (command, errors_dict, self.generate_error_response(self.request, self.self_path, context), context)
-
-    # async def perform_operation(self, func: callable, params: dict, redirect_method_name, context={}) -> Response:
-    #     try:
-    #         func(**params)
-    #         redirect_ulr = self.request.url_for(redirect_method_name).include_query_params(
-    #             msg=tr.t("Successful operation", self.request.state.locale)
-    #         )
-    #         return RedirectResponse(redirect_ulr, 303)
-    #     except Exception as e:
-    #         context |= {"msg": e.msg, "type": "danger"}
-    #     return self.generate_error_response(self.self_path, context)
-
-    # def generate_error_response(self, request: Request, path: str, context: dict) -> Response:
-    #     return main.templates.TemplateResponse(self.request, name=path, context=context)
-
-    async def perform_operation(self, func, self_template_path, redirect_method_name, extra_context={}):
+    async def validate(self, extra_context={}) -> tuple[SQLModel, dict[str, str], Response, dict]:
         context = await self.load()
         context |= extra_context
-        my_errors = {}
+        errors_dict = {}
+        response = None
         command = None
-        # TODO mmr Separar (1er método que validará y devolverá command y si no valida devuelve el template?)
         try:
             if self.model_type is not None:
                 command = self.model_type.model_validate(await self.load())
         except ValidationError as exc:
             errors = exc.errors()
             for error in errors:
-                my_errors[error["loc"][0]] = tr.t(error["msg"], self.request.state.locale)
-            context |= {'errors': my_errors}
-            return main.templates.TemplateResponse(request=self.request, name=self_template_path, context=context)
-        # TODO mmr Separar (2o método que llamará a la operación (los params vendrán del controller))
-        if "id" in context and command:
-            params = {"id": context["id"], "command": command}
-        elif "id" in context:
-            params = {"id": context["id"]}
-        else:
-            params = {"command": command}
+                errors_dict[error["loc"][0]] = tr.t(error["msg"], self.request.state.locale)
+                context |= {'errors': errors_dict}
+            response = self.generate_error_response(context)
+        return (command, errors_dict, response, context)
+
+    async def perform_operation(self, func: callable, params: dict, redirect_method_name, context={}) -> Response:
         try:
             func(**params)
             redirect_ulr = self.request.url_for(redirect_method_name).include_query_params(
@@ -90,15 +52,50 @@ class Form(Generic[T]):
             return RedirectResponse(redirect_ulr, 303)
         except Exception as e:
             context |= {"msg": e.msg, "type": "danger"}
-        return main.templates.TemplateResponse(request=self.request, name=self_template_path, context=context)
+        return self.generate_error_response(context)
+
+    def generate_error_response(self, context: dict) -> Response:
+        return main.templates.TemplateResponse(self.request, name=self.self_path, context=context)
+
+    # async def perform_operation(self, func, self_template_path, redirect_method_name, extra_context={}):
+    #     context = await self.load()
+    #     context |= extra_context
+    #     my_errors = {}
+    #     command = None
+    #     # TODO mmr Separar (1er método que validará y devolverá command y si no valida devuelve el template?)
+    #     try:
+    #         if self.model_type is not None:
+    #             command = self.model_type.model_validate(await self.load())
+    #     except ValidationError as exc:
+    #         errors = exc.errors()
+    #         for error in errors:
+    #             my_errors[error["loc"][0]] = tr.t(error["msg"], self.request.state.locale)
+    #         context |= {'errors': my_errors}
+    #         return main.templates.TemplateResponse(request=self.request, name=self_template_path, context=context)
+    #     # TODO mmr Separar (2o método que llamará a la operación (los params vendrán del controller))
+    #     if "id" in context and command:
+    #         params = {"id": context["id"], "command": command}
+    #     elif "id" in context:
+    #         params = {"id": context["id"]}
+    #     else:
+    #         params = {"command": command}
+    #     try:
+    #         func(**params)
+    #         redirect_ulr = self.request.url_for(redirect_method_name).include_query_params(
+    #             msg=tr.t("Successful operation", self.request.state.locale)
+    #         )
+    #         return RedirectResponse(redirect_ulr, 303)
+    #     except Exception as e:
+    #         context |= {"msg": e.msg, "type": "danger"}
+    #     return main.templates.TemplateResponse(request=self.request, name=self_template_path, context=context)
 
 
 """ Auth """
 
 
 class LoginForm(Form):
-    def __init__(self, request: Request):
-        super().__init__(request)
+    def __init__(self, request: Request, model_type: Type[T], self_path: str):
+        super().__init__(request, model_type, self_path)
         self.username = str
         self.password = str
 
@@ -123,8 +120,8 @@ class LoginForm(Form):
 
 
 class GroupCreateForm(Form):
-    def __init__(self, request: Request, model_type: Type[T]):
-        super().__init__(request, model_type)
+    def __init__(self, request: Request, model_type: Type[T], self_path: str):
+        super().__init__(request, model_type, self_path)
         self.code: str | None = None
         self.webname: str | None = None
 
@@ -136,8 +133,8 @@ class GroupCreateForm(Form):
 
 
 class GroupUpdateForm(Form):
-    def __init__(self, request: Request, model_type: Type[T]):
-        super().__init__(request, model_type)
+    def __init__(self, request: Request, model_type: Type[T], self_path: str):
+        super().__init__(request, model_type, self_path)
         self.code: str | None = None
         self.webname: str | None = None
         self.active: bool
