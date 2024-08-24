@@ -32,10 +32,12 @@ async def group_create(request: Request):
 
 @router.post("/create")
 async def group_create_perform(request: Request, service: Annotated[GroupService, Depends()]):
-    form = GroupCreateForm(request)
-    command = GroupCreateCommand.model_validate(await form.load())
+    form = GroupCreateForm(request, GroupCreateCommand, "core/group_create.html")
+    command, errors_dict, response, context = await form.validate()
+    if (errors_dict):
+        return response
     params = {"command": command}
-    return await form.perform_operation(service.create, params, "core/group_create.html", "group_list")
+    return await form.perform_operation(service.create, params, "group_list", context)
 
 
 @router.get("/update/{id}")
@@ -46,16 +48,17 @@ async def group_update(request: Request, id: str, service: Annotated[GroupServic
 
 @router.post("/update/{id}")
 async def group_update_perform(request: Request, id: str, service: Annotated[GroupService, Depends()]):
-    form = GroupUpdateForm(request)
-    command = GroupUpdateCommand.model_validate(await form.load())
+    form = GroupUpdateForm(request, GroupUpdateCommand, "core/group_update.html")
+    command, errors_dict, response, context = await form.validate()
+    if (errors_dict):
+        return response
     params = {"id": id, "command": command}
-    context = {"id": id}
-    return await form.perform_operation(service.update, params, "core/group_update.html", "group_list", context)
+    context |= {"id": id}
+    return await form.perform_operation(service.update, params, "group_list", context)
 
 
 @router.post("/delete/{id}")
 async def group_delete_perform(request: Request, id: str, service: Annotated[GroupService, Depends()]):
-    form = Form(request)
-    await form.load()
-    params = {"id": id}
-    return await form.perform_operation(service.delete, params, "core/group_list.html", "group_list")
+    form = Form(request, None, "core/group_list.html")
+    params = context = {"id": id}
+    return await form.perform_operation(service.delete, params, "group_list", context)

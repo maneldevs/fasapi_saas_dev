@@ -1,12 +1,19 @@
-from fastapi import Request
+from typing import Generic, Type, TypeVar
+from fastapi import Request, Response
 from fastapi.responses import RedirectResponse
+from pydantic_core import ValidationError
+from sqlmodel import SQLModel
 
 from src.app import main
 from src.app.configuration.lang import tr
 
+T = TypeVar("T", bound=SQLModel)
 
-class Form:
-    def __init__(self, request: Request):
+
+class Form(Generic[T]):
+    def __init__(self, request: Request, model_type: Type[T], self_path: str):
+        self.model_type = model_type
+        self.self_path = self_path
         self.request: Request = request
         self.errors: dict[str, str] = {}
 
@@ -14,33 +21,47 @@ class Form:
         await self.request.form()
         return self.to_dict()
 
-    def is_valid(self) -> bool:
-        return True
-
     def to_dict(self) -> dict:
         return self.__dict__
 
-    async def perform_operation(self, func, params, self_template_path, redirect_method_name, extra_context={}):
+    async def validate(self, extra_context={}) -> tuple[SQLModel, dict[str, str], Response, dict]:
         context = await self.load()
         context |= extra_context
-        if self.is_valid():
-            try:
-                func(**params)
-                redirect_ulr = self.request.url_for(redirect_method_name).include_query_params(
-                    msg=tr.t("Successful operation", self.request.state.locale)
-                )
-                return RedirectResponse(redirect_ulr, 303)
-            except Exception as e:
-                context |= {"msg": e.msg, "type": "danger"}
-        return main.templates.TemplateResponse(request=self.request, name=self_template_path, context=context)
+        errors_dict = {}
+        response = None
+        command = None
+        try:
+            if self.model_type is not None:
+                command = self.model_type.model_validate(await self.load())
+        except ValidationError as exc:
+            errors = exc.errors()
+            for error in errors:
+                errors_dict[error["loc"][0]] = tr.t(error["msg"], self.request.state.locale)
+                context |= {'errors': errors_dict}
+            response = self.generate_error_response(context)
+        return (command, errors_dict, response, context)
+
+    async def perform_operation(self, func: callable, params: dict, redirect_method_name, context={}) -> Response:
+        try:
+            func(**params)
+            redirect_ulr = self.request.url_for(redirect_method_name).include_query_params(
+                msg=tr.t("Successful operation", self.request.state.locale)
+            )
+            return RedirectResponse(redirect_ulr, 303)
+        except Exception as e:
+            context |= {"msg": e.msg, "type": "danger"}
+        return self.generate_error_response(context)
+
+    def generate_error_response(self, context: dict) -> Response:
+        return main.templates.TemplateResponse(self.request, name=self.self_path, context=context)
 
 
 """ Auth """
 
 
 class LoginForm(Form):
-    def __init__(self, request: Request):
-        super().__init__(request)
+    def __init__(self, request: Request, model_type: Type[T], self_path: str):
+        super().__init__(request, model_type, self_path)
         self.username = str
         self.password = str
 
@@ -50,23 +71,13 @@ class LoginForm(Form):
         self.password = form.get("password")
         return self.to_dict()
 
-    def is_valid(self) -> bool:
-        valid = False
-        if not self.username or len(self.username) == 0:
-            self.errors["username"] = tr.t("username is required", self.request.state.locale)
-        if not self.password or len(self.password) == 0:
-            self.errors["password"] = tr.t("password is required", self.request.state.locale)
-        if not self.errors or len(self.errors) == 0:
-            valid = True
-        return valid
-
 
 """ Group """
 
 
 class GroupCreateForm(Form):
-    def __init__(self, request: Request):
-        super().__init__(request)
+    def __init__(self, request: Request, model_type: Type[T], self_path: str):
+        super().__init__(request, model_type, self_path)
         self.code: str | None = None
         self.webname: str | None = None
 
@@ -76,24 +87,10 @@ class GroupCreateForm(Form):
         self.webname = form.get("webname")
         return self.to_dict()
 
-    def is_valid(self) -> bool:
-        valid = False
-        if not self.code or len(self.code) == 0:
-            self.errors["code"] = (
-                tr.t("code", self.request.state.locale) + " " + tr.t("is required", self.request.state.locale)
-            )
-        if not self.webname or len(self.webname) == 0:
-            self.errors["webname"] = (
-                tr.t("webname", self.request.state.locale) + " " + tr.t("is required", self.request.state.locale)
-            )
-        if not self.errors or len(self.errors) == 0:
-            valid = True
-        return valid
-
 
 class GroupUpdateForm(Form):
-    def __init__(self, request: Request):
-        super().__init__(request)
+    def __init__(self, request: Request, model_type: Type[T], self_path: str):
+        super().__init__(request, model_type, self_path)
         self.code: str | None = None
         self.webname: str | None = None
         self.active: bool
@@ -105,27 +102,13 @@ class GroupUpdateForm(Form):
         self.active = form.get("active") if form.get("active") else False
         return self.to_dict()
 
-    def is_valid(self) -> bool:
-        valid = False
-        if not self.code or len(self.code) == 0:
-            self.errors["code"] = (
-                tr.t("code", self.request.state.locale) + " " + tr.t("is required", self.request.state.locale)
-            )
-        if not self.webname or len(self.webname) == 0:
-            self.errors["webname"] = (
-                tr.t("webname", self.request.state.locale) + " " + tr.t("is required", self.request.state.locale)
-            )
-        if not self.errors or len(self.errors) == 0:
-            valid = True
-        return valid
-
 
 """ Role """
 
 
 class RoleForm(Form):
-    def __init__(self, request: Request):
-        super().__init__(request)
+    def __init__(self, request: Request, model_type: Type[T], self_path: str):
+        super().__init__(request, model_type, self_path)
         self.code: str | None = None
         self.webname: str | None = None
 
@@ -135,27 +118,13 @@ class RoleForm(Form):
         self.webname = form.get("webname")
         return self.to_dict()
 
-    def is_valid(self) -> bool:
-        valid = False
-        if not self.code or len(self.code) == 0:
-            self.errors["code"] = (
-                tr.t("code", self.request.state.locale) + " " + tr.t("is required", self.request.state.locale)
-            )
-        if not self.webname or len(self.webname) == 0:
-            self.errors["webname"] = (
-                tr.t("webname", self.request.state.locale) + " " + tr.t("is required", self.request.state.locale)
-            )
-        if not self.errors or len(self.errors) == 0:
-            valid = True
-        return valid
-
 
 """ User """
 
 
 class UserCreateForm(Form):
-    def __init__(self, request: Request):
-        super().__init__(request)
+    def __init__(self, request: Request, model_type: Type[T], self_path: str):
+        super().__init__(request, model_type, self_path)
         self.username: str
         self.password_raw: str
         self.firstname: str | None = None
@@ -173,24 +142,10 @@ class UserCreateForm(Form):
         self.role_id = form.get("role_id") if form.get("role_id") else None
         return self.to_dict()
 
-    def is_valid(self) -> bool:
-        valid = False
-        if not self.username or len(self.username) == 0:
-            self.errors["username"] = (
-                tr.t("username", self.request.state.locale) + " " + tr.t("is required", self.request.state.locale)
-            )
-        if not self.password_raw or len(self.password_raw) == 0:
-            self.errors["password_raw"] = (
-                tr.t("password", self.request.state.locale) + " " + tr.t("is required", self.request.state.locale)
-            )
-        if not self.errors or len(self.errors) == 0:
-            valid = True
-        return valid
-
 
 class UserUpdateForm(Form):
-    def __init__(self, request: Request):
-        super().__init__(request)
+    def __init__(self, request: Request, model_type: Type[T], self_path: str):
+        super().__init__(request, model_type, self_path)
         self.username: str
         self.password_raw: str | None
         self.firstname: str | None = None
@@ -211,13 +166,3 @@ class UserUpdateForm(Form):
         self.active = form.get("active") if form.get("active") else False
         self.is_god = form.get("is_god") if form.get("is_god") else False
         return self.to_dict()
-
-    def is_valid(self) -> bool:
-        valid = False
-        if not self.username or len(self.username) == 0:
-            self.errors["username"] = (
-                tr.t("username", self.request.state.locale) + " " + tr.t("is required", self.request.state.locale)
-            )
-        if not self.errors or len(self.errors) == 0:
-            valid = True
-        return valid

@@ -32,10 +32,12 @@ async def role_create(request: Request):
 
 @router.post("/create")
 async def role_create_perform(request: Request, service: Annotated[RoleService, Depends()]):
-    form = RoleForm(request)
-    command = RoleCommand.model_validate(await form.load())
+    form = RoleForm(request, RoleCommand, "core/role_create.html")
+    command, errors_dict, response, context = await form.validate()
+    if (errors_dict):
+        return response
     params = {"command": command}
-    return await form.perform_operation(service.create, params, "core/role_create.html", "role_list")
+    return await form.perform_operation(service.create, params, "role_list", context)
 
 
 @router.get("/update/{id}")
@@ -46,16 +48,17 @@ async def role_update(request: Request, id: str, service: Annotated[RoleService,
 
 @router.post("/update/{id}")
 async def role_update_perform(request: Request, id: str, service: Annotated[RoleService, Depends()]):
-    form = RoleForm(request)
-    command = RoleCommand.model_validate(await form.load())
+    form = RoleForm(request, RoleCommand, "core/role_update.html")
+    command, errors_dict, response, context = await form.validate()
+    if (errors_dict):
+        return response
     params = {"id": id, "command": command}
-    context = {"id": id}
-    return await form.perform_operation(service.update, params, "core/role_update.html", "role_list", context)
+    context |= {"id": id}
+    return await form.perform_operation(service.update, params, "role_list", context)
 
 
 @router.post("/delete/{id}")
 async def role_delete_perform(request: Request, id: str, service: Annotated[RoleService, Depends()]):
-    form = Form(request)
-    await form.load()
-    params = {"id": id}
-    return await form.perform_operation(service.delete, params, "core/role_list.html", "role_list")
+    form = Form(request, None, "core/role_list.html")
+    params = context = {"id": id}
+    return await form.perform_operation(service.delete, params, "role_list", context)

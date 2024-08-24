@@ -23,7 +23,7 @@ class Translator:
         result = []
         for error in errors:
             print(type(error))
-            message = error["msg"]
+            message = error["msg"]  # TODO mmr manejar variables en keys de errores de validación
             translated_message = self.t(message, locale)
             error["msg"] = translated_message
             result.append(error)
