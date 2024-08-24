@@ -62,8 +62,8 @@ class GroupFilter(SQLModel):
 
 
 class RoleBase(SQLModel):
-    code: str = Field(unique=True)
-    webname: str
+    code: str = Field(unique=True, min_length=3)
+    webname: str = Field(min_length=3)
 
 
 class Role(RoleBase, table=True):
@@ -89,8 +89,8 @@ class RoleFilter(SQLModel):
 class User(SQLModel, table=True):
     __tablename__ = "users"
     id: str | None = Field(default=None, primary_key=True)
-    username: str = Field(unique=True)
-    password: str
+    username: str = Field(unique=True, min_length=3)
+    password: str = Field(min_length=3)
     firstname: str | None = None
     lastname: str | None = None
     active: bool = True
@@ -103,7 +103,7 @@ class User(SQLModel, table=True):
 
 
 class UserBaseCommand(SQLModel):
-    username: str
+    username: str = Field(min_length=3)
     firstname: str | None = None
     lastname: str | None = None
     group_id: str | None = None
@@ -111,7 +111,7 @@ class UserBaseCommand(SQLModel):
 
 
 class UserCreateCommand(UserBaseCommand):
-    password_raw: str
+    password_raw: str = Field(min_length=3)
 
 
 class UserUpdateCommand(UserBaseCommand):

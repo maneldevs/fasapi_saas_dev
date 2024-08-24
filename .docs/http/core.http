@@ -4,10 +4,10 @@
 ####################################################### GROUP ##########################################################
 
 ### GROUP - CREATE
-POST {{urlBase}}/groups
+POST {{urlBase}}/groups?locale=es_ES
 
 {
-    "code": "ainia1",
+    "code": "ai",
     "webname": "ainia"
 }
 

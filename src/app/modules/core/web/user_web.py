@@ -57,13 +57,15 @@ async def user_create_perform(
     service_group: Annotated[GroupService, Depends()],
     service_role: Annotated[RoleService, Depends()],
 ):
-    form = UserCreateForm(request)
-    command = UserCreateCommand.model_validate(await form.load())
-    params = {"command": command}
+    form = UserCreateForm(request, UserCreateCommand, "core/user_create.html")
     groups = __fetch_groups(service_group)
     roles = __fetch_roles(service_role)
     context = {"groups": groups, "roles": roles}
-    return await form.perform_operation(service.create, params, "core/user_create.html", "user_list", context)
+    command, errors_dict, response, context = await form.validate(context)
+    if (errors_dict):
+        return response
+    params = {"command": command}
+    return await form.perform_operation(service.create, params, "user_list", context)
 
 
 @router.get("/update/{id}")
@@ -90,21 +92,22 @@ async def user_update_perform(
     service_group: Annotated[GroupService, Depends()],
     service_role: Annotated[RoleService, Depends()],
 ):
-    form = UserUpdateForm(request)
-    command = UserUpdateCommand.model_validate(await form.load())
-    params = {"id": id, "command": command}
+    form = UserUpdateForm(request, UserUpdateCommand, "core/user_update.html")
     groups = __fetch_groups(service_group)
     roles = __fetch_roles(service_role)
     context = {"id": id, "groups": groups, "roles": roles}
-    return await form.perform_operation(service.update, params, "core/user_update.html", "user_list", context)
+    command, errors_dict, response, context = await form.validate(context)
+    if (errors_dict):
+        return response
+    params = {"id": id, "command": command}
+    return await form.perform_operation(service.update, params, "user_list", context)
 
 
 @router.post("/delete/{id}")
 async def user_delete_perform(request: Request, id: str, service: Annotated[UserService, Depends()]):
-    form = Form(request)
-    await form.load()
-    params = {"id": id}
-    return await form.perform_operation(service.delete, params, "core/user_list.html", "user_list")
+    form = Form(request, None, "core/user_list.html")
+    params = context = {"id": id}
+    return await form.perform_operation(service.delete, params, "user_list", context)
 
 
 def __fetch_groups(service_group: GroupService):
