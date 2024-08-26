@@ -15,7 +15,7 @@ class Translator:
         dictionary = self.get_dictionary(locale)
         return dictionary.get(key, key)
 
-    def t(self, key: str, locale: str, **kwargs: dict[str, str]):
+    def t(self, key: str, locale: str, **kwargs: dict[str, any]):
         translation = self.get_translation(key, locale)
         return translation.format(**kwargs)
 
@@ -23,8 +23,16 @@ class Translator:
         result = []
         for error in errors:
             print(type(error))
-            message = error["msg"]  # TODO mmr manejar variables en keys de errores de validación
-            translated_message = self.t(message, locale)
+            message = error["msg"]
+            context = error.get("ctx", {})
+            message = self.__get_original_error_message(message, context)
+            translated_message = self.t(message, locale, **context)
             error["msg"] = translated_message
             result.append(error)
         return result
+
+    def __get_original_error_message(self, message: str, context: dict[str, any]):
+        for k in context.keys():
+            placeholder = "{" + k + "}"
+            message = message.replace(str(context[k]), placeholder)
+        return message
