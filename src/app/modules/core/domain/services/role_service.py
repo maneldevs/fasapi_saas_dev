@@ -3,7 +3,11 @@ from typing import Annotated
 from fastapi import Depends
 
 from src.app.modules.core.domain.dependencies import Locale
-from src.app.modules.core.utils.exceptions import EntityAlreadyExistsError, EntityNotFoundError
+from src.app.modules.core.utils.exceptions import (
+    EntityAlreadyExistsError,
+    EntityNotFoundError,
+    EntityRelationshipExistsError,
+)
 from src.app.modules.core.domain.models import Role, RoleCommand, RoleFilter
 from src.app.modules.core.persistence.role_repo import RoleRepo
 from src.app.modules.core.utils.paginator import PageParams
@@ -44,7 +48,7 @@ class RoleService:
             role = Role.model_validate(command)
             role.id = id
             role_updated = self.repo.update(id, role)
-            if (role_updated is None):
+            if role_updated is None:
                 raise EntityNotFoundError(msg=tr.t("Not found", self.locale, entity=id))
             return role_updated
         except EntityAlreadyExistsError as e:
@@ -52,6 +56,10 @@ class RoleService:
             raise e
 
     def delete(self, id: str) -> None:
-        role = self.repo.delete(id)
-        if (role is None):
-            raise EntityNotFoundError(msg=tr.t("Not found", self.locale, entity=id))
+        try:
+            role = self.repo.delete(id)
+            if role is None:
+                raise EntityNotFoundError(msg=tr.t("Not found", self.locale, entity=id))
+        except EntityRelationshipExistsError as e:
+            e.msg = tr.t("Entity has dependants", self.locale)
+            raise e

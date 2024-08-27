@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
 from sqlmodel import Session
 
-from src.app.modules.core.domain.models import Role, RoleCommand
+from src.app.modules.core.domain.models import Role, RoleCommand, User
 
 BASE_URL: str = "/api/core/roles"
 
@@ -169,3 +169,8 @@ def test_i_delete_happy(client: TestClient, session: Session, role_in_db: Role):
 def test_i_delete_no_existent(client: TestClient):
     response = client.delete(f"{BASE_URL}/8888")
     assert response.status_code == 404
+
+
+def test_i_delete_role_with_dependants(client: TestClient, user_in_db: User):
+    response = client.delete(f"{BASE_URL}/{user_in_db.role.id}")
+    assert response.status_code == 400

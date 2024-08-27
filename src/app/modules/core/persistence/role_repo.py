@@ -6,7 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlmodel.sql.expression import SelectOfScalar
 
 from src.app.configuration.database import get_session
-from src.app.modules.core.utils.exceptions import EntityAlreadyExistsError
+from src.app.modules.core.utils.exceptions import EntityAlreadyExistsError, EntityRelationshipExistsError
 from src.app.modules.core.domain.models import Role, RoleFilter
 from src.app.modules.core.utils.paginator import Paginator
 from src.app.modules.core.utils.paginator import PageParams
@@ -16,15 +16,6 @@ class RoleRepo:
 
     def __init__(self, session: Annotated[Session, Depends(get_session)]) -> None:
         self.session = session
-
-    def __save(self, role: Role) -> Role:
-        try:
-            self.session.add(role)
-            self.session.commit()
-            self.session.refresh(role)
-            return role
-        except IntegrityError as e:
-            raise EntityAlreadyExistsError(original_exception=e)
 
     def read_by_id(self, id: str) -> Role:
         role = self.session.get(Role, id)
@@ -67,11 +58,26 @@ class RoleRepo:
     def delete(self, id: str) -> Role:
         role_in_db = self.read_by_id(id)
         if (role_in_db is not None):
-            self.session.delete(role_in_db)
-            self.session.commit()
+            self.__delete(role_in_db)
         return role_in_db
 
     def __apply_filter(self, stmt: SelectOfScalar[Role], filter: RoleFilter):
         if filter.target:
             stmt = stmt.where(or_(col(Role.code).contains(filter.target), col(Role.webname).contains(filter.target)))
         return stmt
+
+    def __save(self, role: Role) -> Role:
+        try:
+            self.session.add(role)
+            self.session.commit()
+            self.session.refresh(role)
+            return role
+        except IntegrityError as e:
+            raise EntityAlreadyExistsError(original_exception=e)
+
+    def __delete(self, role):
+        try:
+            self.session.delete(role)
+            self.session.commit()
+        except Exception as e:
+            raise EntityRelationshipExistsError(original_exception=e)

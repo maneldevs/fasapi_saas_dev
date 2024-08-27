@@ -11,6 +11,11 @@ class EntityAlreadyExistsError(BaseError):
         super().__init__(type="database", msg=msg, status_code=400, original_exception=original_exception)
 
 
+class EntityRelationshipExistsError(BaseError):
+    def __init__(self, msg: str = "Entity has dependants", original_exception: Exception = None) -> None:
+        super().__init__(type="forbidden", msg=msg, status_code=400, original_exception=original_exception)
+
+
 class EntityNotFoundError(BaseError):
     def __init__(self, msg: str = "Entity not found", original_exception: Exception = None) -> None:
         super().__init__(type="not found", msg=msg, status_code=404, original_exception=original_exception)

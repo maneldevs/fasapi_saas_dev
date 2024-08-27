@@ -3,7 +3,11 @@ from typing import Annotated
 from fastapi import Depends
 
 from src.app.modules.core.domain.dependencies import Locale
-from src.app.modules.core.utils.exceptions import EntityAlreadyExistsError, EntityNotFoundError
+from src.app.modules.core.utils.exceptions import (
+    EntityAlreadyExistsError,
+    EntityNotFoundError,
+    EntityRelationshipExistsError,
+)
 from src.app.modules.core.domain.models import User, UserCreateCommand, UserFilter, UserUpdateCommand
 from src.app.modules.core.persistence.group_repo import GroupRepo
 from src.app.modules.core.persistence.role_repo import RoleRepo
@@ -20,7 +24,7 @@ class UserService:
         repo: Annotated[UserRepo, Depends()],
         role_repo: Annotated[RoleRepo, Depends()],
         group_repo: Annotated[GroupRepo, Depends()],
-        locale: Locale
+        locale: Locale,
     ) -> None:
         self.repo = repo
         self.role_repo = role_repo
@@ -58,7 +62,7 @@ class UserService:
             user = User.model_validate(command, update={"password": password})
             user.id = id
             user_updated = self.repo.update(id, user)
-            if (user_updated is None):
+            if user_updated is None:
                 raise EntityNotFoundError(msg=tr.t("Not found", self.locale, entity=id))
             return user_updated
         except EntityAlreadyExistsError as e:
@@ -66,9 +70,13 @@ class UserService:
             raise e
 
     def delete(self, id: str) -> None:
-        user = self.repo.delete(id)
-        if (user is None):
-            raise EntityNotFoundError(msg=tr.t("Not found", self.locale, entity=id))
+        try:
+            user = self.repo.delete(id)
+            if user is None:
+                raise EntityNotFoundError(msg=tr.t("Not found", self.locale, entity=id))
+        except EntityRelationshipExistsError as e:
+            e.msg = tr.t("Entity has dependants", self.locale)
+            raise e
 
     def __validate(self, command) -> None:
         if command.role_id:

@@ -6,7 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlmodel.sql.expression import SelectOfScalar
 
 from src.app.configuration.database import get_session
-from src.app.modules.core.utils.exceptions import EntityAlreadyExistsError
+from src.app.modules.core.utils.exceptions import EntityAlreadyExistsError, EntityRelationshipExistsError
 from src.app.modules.core.domain.models import Group, GroupFilter
 from src.app.modules.core.utils.paginator import Paginator
 from src.app.modules.core.utils.paginator import PageParams
@@ -16,15 +16,6 @@ class GroupRepo:
 
     def __init__(self, session: Annotated[Session, Depends(get_session)]) -> None:
         self.session = session
-
-    def __save(self, group: Group) -> Group:
-        try:
-            self.session.add(group)
-            self.session.commit()
-            self.session.refresh(group)
-            return group
-        except IntegrityError as e:
-            raise EntityAlreadyExistsError(original_exception=e)
 
     def read_by_id(self, id: str) -> Group:
         group = self.session.get(Group, id)
@@ -67,11 +58,26 @@ class GroupRepo:
     def delete(self, id: str) -> Group:
         group_in_db = self.read_by_id(id)
         if (group_in_db is not None):
-            self.session.delete(group_in_db)
-            self.session.commit()
+            self.__delete(group_in_db)
         return group_in_db
 
     def __apply_filter(self, stmt: SelectOfScalar[Group], filter: GroupFilter):
         if filter.target:
             stmt = stmt.where(or_(col(Group.code).contains(filter.target), col(Group.webname).contains(filter.target)))
         return stmt
+
+    def __save(self, group: Group) -> Group:
+        try:
+            self.session.add(group)
+            self.session.commit()
+            self.session.refresh(group)
+            return group
+        except IntegrityError as e:
+            raise EntityAlreadyExistsError(original_exception=e)
+
+    def __delete(self, module):
+        try:
+            self.session.delete(module)
+            self.session.commit()
+        except IntegrityError as e:
+            raise EntityRelationshipExistsError(original_exception=e)

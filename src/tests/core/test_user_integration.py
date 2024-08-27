@@ -370,13 +370,18 @@ def test_i_update_no_existent_role_id(client: TestClient, user_update_command: U
 """ Delete """
 
 
-def test_i_delete_group_happy(client: TestClient, session: Session, user_in_db: User):
+def test_i_delete_user_happy(client: TestClient, session: Session, user_in_db: User):
     response = client.delete(f"{BASE_URL}/{user_in_db.id}")
     group_in_db_after = session.get(User, user_in_db.id)
     assert response.status_code == 204
     assert group_in_db_after is None
 
 
-def test_i_delete_group_no_existent(client: TestClient):
+def test_i_delete_user_no_existent(client: TestClient):
     response = client.delete(f"{BASE_URL}/8888")
     assert response.status_code == 404
+
+
+def test_i_delete_user_with_dependants(client: TestClient):
+    # TODO mmr
+    pass

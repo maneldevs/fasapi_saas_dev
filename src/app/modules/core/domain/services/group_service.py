@@ -3,7 +3,11 @@ from typing import Annotated
 from fastapi import Depends
 
 from src.app.modules.core.domain.dependencies import Locale
-from src.app.modules.core.utils.exceptions import EntityAlreadyExistsError, EntityNotFoundError
+from src.app.modules.core.utils.exceptions import (
+    EntityAlreadyExistsError,
+    EntityNotFoundError,
+    EntityRelationshipExistsError,
+)
 from src.app.modules.core.domain.models import Group, GroupCreateCommand, GroupFilter, GroupUpdateCommand
 from src.app.modules.core.persistence.group_repo import GroupRepo
 from src.app.modules.core.utils.paginator import PageParams
@@ -44,7 +48,7 @@ class GroupService:
             group = Group.model_validate(command)
             group.id = id
             group_updated = self.repo.update(id, group)
-            if (group_updated is None):
+            if group_updated is None:
                 raise EntityNotFoundError(msg=tr.t("Not found", self.locale, entity=id))
             return group_updated
         except EntityAlreadyExistsError as e:
@@ -52,6 +56,10 @@ class GroupService:
             raise e
 
     def delete(self, id: str) -> None:
-        group = self.repo.delete(id)
-        if (group is None):
-            raise EntityNotFoundError(msg=tr.t("Not found", self.locale, entity=id))
+        try:
+            group = self.repo.delete(id)
+            if group is None:
+                raise EntityNotFoundError(msg=tr.t("Not found", self.locale, entity=id))
+        except EntityRelationshipExistsError as e:
+            e.msg = tr.t("Entity has dependants", self.locale)
+            raise e

@@ -1,0 +1,25 @@
+{% from 'shared/macros/form_control.html' import form_control %}
+{% extends 'shared/content.html' %}
+
+{% set current_page = 'modules' %}
+
+{% block title %}
+{{ _t("Create", request.state.locale )}} {{ _t("module", request.state.locale )}}
+{% endblock title %}
+
+{% block title_right %}
+<button type="submit" form="create-module-form" class="btn btn-primary">{{ _t("Save", request.state.locale ) }}</button>
+{% endblock title_right %}
+
+{% block main %}
+<form id="create-module-form" method="post">
+  <div class="row g-3">
+    <div class="mb-3 col-md-6">
+      {{ form_control(_t("code", request.state.locale ), "text", errors.code if errors and errors.code else None, "code", code, true) }}
+    </div>
+    <div class="mb-3 col-md-6">
+      {{ form_control(_t("webname", request.state.locale ), "text", errors.webname if errors and errors.webname else None, "webname", webname, true) }}
+    </div>
+  </div>
+</form>
+{% endblock main %}

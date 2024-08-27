@@ -1,5 +1,6 @@
 from fastapi.testclient import TestClient
 import pytest
+from sqlalchemy import text
 from sqlmodel import SQLModel, Session, create_engine, StaticPool
 
 from src.app.configuration.database import get_session
@@ -12,6 +13,7 @@ def session_fixture():
     engine = create_engine("sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool)
     SQLModel.metadata.create_all(engine)
     with Session(engine) as session:
+        session.exec(text('PRAGMA foreign_keys=ON'))
         yield session
 
 

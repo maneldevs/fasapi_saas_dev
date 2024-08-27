@@ -170,3 +170,8 @@ def test_i_delete_happy(client: TestClient, session: Session, module_in_db: Modu
 def test_i_delete_no_existent(client: TestClient):
     response = client.delete(f"{BASE_URL}/8888")
     assert response.status_code == 404
+
+
+def test_i_delete_module_with_dependants(client: TestClient):
+    # TODO mmr
+    pass

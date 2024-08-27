@@ -185,3 +185,8 @@ def test_i_delete_group_happy(client: TestClient, session: Session, group_in_db:
 def test_i_delete_group_no_existent(client: TestClient):
     response = client.delete(f"{BASE_URL}/8888")
     assert response.status_code == 404
+
+
+def test_i_delete_group_with_dependants(client: TestClient):
+    # TODO mmr
+    pass

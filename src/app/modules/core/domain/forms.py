@@ -166,3 +166,19 @@ class UserUpdateForm(Form):
         self.active = form.get("active") if form.get("active") else False
         self.is_god = form.get("is_god") if form.get("is_god") else False
         return self.to_dict()
+
+
+""" Module """
+
+
+class ModuleForm(Form):
+    def __init__(self, request: Request, model_type: Type[T], self_path: str):
+        super().__init__(request, model_type, self_path)
+        self.code: str | None = None
+        self.webname: str | None = None
+
+    async def load(self) -> dict:
+        form = await self.request.form()
+        self.code = form.get("code")
+        self.webname = form.get("webname")
+        return self.to_dict()

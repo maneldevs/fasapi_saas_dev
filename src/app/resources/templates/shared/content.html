@@ -23,11 +23,12 @@
             href="{{ url_for('user_list') }}">{{ _t("users", request.state.locale )|capitalize }}</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {{'active' if current_page == 'modules'}}" aria-current="page" href="#">{{ _t("modules", request.state.locale )|capitalize }}</a>
+          <a class="nav-link {{'active' if current_page == 'modules'}}" aria-current="page"
+            href="{{ url_for('module_list') }}">{{ _t("modules", request.state.locale )|capitalize }}</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {{'active' if current_page == 'configurations'}}" aria-current="page"
-            href="#">{{ _t("configurations", request.state.locale )|capitalize }}</a>
+          <a class="nav-link {{'active' if current_page == 'configurations'}}" aria-current="page" href="#">{{
+            _t("configurations", request.state.locale )|capitalize }}</a>
         </li>
       </ul>
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
@@ -36,7 +37,8 @@
             {{request.state.principal_username or "anonymous"}}
           </a>
           <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" href="{{ url_for('admin_logout')}}">{{ _t("logout", request.state.locale) }}</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('admin_logout')}}">{{ _t("logout", request.state.locale)
+                }}</a></li>
           </ul>
         </li>
       </ul>

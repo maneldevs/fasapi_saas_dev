@@ -5,7 +5,11 @@ from fastapi import Depends
 from src.app.modules.core.domain.dependencies import Locale
 from src.app.modules.core.domain.models import Module, ModuleCommand, ModuleFilter
 from src.app.modules.core.persistence.module_repo import ModuleRepo
-from src.app.modules.core.utils.exceptions import EntityAlreadyExistsError, EntityNotFoundError
+from src.app.modules.core.utils.exceptions import (
+    EntityAlreadyExistsError,
+    EntityNotFoundError,
+    EntityRelationshipExistsError,
+)
 from src.app.configuration.lang import tr
 from src.app.modules.core.utils.paginator import PageParams
 
@@ -44,7 +48,7 @@ class ModuleService:
             module = Module.model_validate(command)
             module.id = id
             module_updated = self.repo.update(id, module)
-            if (module_updated is None):
+            if module_updated is None:
                 raise EntityNotFoundError(msg=tr.t("Not found", self.locale, entity=id))
             return module_updated
         except EntityAlreadyExistsError as e:
@@ -52,6 +56,10 @@ class ModuleService:
             raise e
 
     def delete(self, id: str) -> None:
-        module = self.repo.delete(id)
-        if (module is None):
-            raise EntityNotFoundError(msg=tr.t("Not found", self.locale, entity=id))
+        try:
+            module = self.repo.delete(id)
+            if module is None:
+                raise EntityNotFoundError(msg=tr.t("Not found", self.locale, entity=id))
+        except EntityRelationshipExistsError as e:
+            e.msg = tr.t("Entity has dependants", self.locale)
+            raise e

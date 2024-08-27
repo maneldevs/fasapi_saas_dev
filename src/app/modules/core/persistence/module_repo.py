@@ -8,7 +8,7 @@ from sqlalchemy.exc import IntegrityError
 
 from src.app.configuration.database import get_session
 from src.app.modules.core.domain.models import Module, ModuleFilter
-from src.app.modules.core.utils.exceptions import EntityAlreadyExistsError
+from src.app.modules.core.utils.exceptions import EntityAlreadyExistsError, EntityRelationshipExistsError
 from src.app.modules.core.utils.paginator import PageParams, Paginator
 
 
@@ -16,15 +16,6 @@ class ModuleRepo:
 
     def __init__(self, session: Annotated[Session, Depends(get_session)]) -> None:
         self.session = session
-
-    def __save(self, module: Module) -> Module:
-        try:
-            self.session.add(module)
-            self.session.commit()
-            self.session.refresh(module)
-            return module
-        except IntegrityError as e:
-            raise EntityAlreadyExistsError(original_exception=e)
 
     def read_by_id(self, id: str) -> Module:
         module = self.session.get(Module, id)
@@ -67,8 +58,7 @@ class ModuleRepo:
     def delete(self, id: str) -> Module:
         module_in_db = self.read_by_id(id)
         if module_in_db is not None:
-            self.session.delete(module_in_db)
-            self.session.commit()
+            self.__delete(module_in_db)
         return module_in_db
 
     def __apply_filter(self, stmt: SelectOfScalar[Module], filter: ModuleFilter):
@@ -77,3 +67,19 @@ class ModuleRepo:
                 or_(col(Module.code).contains(filter.target), col(Module.webname).contains(filter.target))
             )
         return stmt
+
+    def __save(self, module: Module) -> Module:
+        try:
+            self.session.add(module)
+            self.session.commit()
+            self.session.refresh(module)
+            return module
+        except IntegrityError as e:
+            raise EntityRelationshipExistsError(original_exception=e)
+
+    def __delete(self, module):
+        try:
+            self.session.delete(module)
+            self.session.commit()
+        except IntegrityError as e:
+            raise EntityAlreadyExistsError(original_exception=e)

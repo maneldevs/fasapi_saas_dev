@@ -7,7 +7,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlmodel.sql.expression import SelectOfScalar
 
 from src.app.configuration.database import get_session
-from src.app.modules.core.utils.exceptions import EntityAlreadyExistsError
+from src.app.modules.core.utils.exceptions import EntityAlreadyExistsError, EntityRelationshipExistsError
 from src.app.modules.core.domain.models import User, UserFilter
 from src.app.modules.core.utils.paginator import PageParams, Paginator
 
@@ -66,8 +66,7 @@ class UserRepo:
     def delete(self, id: str) -> User:
         user_in_db = self.read_by_id(id)
         if (user_in_db is not None):
-            self.session.delete(user_in_db)
-            self.session.commit()
+            self.__delete(user_in_db)
         return user_in_db
 
     def __save(self, user: User) -> User:
@@ -78,6 +77,13 @@ class UserRepo:
             return user
         except IntegrityError as e:
             raise EntityAlreadyExistsError(original_exception=e)
+
+    def __delete(self, module):
+        try:
+            self.session.delete(module)
+            self.session.commit()
+        except IntegrityError as e:
+            raise EntityRelationshipExistsError(original_exception=e)
 
     def __apply_filter(self, stmt: SelectOfScalar[User], filter: UserFilter):
         if filter.target:

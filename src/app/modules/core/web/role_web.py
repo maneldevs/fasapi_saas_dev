@@ -61,4 +61,5 @@ async def role_update_perform(request: Request, id: str, service: Annotated[Role
 async def role_delete_perform(request: Request, id: str, service: Annotated[RoleService, Depends()]):
     form = Form(request, None, "core/role_list.html")
     params = context = {"id": id}
+    
     return await form.perform_operation(service.delete, params, "role_list", context)
