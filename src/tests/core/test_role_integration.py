@@ -89,7 +89,7 @@ def test_id_read_by_id_no_existent(client: TestClient):
 """ Create """
 
 
-def test_i_create_group_happy(client: TestClient, session: Session, role_command: RoleCommand):
+def test_i_create_happy(client: TestClient, session: Session, role_command: RoleCommand):
     body = role_command.model_dump()
     response = client.post(BASE_URL, json=body)
     data = response.json()
@@ -104,14 +104,14 @@ def test_i_create_group_happy(client: TestClient, session: Session, role_command
     assert data["id"] == created.id
 
 
-def test_i_create_group_no_code(client: TestClient, role_command: RoleCommand):
+def test_i_create_no_code(client: TestClient, role_command: RoleCommand):
     role_command.code = None
     body = role_command.model_dump(exclude_defaults=True)
     response = client.post(BASE_URL, json=body)
     assert response.status_code == 422
 
 
-def test_i_create_group_no_webname(client: TestClient, role_command: RoleCommand):
+def test_i_create_no_webname(client: TestClient, role_command: RoleCommand):
     role_command.webname = None
     body = role_command.model_dump(exclude_defaults=True)
     response = client.post(BASE_URL, json=body)
@@ -121,36 +121,36 @@ def test_i_create_group_no_webname(client: TestClient, role_command: RoleCommand
 """ Update """
 
 
-def test_i_update_group_happy(client: TestClient, session: Session, role_command: RoleCommand, role_in_db: Role):
+def test_i_update_happy(client: TestClient, session: Session, role_command: RoleCommand, role_in_db: Role):
     body = role_command.model_dump()
     response = client.put(f"{BASE_URL}/{role_in_db.id}", json=body)
     data = response.json()
-    group_updated = session.get(Role, {data["id"]})
-    assert group_updated is not None
+    module_updated = session.get(Role, {data["id"]})
+    assert module_updated is not None
     assert response.status_code == 200
     assert data["code"] == role_command.code
     assert data["webname"] == role_command.webname
     assert data["id"] == role_in_db.id
-    assert data["code"] == group_updated.code
-    assert data["webname"] == group_updated.webname
-    assert data["id"] == group_updated.id
+    assert data["code"] == module_updated.code
+    assert data["webname"] == module_updated.webname
+    assert data["id"] == module_updated.id
 
 
-def test_i_update_group_no_code(client: TestClient, role_command: RoleCommand, role_in_db: Role):
+def test_i_update_no_code(client: TestClient, role_command: RoleCommand, role_in_db: Role):
     role_command.code = None
     body = role_command.model_dump(exclude_defaults=True)
     response = client.put(f"{BASE_URL}/{role_in_db.id}", json=body)
     assert response.status_code == 422
 
 
-def test_i_update_group_no_webname(client: TestClient, role_command: RoleCommand, role_in_db: Role):
+def test_i_update_no_webname(client: TestClient, role_command: RoleCommand, role_in_db: Role):
     role_command.webname = None
     body = role_command.model_dump(exclude_defaults=True)
     response = client.put(f"{BASE_URL}/{role_in_db.id}", json=body)
     assert response.status_code == 422
 
 
-def test_i_update_group_no_existent(client: TestClient, role_command: RoleCommand):
+def test_i_update_no_existent(client: TestClient, role_command: RoleCommand):
     body = role_command.model_dump(exclude_defaults=True)
     response = client.put(f"{BASE_URL}/8888", json=body)
     assert response.status_code == 404
@@ -159,13 +159,13 @@ def test_i_update_group_no_existent(client: TestClient, role_command: RoleComman
 """ Delete """
 
 
-def test_i_delete_group_happy(client: TestClient, session: Session, role_in_db: Role):
+def test_i_delete_happy(client: TestClient, session: Session, role_in_db: Role):
     response = client.delete(f"{BASE_URL}/{role_in_db.id}")
-    group_in_db_after = session.get(Role, role_in_db.id)
+    role_in_db_after = session.get(Role, role_in_db.id)
     assert response.status_code == 204
-    assert group_in_db_after is None
+    assert role_in_db_after is None
 
 
-def test_i_delete_group_no_existent(client: TestClient):
+def test_i_delete_no_existent(client: TestClient):
     response = client.delete(f"{BASE_URL}/8888")
     assert response.status_code == 404

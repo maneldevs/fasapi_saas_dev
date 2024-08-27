@@ -161,7 +161,7 @@ def user_in_db_fixture(session: Session, user: User, role_in_db: Role, group_in_
     user.group_id = group_in_db.id
     session.add(user)
     session.commit()
-    return userrole
+    return user
 
 
 @pytest.fixture(name="users_in_db")
