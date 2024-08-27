@@ -60,5 +60,5 @@
 </table>
 {{ paginator(total, size) }}
 </div>
-{{ modal_delete('Delete group', 'group_delete_perform') }}
+{{ modal_delete(_t("Delete", request.state.locale ) + " " + _t("group", request.state.locale ), 'group_delete_perform') }}
 {% endblock main %}

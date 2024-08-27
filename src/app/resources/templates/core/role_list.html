@@ -52,5 +52,5 @@
 </table>
 {{ paginator(total, size) }}
 </div>
-{{ modal_delete('Delete role', 'role_delete_perform') }}
+{{ modal_delete(_t("Delete", request.state.locale ) + " " + _t("role", request.state.locale ), 'role_delete_perform') }}
 {% endblock main %}
