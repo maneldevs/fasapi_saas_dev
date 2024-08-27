@@ -6,7 +6,7 @@ from src.app.modules.core.domain.services.module_service import ModuleService
 from src.app.modules.core.utils.paginator import PageParams, PageParser, PageResponse
 
 
-router = APIRouter(prefix="/api/core/models", tags=["Core - Models"])
+router = APIRouter(prefix="/api/core/modules", tags=["Core - Modules"])
 
 
 @router.post("/", response_model=ModuleResponse, status_code=status.HTTP_201_CREATED)
