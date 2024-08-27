@@ -298,15 +298,18 @@ class Translator:
         dictionary = self.get_dictionary(locale)
         return dictionary.get(key, key)
 
-    def t(self, key: str, locale: str, **kwargs: dict[str, str]):
+    def t(self, key: str, locale: str, **kwargs: dict[str, any]):
         translation = self.get_translation(key, locale)
         return translation.format(**kwargs)
 
-    def t_errors(self, errors: list["ErrorDict"], locale: str):
+    def t_errors(self, errors: list[dict], locale: str):
         result = []
         for error in errors:
+            print(type(error))
             message = error["msg"]
-            translated_message = self.t(message, locale)
+            context = error.get("ctx", {})
+            message = self.__get_original_error_message(message, context)
+            translated_message = self.t(message, locale, **context)
             error["msg"] = translated_message
             result.append(error)
         return result
