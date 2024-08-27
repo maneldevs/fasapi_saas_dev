@@ -6,6 +6,8 @@ from src.app.modules.core.domain.models import (
     Group,
     GroupCreateCommand,
     GroupUpdateCommand,
+    Module,
+    ModuleCommand,
     Role,
     RoleCommand,
     User,
@@ -172,3 +174,36 @@ def users_in_db_fixture(session: Session, user: User, user2: User, role_in_db: R
     session.add(user2)
     session.commit()
     return [user, user2]
+
+
+""" Module """
+
+
+@pytest.fixture(name="module_command")
+def module_command_fixture():
+    return ModuleCommand(code="MODULE1", webname="module 1")
+
+
+@pytest.fixture(name="module")
+def module_fixture():
+    return Module(id="abc-123-def-456", code="MODULE1", webname="module 1")
+
+
+@pytest.fixture(name="module2")
+def module2_fixture():
+    return Module(id="ghi-123-jkl-456", code="MODULE2", webname="module 2")
+
+
+@pytest.fixture(name="module_in_db")
+def module_in_db_fixture(session: Session, module: Module):
+    session.add(module)
+    session.commit()
+    return module
+
+
+@pytest.fixture(name="modules_in_db")
+def modules_in_db_fixture(session: Session, module: Module, module2: Module):
+    session.add(module)
+    session.add(module2)
+    session.commit()
+    return [module, module2]

@@ -4,7 +4,6 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from pydantic_core import ValidationError
 from starlette.middleware.base import BaseHTTPMiddleware
 import src.app.configuration.exception_handler as handler
 import src.app.configuration.exception_handler_admin as handler_admin
@@ -42,7 +41,6 @@ admin.include_router(core_web_router)
 templates = Jinja2Templates(directory=app_folder + "/resources/templates")
 templates.env.globals['_t'] = tr.t
 admin.add_exception_handler(BaseError, handler_admin.base_handler)
-# admin.add_exception_handler(ValidationError, handler_admin.validation_handler)
 add_username_middleware = AddUsernameMiddleware()
 admin.add_middleware(BaseHTTPMiddleware, dispatch=add_username_middleware)
 

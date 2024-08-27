@@ -19,6 +19,15 @@ class LoginResponse(Login):
     pass
 
 
+""" GroupModule """
+
+
+class GroupModule(SQLModel, table=True):
+    __tablename__ = "group_module"
+    group_id: str | None = Field(default=None, primary_key=True, foreign_key="groups.id")
+    module_id: str | None = Field(default=None, primary_key=True, foreign_key="modules.id")
+
+
 """ Group """
 
 
@@ -34,6 +43,8 @@ class GroupBase(GroupSimpleBase):
 class Group(GroupBase, table=True):
     __tablename__ = "groups"
     id: str | None = Field(default=None, primary_key=True)
+
+    modules: list["Module"] = Relationship(back_populates="groups", link_model=GroupModule)
 
 
 class GroupCreateCommand(GroupSimpleBase):
@@ -155,6 +166,33 @@ class UserWebFilter(SQLModel):
         active = None if self.active == "None" else self.active
         is_god = None if self.is_god == "None" else self.is_god
         return UserFilter(target=self.target, active=active, is_god=is_god, group_id=self.group_id)
+
+
+""" Modules """
+
+
+class ModuleBase(SQLModel):
+    code: str = Field(unique=True, min_length=3)
+    webname: str = Field(min_length=3)
+
+
+class Module(ModuleBase, table=True):
+    __tablename__ = "modules"
+    id: str | None = Field(default=None, primary_key=True)
+
+    groups: list[Group] = Relationship(back_populates="modules", link_model=GroupModule)
+
+
+class ModuleCommand(ModuleBase):
+    pass
+
+
+class ModuleResponse(ModuleBase):
+    id: str
+
+
+class ModuleFilter(SQLModel):
+    target: str | None = None
 
 
 """ Statistics """
