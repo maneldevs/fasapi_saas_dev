@@ -44,7 +44,7 @@
       <div class="card-body">
         <h5 class="card-title">{{ _t("modules", request.state.locale )|capitalize }}</h5>
         <h3 class="card-text">{{module_count or 0}}</h3>
-        <a href="#" class="btn btn-outline-secondary"><i class="bi bi-eye"></i></a>
+        <a href="{{ url_for('module_list') }}" class="btn btn-outline-secondary"><i class="bi bi-eye"></i></a>
       </div>
     </div>
   </div>
