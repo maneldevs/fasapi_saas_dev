@@ -90,8 +90,8 @@ async def group_update_modules(
 async def group_update_modules_perform(
     request: Request,
     id: str,
-    module_selected_ids: Annotated[list[str], FForm()],
     service: Annotated[GroupService, Depends()],
+    module_selected_ids: Annotated[list[str], FForm()] = [],
 ):
     try:
         service.update_modules(id, module_selected_ids)
