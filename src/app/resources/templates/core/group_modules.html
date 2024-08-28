@@ -1,0 +1,34 @@
+{% extends 'shared/content.html' %}
+
+{% set current_page = 'groups' %}
+
+{% block title %}
+{{ _t("group", request.state.locale ) | capitalize()}} {{ _t("modules", request.state.locale )}}
+{% endblock title %}
+
+{% block title_right %}
+<button type="submit" form="update-group-modules" class="btn btn-primary">{{ _t("Save", request.state.locale ) }}</button>
+{% endblock title_right %}
+
+{% block main %}
+<form id="update-group-modules" method="post">
+  <div class="row align-items-center mb-3">
+    <div class="col-md-6">
+      <label for="id" class="form-label">id</label>
+      <input type="text" class="form-control" name="id" value="{{id}}" disabled>
+    </div>
+    <div class="col-md-6">
+      <label for="id" class="form-label">{{ _t("webname", request.state.locale )}}</label>
+      <input type="text" class="form-control" name="name" value="{{name}}" disabled>
+    </div>
+  </div>
+  <div class="row mb-4">
+    {% for module in modules %}
+    <div class="col-md-6">
+      <input class="form-check-input me-1" type="checkbox" id="module-{{module.id}}" {{'checked' if module.active }} name="module_selected_ids" value="{{module.id}}">
+      <label class="form-check-label" for="module-{{module.id}}">{{module.webname}}</label>
+    </div>
+    {% endfor %}
+  </div>
+</form>
+{% endblock main %}
