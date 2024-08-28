@@ -63,7 +63,7 @@ class PageParser(Generic[T, U, V]):
         list_target = self.parse_list()
         return PageResponse(page=page, size=size, total=total, content=list_target)
 
-    def generate_web_context(self, page_params: PageParams, total: int, filter: V, msg: str):
+    def generate_web_context(self, page_params: PageParams, total: int, filter: V, msg: str, msg_type: str = "success"):
         list_target = self.parse_list()
         page_response = PageResponse(page=page_params.page, size=page_params.size, total=total, content=list_target)
         context = page_response.model_dump()
@@ -75,5 +75,5 @@ class PageParser(Generic[T, U, V]):
         for k, v in filter_dict.items():
             params += f"&{k}={v}"
         context |= {"query_params": params}
-        context |= {"msg": msg, "type": "success"}
+        context |= {"msg": msg, "type": msg_type}
         return context

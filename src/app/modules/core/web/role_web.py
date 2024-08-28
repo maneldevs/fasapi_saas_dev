@@ -17,11 +17,12 @@ async def role_list(
     filter: Annotated[RoleFilter, Depends()],
     service: Annotated[RoleService, Depends()],
     msg: str = None,
+    type: str = "success"
 ):
     page_params.order_field = "code"
     roles, total = service.read_all_paginated(page_params, filter)
     parser = PageParser(roles, RoleResponse)
-    context = parser.generate_web_context(page_params, total, filter, msg)
+    context = parser.generate_web_context(page_params, total, filter, msg, type)
     return main.templates.TemplateResponse(request=request, name="core/role_list.html", context=context)
 
 
@@ -59,7 +60,6 @@ async def role_update_perform(request: Request, id: str, service: Annotated[Role
 
 @router.post("/delete/{id}")
 async def role_delete_perform(request: Request, id: str, service: Annotated[RoleService, Depends()]):
-    form = Form(request, None, "core/role_list.html")
-    params = context = {"id": id}
-    
-    return await form.perform_operation(service.delete, params, "role_list", context)
+    form = Form(request)
+    params = {"id": id}
+    return await form.perform_delete(service.delete, params, "role_list")

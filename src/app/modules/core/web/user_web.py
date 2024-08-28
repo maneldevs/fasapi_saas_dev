@@ -28,11 +28,12 @@ async def user_list(
     service: Annotated[UserService, Depends()],
     service_group: Annotated[GroupService, Depends()],
     msg: str = None,
+    type: str = "success"
 ):
     page_params.order_field = "username"
     users, total = service.read_all_paginated(page_params, filter.parseToUserFilter())
     parser = PageParser(users, UserResponse)
-    context = parser.generate_web_context(page_params, total, filter, msg)
+    context = parser.generate_web_context(page_params, total, filter, msg, type)
     groups = __fetch_groups(service_group)
     context |= {"groups": groups}
     return main.templates.TemplateResponse(request=request, name="core/user_list.html", context=context)
@@ -105,9 +106,9 @@ async def user_update_perform(
 
 @router.post("/delete/{id}")
 async def user_delete_perform(request: Request, id: str, service: Annotated[UserService, Depends()]):
-    form = Form(request, None, "core/user_list.html")
-    params = context = {"id": id}
-    return await form.perform_operation(service.delete, params, "user_list", context)
+    form = Form(request)
+    params = {"id": id}
+    return await form.perform_delete(service.delete, params, "user_list")
 
 
 def __fetch_groups(service_group: GroupService):

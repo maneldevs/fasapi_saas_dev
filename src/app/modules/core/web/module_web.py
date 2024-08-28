@@ -17,11 +17,12 @@ async def module_list(
     filter: Annotated[ModuleFilter, Depends()],
     service: Annotated[ModuleService, Depends()],
     msg: str = None,
+    type: str = "success"
 ):
     page_params.order_field = "code"
     modules, total = service.read_all_paginated(page_params, filter)
     parser = PageParser(modules, ModuleResponse)
-    context = parser.generate_web_context(page_params, total, filter, msg)
+    context = parser.generate_web_context(page_params, total, filter, msg, type)
     return main.templates.TemplateResponse(request=request, name="core/module_list.html", context=context)
 
 
@@ -59,6 +60,6 @@ async def module_update_perform(request: Request, id: str, service: Annotated[Mo
 
 @router.post("/delete/{id}")
 async def module_delete_perform(request: Request, id: str, service: Annotated[ModuleService, Depends()]):
-    form = Form(request, None, "core/module_list.html")
-    params = context = {"id": id}
-    return await form.perform_operation(service.delete, params, "module_list", context)
+    form = Form(request)
+    params = {"id": id}
+    return await form.perform_delete(service.delete, params, "module_list")

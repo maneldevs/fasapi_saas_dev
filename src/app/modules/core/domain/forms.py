@@ -6,12 +6,13 @@ from sqlmodel import SQLModel
 
 from src.app import main
 from src.app.configuration.lang import tr
+from src.app.modules.core.utils.exceptions import EntityRelationshipExistsError
 
 T = TypeVar("T", bound=SQLModel)
 
 
 class Form(Generic[T]):
-    def __init__(self, request: Request, model_type: Type[T], self_path: str):
+    def __init__(self, request: Request, model_type: Type[T] = None, self_path: str = None):
         self.model_type = model_type
         self.self_path = self_path
         self.request: Request = request
@@ -38,7 +39,7 @@ class Form(Generic[T]):
             for error in errors:
                 errors_dict[error["loc"][0]] = tr.t(error["msg"], self.request.state.locale)
                 context |= {'errors': errors_dict}
-            response = self.generate_error_response(context)
+            response = self.__generate_error_response(context)
         return (command, errors_dict, response, context)
 
     async def perform_operation(self, func: callable, params: dict, redirect_method_name, context={}) -> Response:
@@ -50,9 +51,18 @@ class Form(Generic[T]):
             return RedirectResponse(redirect_ulr, 303)
         except Exception as e:
             context |= {"msg": e.msg, "type": "danger"}
-        return self.generate_error_response(context)
+        return self.__generate_error_response(context)
 
-    def generate_error_response(self, context: dict) -> Response:
+    async def perform_delete(self, func: callable, params: dict, redirect_method_name) -> Response:
+        try:
+            func(**params)
+            params = {"msg": tr.t("Successful operation", self.request.state.locale)}
+        except EntityRelationshipExistsError as e:
+            params = {"msg": tr.t(e.msg, self.request.state.locale), "type": "danger"}
+        redirect_ulr = self.request.url_for(redirect_method_name).include_query_params(**params)
+        return RedirectResponse(redirect_ulr, 303)
+
+    def __generate_error_response(self, context: dict) -> Response:
         return main.templates.TemplateResponse(self.request, name=self.self_path, context=context)
 
 

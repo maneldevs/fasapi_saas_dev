@@ -17,11 +17,12 @@ async def group_list(
     filter: Annotated[GroupFilter, Depends()],
     service: Annotated[GroupService, Depends()],
     msg: str = None,
+    type: str = "success"
 ):
     page_params.order_field = "code"
     groups, total = service.read_all_paginated(page_params, filter)
     parser = PageParser(groups, GroupResponse)
-    context = parser.generate_web_context(page_params, total, filter, msg)
+    context = parser.generate_web_context(page_params, total, filter, msg, type)
     return main.templates.TemplateResponse(request=request, name="core/group_list.html", context=context)
 
 
@@ -59,6 +60,6 @@ async def group_update_perform(request: Request, id: str, service: Annotated[Gro
 
 @router.post("/delete/{id}")
 async def group_delete_perform(request: Request, id: str, service: Annotated[GroupService, Depends()]):
-    form = Form(request, None, "core/group_list.html")
-    params = context = {"id": id}
-    return await form.perform_operation(service.delete, params, "group_list", context)
+    form = Form(request)
+    params = {"id": id}
+    return await form.perform_delete(service.delete, params, "group_list")
