@@ -33,6 +33,11 @@ PUT {{urlBase}}/groups/c998846c-3ee7-435c-9910-fb9b0b5ee372
 ### GROUP - DELETE BY ID
 DELETE {{urlBase}}/groups/419390fd-e26a-461f-80b1-1154ec65a93e
 
+### GROUP - UPDATE MODULES
+PATCH {{urlBase}}/groups/59af182f-0bee-43b9-9f6c-d325691950e2/modules
+
+[ "08100acc-9cbe-4263-b8b3-294976c288c3", "16b6ab5a-a588-4a68-9450-b118c75afa9a" ]
+
 ####################################################### ROLE ###########################################################
 
 ### ROLE - CREATE
@@ -114,7 +119,7 @@ POST {{urlBase}}/modules?locale=en_US
 }
 
 ### MODULE - READ BY ID
-GET {{urlBase}}/modules/5ce115a4-a923-4af7-855b-f8efad8a1015
+GET {{urlBase}}/modules/08100acc-9cbe-4263-b8b3-294976c288c3
 
 ### MODULE - READ INDEX
 GET {{urlBase}}/modules/index

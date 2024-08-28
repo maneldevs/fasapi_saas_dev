@@ -7,7 +7,7 @@ from sqlmodel.sql.expression import SelectOfScalar
 
 from src.app.configuration.database import get_session
 from src.app.modules.core.utils.exceptions import EntityAlreadyExistsError, EntityRelationshipExistsError
-from src.app.modules.core.domain.models import Group, GroupFilter
+from src.app.modules.core.domain.models import Group, GroupFilter, Module
 from src.app.modules.core.utils.paginator import Paginator
 from src.app.modules.core.utils.paginator import PageParams
 
@@ -59,6 +59,13 @@ class GroupRepo:
         group_in_db = self.read_by_id(id)
         if (group_in_db is not None):
             self.__delete(group_in_db)
+        return group_in_db
+
+    def update_modules(self, id: str, modules: list[Module]):
+        group_in_db = self.read_by_id(id)
+        if (group_in_db is not None):
+            group_in_db.modules = modules
+            self.__save(group_in_db)
         return group_in_db
 
     def __apply_filter(self, stmt: SelectOfScalar[Group], filter: GroupFilter):

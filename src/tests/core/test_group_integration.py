@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
 from sqlmodel import Session
 
-from src.app.modules.core.domain.models import Group, GroupCreateCommand, GroupUpdateCommand
+from src.app.modules.core.domain.models import Group, GroupCreateCommand, GroupUpdateCommand, Module, User
 
 BASE_URL: str = "/api/core/groups"
 
@@ -187,6 +187,47 @@ def test_i_delete_group_no_existent(client: TestClient):
     assert response.status_code == 404
 
 
-def test_i_delete_group_with_dependants(client: TestClient):
-    # TODO mmr
-    pass
+def test_i_delete_group_with_dependants(client: TestClient, user_in_db: User):
+    response = client.delete(f"{BASE_URL}/{user_in_db.group.id}")
+    assert response.status_code == 400
+
+
+""" Update modules """
+
+
+def test_i_update_group_modules_happy(
+    client: TestClient, session: Session, group_in_db: Group, modules_in_db: list[Module]
+):
+    body = [module.id for module in modules_in_db]
+    response = client.patch(f"{BASE_URL}/{group_in_db.id}/modules", json=body)
+    data = response.json()
+    group_updated = session.get(Group, group_in_db.id)
+    assert group_updated is not None
+    assert response.status_code == 200
+    assert data["code"] == group_in_db.code
+    assert data["webname"] == group_in_db.webname
+    assert data["active"] == group_in_db.active
+    assert data["id"] == group_in_db.id
+    assert data["code"] == group_updated.code
+    assert data["webname"] == group_updated.webname
+    assert data["active"] == group_updated.active
+    assert data["id"] == group_updated.id
+    assert len(group_updated.modules) == 2
+    assert data["modules"][0]["code"] == modules_in_db[0].code == group_updated.modules[0].code
+    assert data["modules"][0]["webname"] == modules_in_db[0].webname == group_updated.modules[0].webname
+    assert data["modules"][0]["id"] == modules_in_db[0].id == group_updated.modules[0].id
+    assert data["modules"][1]["code"] == modules_in_db[1].code == group_updated.modules[1].code
+    assert data["modules"][1]["webname"] == modules_in_db[1].webname == group_updated.modules[1].webname
+    assert data["modules"][1]["id"] == modules_in_db[1].id == group_updated.modules[1].id
+
+
+def test_i_update_group_modules_group_non_existent(client: TestClient, modules_in_db: list[Module]):
+    body = [module.id for module in modules_in_db]
+    response = client.patch(f"{BASE_URL}/8888/modules", json=body)
+    assert response.status_code == 404
+
+
+def test_i_update_group_modules_with_modules_non_existent(client: TestClient, group_in_db: Group):
+    body = ["abc, def"]
+    response = client.patch(f"{BASE_URL}/{group_in_db.id}/modules", json=body)
+    assert response.status_code == 404

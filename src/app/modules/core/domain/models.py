@@ -65,6 +65,11 @@ class GroupResponse(GroupSimpleResponse):
     active: bool
 
 
+class GroupResponseWithRels(GroupSimpleResponse):
+    active: bool
+    modules: list["ModuleResponse"] | None = None
+
+
 class GroupFilter(SQLModel):
     target: str | None = None
 

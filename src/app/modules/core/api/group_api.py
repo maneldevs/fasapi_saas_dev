@@ -6,6 +6,7 @@ from src.app.modules.core.domain.models import (
     GroupCreateCommand,
     GroupFilter,
     GroupResponse,
+    GroupResponseWithRels,
     GroupSimpleResponse,
     GroupUpdateCommand,
 )
@@ -54,3 +55,9 @@ async def update(id: str, command: GroupUpdateCommand, service: Annotated[GroupS
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete(id: str, service: Annotated[GroupService, Depends()]):
     service.delete(id)
+
+
+@router.patch("/{id}/modules", response_model=GroupResponseWithRels)
+async def update_modules(id: str, command: list[str], service: Annotated[GroupService, Depends()]):
+    group = service.update_modules(id, command)
+    return group

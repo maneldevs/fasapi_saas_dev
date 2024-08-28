@@ -13,7 +13,7 @@ async def base_handler(request: Request, exc: BaseError):
         input = "<empty>"
     detail = {
         "args": exc.original_exception.args if exc.original_exception else "<empty>",
-        "input": input if request.method == "POST" else "<empty>",
+        "input": input if request.method in ["POST", "PUT", "PATCH"] else "<empty>",
     }
     return JSONResponse(
         status_code=exc.status_code,

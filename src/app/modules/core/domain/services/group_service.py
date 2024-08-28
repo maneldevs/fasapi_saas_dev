@@ -3,6 +3,7 @@ from typing import Annotated
 from fastapi import Depends
 
 from src.app.modules.core.domain.dependencies import Locale
+from src.app.modules.core.persistence.module_repo import ModuleRepo
 from src.app.modules.core.utils.exceptions import (
     EntityAlreadyExistsError,
     EntityNotFoundError,
@@ -16,8 +17,11 @@ from src.app.configuration.lang import tr
 
 class GroupService:
 
-    def __init__(self, repo: Annotated[GroupRepo, Depends()], locale: Locale) -> None:
+    def __init__(
+        self, repo: Annotated[GroupRepo, Depends()], module_repo: Annotated[ModuleRepo, Depends()], locale: Locale
+    ) -> None:
         self.repo = repo
+        self.module_repo = module_repo
         self.locale = locale
 
     def create(self, command: GroupCreateCommand) -> Group:
@@ -63,3 +67,15 @@ class GroupService:
         except EntityRelationshipExistsError as e:
             e.msg = tr.t("Entity has dependants", self.locale)
             raise e
+
+    def update_modules(self, id: str, command: list[str]) -> Group:
+        modules = []
+        for module_id in command:
+            module = self.module_repo.read_by_id(module_id)
+            if module is None:
+                raise EntityNotFoundError(msg=tr.t("Not found", self.locale, entity=module_id))
+            modules.append(module)
+        group_updated = self.repo.update_modules(id, modules)
+        if group_updated is None:
+            raise EntityNotFoundError(msg=tr.t("Not found", self.locale, entity=id))
+        return group_updated
