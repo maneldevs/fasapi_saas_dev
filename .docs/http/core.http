@@ -102,13 +102,13 @@ PUT {{urlBase}}/users/784874f7-7abf-431e-a85a-1dfd8096913a
     "active": true,
     "is_god": true,
     "group_id": null,
-    "role_id": "d3bc9238-ca0a-47e7-adfd-f2dcb541e5e6"
+    "role_id": "d3bc9238-ca0a-47e7-adfd-f2dcb541e5e"
 }
 
 ### USER - DELETE BY ID
 DELETE {{urlBase}}/users/5047454c-3e8f-41af-af3d-27cac9ea8123
 
-####################################################### MODULE ###########################################################
+####################################################### MODULE #########################################################
 
 ### MODULE - CREATE
 POST {{urlBase}}/modules?locale=en_US
@@ -137,6 +137,41 @@ PUT {{urlBase}}/modules/5ce115a4-a923-4af7-855b-f8efad8a1015
 
 ### MODULE - DELETE BY ID
 DELETE {{urlBase}}/modules/5ce115a4-a923-4af7-855b-f8efad8a1015
+
+
+####################################################### RESOURCE #######################################################
+
+
+### MODULE RESOURCE - CREATE
+POST {{urlBase}}/modules/08100acc-9cbe-4263-b8b3-294976c288c3/resources
+
+{
+    "code": "MODULE2RESOURCE2"
+}
+
+
+### MODULE RESOURCE - READ INDEX
+
+GET {{urlBase}}/modules/08100acc-9cbe-4263-b8b3-294976c288c3/resources/index
+
+
+### MODULE RESOURCE - READ BY ID
+
+GET {{urlBase}}/resources/7455c736-8866-4a32-aa91-b3bdbbb51b94
+
+
+### MODULE RESOURCE - UPDATE
+PUT {{urlBase}}/resources/7455c736-8866-4a32-aa91-b3bdbbb51b94
+
+{
+    "code": "MODULE2RESOURCE2NEW",
+    "module_id": "08100acc-9cbe-4263-b8b3-294976c288c3"
+}
+
+
+### MODULE RESOURCE - DELETE BY ID
+DELETE {{urlBase}}/resources/7455c736-8866-4a32-aa91-b3bdbbb51b94
+
 
 ####################################################### AUTH ###########################################################
 

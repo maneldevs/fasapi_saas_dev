@@ -186,6 +186,7 @@ class Module(ModuleBase, table=True):
     id: str | None = Field(default=None, primary_key=True)
 
     groups: list[Group] = Relationship(back_populates="modules", link_model=GroupModule)
+    resources: list["Resource"] = Relationship(back_populates="module", cascade_delete=True)
 
 
 class ModuleCommand(ModuleBase):
@@ -198,6 +199,37 @@ class ModuleResponse(ModuleBase):
 
 class ModuleFilter(SQLModel):
     target: str | None = None
+
+
+""" Resources """
+
+
+class ResourceBase(SQLModel):
+    code: str = Field(unique=True, min_length=3)
+
+
+class Resource(ResourceBase, table=True):
+    __tablename__ = "resources"
+    id: str | None = Field(default=None, primary_key=True)
+    module_id: str = Field(foreign_key="modules.id", ondelete="CASCADE")
+    module: Module = Relationship(back_populates="resources")
+
+
+class ResourceCreateCommand(ResourceBase):
+    pass
+
+
+class ResourceUpdateCommand(ResourceBase):
+    module_id: str = Field(min_length=3)
+
+
+class ResourceSimpleResponse(SQLModel):
+    id: str
+    code: str
+
+
+class ResourceResponse(ResourceSimpleResponse):
+    module: ModuleResponse
 
 
 """ Statistics """

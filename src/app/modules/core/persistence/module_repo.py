@@ -75,11 +75,11 @@ class ModuleRepo:
             self.session.refresh(module)
             return module
         except IntegrityError as e:
-            raise EntityRelationshipExistsError(original_exception=e)
+            raise EntityAlreadyExistsError(original_exception=e)
 
     def __delete(self, module):
         try:
             self.session.delete(module)
             self.session.commit()
         except IntegrityError as e:
-            raise EntityAlreadyExistsError(original_exception=e)
+            raise EntityRelationshipExistsError(original_exception=e)

@@ -1,7 +1,14 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, status
 
-from src.app.modules.core.domain.models import ModuleCommand, ModuleFilter, ModuleResponse
+from src.app.modules.core.domain.models import (
+    ModuleCommand,
+    ModuleFilter,
+    ModuleResponse,
+    ResourceCreateCommand,
+    ResourceResponse,
+    ResourceSimpleResponse
+)
 from src.app.modules.core.domain.services.module_service import ModuleService
 from src.app.modules.core.utils.paginator import PageParams, PageParser, PageResponse
 
@@ -47,3 +54,15 @@ async def update(id: str, command: ModuleCommand, service: Annotated[ModuleServi
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete(id: str, service: Annotated[ModuleService, Depends()]):
     service.delete(id)
+
+
+@router.post("/{id}/resources", response_model=ResourceResponse, status_code=status.HTTP_201_CREATED)
+async def create_module_resource(id: str, command: ResourceCreateCommand, service: Annotated[ModuleService, Depends()]):
+    resource = service.create_resource(id, command)
+    return resource
+
+
+@router.get("/{id}/resources/index", response_model=list[ResourceSimpleResponse])
+async def read_module_resources_index(id: str, service: Annotated[ModuleService, Depends()]):
+    resources = service.read_module_resource_index(id)
+    return resources

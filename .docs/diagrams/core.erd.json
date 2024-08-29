@@ -4,8 +4,8 @@
   "settings": {
     "width": 3000,
     "height": 3000,
-    "scrollTop": -1515.6911,
-    "scrollLeft": -719.8005,
+    "scrollTop": -1687.6911,
+    "scrollLeft": -692.8005,
     "zoomLevel": 0.9,
     "show": 508,
     "database": 4,
@@ -61,7 +61,8 @@
     ],
     "indexIds": [],
     "memoIds": [
-      "xNdptckHNzBNzzTTSd243"
+      "xNdptckHNzBNzzTTSd243",
+      "cfaK3Cwz-niH03g_eBahy"
     ]
   },
   "collections": {
@@ -1056,7 +1057,7 @@
         "comment": "",
         "dataType": "VARCHAR",
         "default": "",
-        "options": 8,
+        "options": 0,
         "ui": {
           "keys": 2,
           "widthName": 60,
@@ -1065,7 +1066,7 @@
           "widthDefault": 60
         },
         "meta": {
-          "updateAt": 1722192571613,
+          "updateAt": 1724843582879,
           "createAt": 1722192558097
         }
       },
@@ -1716,7 +1717,7 @@
         "comment": "",
         "dataType": "VARCHAR",
         "default": "",
-        "options": 8,
+        "options": 0,
         "ui": {
           "keys": 2,
           "widthName": 60,
@@ -1725,7 +1726,7 @@
           "widthDefault": 60
         },
         "meta": {
-          "updateAt": 1723105531628,
+          "updateAt": 1724910758327,
           "createAt": 1723105525249
         }
       },
@@ -1923,7 +1924,7 @@
         "id": "_1mmk9L9a9E85awwrrSaC",
         "identification": false,
         "relationshipType": 4,
-        "startRelationshipType": 2,
+        "startRelationshipType": 1,
         "start": {
           "tableId": "v-zhz2SWpCPIAZxclvxmt",
           "columnIds": [
@@ -2091,7 +2092,7 @@
         "id": "Puqz5m8-W_AYas-ARs5Tb",
         "identification": false,
         "relationshipType": 4,
-        "startRelationshipType": 2,
+        "startRelationshipType": 1,
         "start": {
           "tableId": "CuodJEI7LOB1-yKQzwy4Y",
           "columnIds": [
@@ -2155,12 +2156,28 @@
           "y": 1200.2875,
           "zIndex": 511,
           "width": 173,
-          "height": 162,
+          "height": 185,
           "color": ""
         },
         "meta": {
-          "updateAt": 1723739879817,
+          "updateAt": 1724841975458,
           "createAt": 1722671267162
+        }
+      },
+      "cfaK3Cwz-niH03g_eBahy": {
+        "id": "cfaK3Cwz-niH03g_eBahy",
+        "value": "A user is allowed to an api if:\n\n- Has the permission\n       and\n- resource module is enabled in his group\n",
+        "ui": {
+          "x": 628.6676,
+          "y": 921.8793,
+          "zIndex": 515,
+          "width": 225,
+          "height": 100,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1724842070089,
+          "createAt": 1724841980107
         }
       }
     }
@@ -2619,7 +2636,7 @@
       1722192558096,
       -1,
       {
-        "options(notNull)": 1722192558096,
+        "options(notNull)": 1724843582877,
         "name": 1722192571612,
         "dataType": 1722192558096,
         "default": 1722192558096,
@@ -2983,7 +3000,7 @@
       1722671267160,
       -1,
       {
-        "value": 1723739879817
+        "value": 1724841970001
       }
     ],
     "09TZ06SMOAgRS1ILZbLAa": [
@@ -3049,7 +3066,7 @@
       1723105525247,
       -1,
       {
-        "options(notNull)": 1723105525247,
+        "options(notNull)": 1724910758327,
         "name": 1723105531627,
         "dataType": 1723105525247,
         "default": 1723105525247,
@@ -3079,6 +3096,14 @@
       1723105592207,
       -1,
       {}
+    ],
+    "cfaK3Cwz-niH03g_eBahy": [
+      "memoEntities",
+      1724841980106,
+      -1,
+      {
+        "value": 1724842057301
+      }
     ]
   }
 }

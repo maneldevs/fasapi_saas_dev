@@ -3,8 +3,9 @@ from typing import Annotated
 from fastapi import Depends
 
 from src.app.modules.core.domain.dependencies import Locale
-from src.app.modules.core.domain.models import Module, ModuleCommand, ModuleFilter
+from src.app.modules.core.domain.models import (Module, ModuleCommand, ModuleFilter, Resource, ResourceCreateCommand)
 from src.app.modules.core.persistence.module_repo import ModuleRepo
+from src.app.modules.core.persistence.resource_repo import ResourceRepo
 from src.app.modules.core.utils.exceptions import (
     EntityAlreadyExistsError,
     EntityNotFoundError,
@@ -16,8 +17,11 @@ from src.app.modules.core.utils.paginator import PageParams
 
 class ModuleService:
 
-    def __init__(self, repo: Annotated[ModuleRepo, Depends()], locale: Locale) -> None:
+    def __init__(
+        self, repo: Annotated[ModuleRepo, Depends()], resource_repo: Annotated[ResourceRepo, Depends()], locale: Locale
+    ) -> None:
         self.repo = repo
+        self.resource_repo = resource_repo
         self.locale = locale
 
     def create(self, command: ModuleCommand) -> Module:
@@ -63,3 +67,20 @@ class ModuleService:
         except EntityRelationshipExistsError as e:
             e.msg = tr.t("Entity has dependants", self.locale)
             raise e
+
+    def create_resource(self, module_id: str, command: ResourceCreateCommand):
+        try:
+            module = self.read_by_id(module_id)
+            resource_dict = command.model_dump()
+            resource_dict.update({"module": module})
+            resource = Resource(**resource_dict, module_id=module.id)
+            resource = Resource.model_validate(resource)
+            return self.resource_repo.create(resource)
+        except EntityAlreadyExistsError as e:
+            e.msg = tr.t("Already exists", self.locale, entity=command.code)
+            raise e
+
+    def read_module_resource_index(self, module_id: str):
+        module = self.read_by_id(module_id)
+        resources = self.resource_repo.read_all_by_module(module)
+        return resources
