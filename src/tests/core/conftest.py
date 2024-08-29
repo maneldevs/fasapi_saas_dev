@@ -8,6 +8,9 @@ from src.app.modules.core.domain.models import (
     GroupUpdateCommand,
     Module,
     ModuleCommand,
+    Resource,
+    ResourceCreateCommand,
+    ResourceUpdateCommand,
     Role,
     RoleCommand,
     User,
@@ -207,3 +210,44 @@ def modules_in_db_fixture(session: Session, module: Module, module2: Module):
     session.add(module2)
     session.commit()
     return [module, module2]
+
+
+""" Module """
+
+
+@pytest.fixture(name="resource_create_command")
+def resource_create_command_fixture():
+    return ResourceCreateCommand(code="RESOURCE_CHANGED")
+
+
+@pytest.fixture(name="resource_update_command")
+def resource_update_command_fixture():
+    return ResourceUpdateCommand(code="RESOURCE_CHANGED", module_id="abc-123-def-456")
+
+
+@pytest.fixture(name="resource")
+def resource_fixture(module: Module):
+    return Resource(id="abc-123-def-456", code="RESOURCE1", module_id=module.id, module=module)
+
+
+@pytest.fixture(name="resource2")
+def resource2_fixture(module: Module):
+    return Resource(id="ghi-123-jkl-456", code="RESOURCE2", module_id=module.id, module=module)
+
+
+@pytest.fixture(name="resource_in_db")
+def resource_in_db_fixture(session: Session, resource: Resource, module_in_db: Module):
+    resource.module_id = module_in_db.id
+    session.add(resource)
+    session.commit()
+    return resource
+
+
+@pytest.fixture(name="resources_in_db")
+def resources_in_db_fixture(session: Session, resource: Resource, resource2: Resource, module_in_db: Module):
+    resource.module_id = module_in_db.id
+    resource2.module_id = module_in_db.id
+    session.add(resource)
+    session.add(resource2)
+    session.commit()
+    return [resource, resource2]

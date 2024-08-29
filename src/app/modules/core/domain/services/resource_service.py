@@ -23,6 +23,8 @@ class ResourceService:
 
     def read_by_id(self, id: str):
         resource = self.repo.read_by_id(id)
+        if resource is None:
+            raise EntityNotFoundError(msg=tr.t("Not found", self.locale, entity=id))
         return resource
 
     def update(self, id: str, command: ResourceUpdateCommand):

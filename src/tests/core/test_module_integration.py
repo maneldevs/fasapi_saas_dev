@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
 from sqlmodel import Session
 
-from src.app.modules.core.domain.models import Module, ModuleCommand
+from src.app.modules.core.domain.models import Module, ModuleCommand, Resource, ResourceCreateCommand
 
 
 BASE_URL: str = "/api/core/modules"
@@ -172,6 +172,70 @@ def test_i_delete_no_existent(client: TestClient):
     assert response.status_code == 404
 
 
-def test_i_delete_module_with_dependants(client: TestClient):
-    # TODO mmr
-    pass
+def test_i_delete_module_with_dependants_cascade(client: TestClient, session: Session, resource_in_db: Resource):
+    resource_id = resource_in_db.id
+    response = client.delete(f"{BASE_URL}/{resource_in_db.module.id}")
+    resource = session.get(Resource, resource_id)
+    assert response.status_code == 204
+    assert resource is None
+
+
+""" Read resource index """
+
+
+def test_id_read_resource_index_happy(client: TestClient, resources_in_db: list[Resource]):
+    module = resources_in_db[0].module
+    response = client.get(f"{BASE_URL}/{module.id}/resources/index")
+    data = response.json()
+    assert response.status_code == 200
+    assert len(data) == 2
+    assert data[0]["code"] == resources_in_db[0].code
+    assert data[0]["id"] == resources_in_db[0].id
+    assert data[1]["code"] == resources_in_db[1].code
+    assert data[1]["id"] == resources_in_db[1].id
+
+
+def test_id_read_resource_index_none_in_db(client: TestClient, module_in_db: Module):
+    response = client.get(f"{BASE_URL}/{module_in_db.id}/resources/index")
+    data = response.json()
+    assert response.status_code == 200
+    assert len(data) == 0
+
+
+def test_id_read_resource_module_no_exists(client: TestClient, module_in_db: Module):
+    response = client.get(f"{BASE_URL}/888/resources/index")
+    assert response.status_code == 404
+
+
+""" Create resource """
+
+
+def test_i_create_resource_happy(
+    client: TestClient, session: Session, resource_create_command: ResourceCreateCommand, module_in_db: Module
+):
+    body = resource_create_command.model_dump()
+    response = client.post(f"{BASE_URL}/{module_in_db.id}/resources", json=body)
+    data = response.json()
+    created = session.get(Resource, {data["id"]})
+    assert response.status_code == 201
+    assert created is not None
+    assert data["code"] == resource_create_command.code == created.code
+    assert data["id"] == created.id
+    assert data["module"]["id"] == module_in_db.id == created.module.id
+    assert data["module"]["code"] == module_in_db.code == created.module.code
+    assert data["module"]["webname"] == module_in_db.webname == created.module.webname
+
+
+def test_i_create_resource_no_code(
+    client: TestClient, resource_create_command: ResourceCreateCommand, module_in_db: Module
+):
+    resource_create_command.code = None
+    body = resource_create_command.model_dump(exclude_defaults=True)
+    response = client.post(f"{BASE_URL}/{module_in_db.id}/resources", json=body)
+    assert response.status_code == 422
+
+
+def test_i_create_resource_module_no_exists(client: TestClient, resource_create_command: ResourceCreateCommand):
+    body = resource_create_command.model_dump(exclude_defaults=True)
+    response = client.post(f"{BASE_URL}/8888/resources", json=body)
+    assert response.status_code == 404
