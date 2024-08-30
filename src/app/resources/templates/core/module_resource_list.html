@@ -1,0 +1,52 @@
+{% from 'shared/macros/modal_delete.html' import modal_delete with context %}
+{% extends 'shared/content.html' %}
+
+{% set current_page = 'modules' %}
+
+{% block title %}
+{{ module.webname if module else '' }} - {{ _t("resources", request.state.locale )}}
+{% endblock title %}
+
+{% block main %}
+<div class="d-flex mb-3">
+  <div class="flex-grow-1 p-1">
+    <form action="{{ url_for('resource_create_perform', module_id=module.id) }}" method="post"
+      id="create-resource-form">
+      <input type="text" class="form-control form-control-sm {{'is-invalid' if errors and errors.code else ''}}"
+        name="code" required minlength="3">
+    </form>
+  </div>
+  <div class="p-1">
+    <button type="submit" form="create-resource-form" class="btn btn-sm btn-outline-success">
+      <i class="bi bi-plus"></i>
+    </button>
+  </div>
+
+</div>
+
+{% for resource in resources %}
+<div class="d-flex">
+  <div class="flex-grow-1 p-1">
+    <form action="{{ url_for('resource_update_perform', id=resource.id, module_id=module.id) }}" method="post"
+      id="update-resource-form-{{resource.id}}">
+      <input type="text" class="form-control form-control-sm"
+        name="code" value="{{resource.code}}" required minlength="3">
+      <input type="hidden" name="module_id" value="{{resource.module_id}}">
+    </form>
+  </div>
+  <div class="p-1">
+    <button type="submit" form="update-resource-form-{{resource.id}}" class="btn  btn-sm btn-outline-primary">
+      <i class="bi bi-floppy"></i>
+    </button>
+  </div>
+  <div class="p-1">
+    <button class="btn btn-sm btn-outline-danger" data-code="{{resource.code}}" data-id="{{resource.id}}"
+      onclick="openDeleteModal(this)">
+      <i class="bi bi-trash"></i>
+    </button>
+  </div>
+</div>
+{% endfor %}
+{{ modal_delete(_t("Delete", request.state.locale ) + " " + _t("resource", request.state.locale ),
+'resource_delete_perform') }}
+{% endblock main %}

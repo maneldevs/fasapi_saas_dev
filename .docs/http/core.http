@@ -143,10 +143,10 @@ DELETE {{urlBase}}/modules/5ce115a4-a923-4af7-855b-f8efad8a1015
 
 
 ### MODULE RESOURCE - CREATE
-POST {{urlBase}}/modules/08100acc-9cbe-4263-b8b3-294976c288c/resources
+POST {{urlBase}}/modules/08100acc-9cbe-4263-b8b3-294976c288c3/resources
 
 {
-    "code": "MODULE2RESOURCE2"
+    "code": "MODULE2RESOURCE1"
 }
 
 

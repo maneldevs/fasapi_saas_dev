@@ -21,7 +21,7 @@ class ResourceService:
         self.module_repo = module_repo
         self.locale = locale
 
-    def read_by_id(self, id: str):
+    def read_by_id(self, id: str) -> Resource:
         resource = self.repo.read_by_id(id)
         if resource is None:
             raise EntityNotFoundError(msg=tr.t("Not found", self.locale, entity=id))

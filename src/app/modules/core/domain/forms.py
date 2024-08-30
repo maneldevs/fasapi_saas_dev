@@ -38,28 +38,30 @@ class Form(Generic[T]):
             errors = exc.errors()
             for error in errors:
                 errors_dict[error["loc"][0]] = tr.t(error["msg"], self.request.state.locale)
-                context |= {'errors': errors_dict}
+                context |= {"errors": errors_dict}
             response = self.__generate_error_response(context)
         return (command, errors_dict, response, context)
 
-    async def perform_operation(self, func: callable, params: dict, redirect_method_name, context={}) -> Response:
+    async def perform_operation(
+        self, func: callable, params: dict, redirect_method_name, context={}, **url_params
+    ) -> Response:
         try:
             func(**params)
-            redirect_ulr = self.request.url_for(redirect_method_name).include_query_params(
+            redirect_ulr = self.request.url_for(redirect_method_name, **url_params).include_query_params(
                 msg=tr.t("Successful operation", self.request.state.locale)
             )
             return RedirectResponse(redirect_ulr, 303)
         except Exception as e:
-            context |= {"msg": e.msg, "type": "danger"}
+            context |= {"msg": e.msg or None, "type": "danger"}
         return self.__generate_error_response(context)
 
-    async def perform_delete(self, func: callable, params: dict, redirect_method_name) -> Response:
+    async def perform_delete(self, func: callable, params: dict, redirect_method_name, **url_params) -> Response:
         try:
             func(**params)
             params = {"msg": tr.t("Successful operation", self.request.state.locale)}
         except EntityRelationshipExistsError as e:
             params = {"msg": tr.t(e.msg, self.request.state.locale), "type": "danger"}
-        redirect_ulr = self.request.url_for(redirect_method_name).include_query_params(**params)
+        redirect_ulr = self.request.url_for(redirect_method_name, **url_params).include_query_params(**params)
         return RedirectResponse(redirect_ulr, 303)
 
     def __generate_error_response(self, context: dict) -> Response:
@@ -191,4 +193,20 @@ class ModuleForm(Form):
         form = await self.request.form()
         self.code = form.get("code")
         self.webname = form.get("webname")
+        return self.to_dict()
+
+
+""" Resource """
+
+
+class ResourceForm(Form):
+    def __init__(self, request: Request, model_type: Type[T], self_path: str):
+        super().__init__(request, model_type, self_path)
+        self.code: str | None = None
+        self.module_id: str | None = None
+
+    async def load(self) -> dict:
+        form = await self.request.form()
+        self.code = form.get("code")
+        self.module_id = form.get("module_id")
         return self.to_dict()

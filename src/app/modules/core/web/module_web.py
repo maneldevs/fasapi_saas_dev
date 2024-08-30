@@ -17,7 +17,7 @@ async def module_list(
     filter: Annotated[ModuleFilter, Depends()],
     service: Annotated[ModuleService, Depends()],
     msg: str = None,
-    type: str = "success"
+    type: str = "success",
 ):
     page_params.order_field = "code"
     modules, total = service.read_all_paginated(page_params, filter)
@@ -35,7 +35,7 @@ async def module_create(request: Request):
 async def module_create_perform(request: Request, service: Annotated[ModuleService, Depends()]):
     form = ModuleForm(request, ModuleCommand, "core/module_create.html")
     command, errors_dict, response, context = await form.validate()
-    if (errors_dict):
+    if errors_dict:
         return response
     params = {"command": command}
     return await form.perform_operation(service.create, params, "module_list", context)
@@ -51,7 +51,7 @@ async def module_update(request: Request, id: str, service: Annotated[ModuleServ
 async def module_update_perform(request: Request, id: str, service: Annotated[ModuleService, Depends()]):
     form = ModuleForm(request, ModuleCommand, "core/module_update.html")
     command, errors_dict, response, context = await form.validate()
-    if (errors_dict):
+    if errors_dict:
         return response
     params = {"id": id, "command": command}
     context |= {"id": id}
@@ -63,3 +63,14 @@ async def module_delete_perform(request: Request, id: str, service: Annotated[Mo
     form = Form(request)
     params = {"id": id}
     return await form.perform_delete(service.delete, params, "module_list")
+
+
+@router.get("/{id}/resources")
+async def module_resource_list(
+    request: Request, id: str, service: Annotated[ModuleService, Depends()], msg: str = None, type: str = "success"
+):
+    module = service.read_by_id(id)
+    resources = module.resources
+    resources.sort(key=lambda r: r.code)
+    context = {"module": module, "resources": resources, "msg": msg, "type": type}
+    return main.templates.TemplateResponse(request=request, name="core/module_resource_list.html", context=context)

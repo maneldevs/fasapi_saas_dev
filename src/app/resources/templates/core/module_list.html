@@ -41,6 +41,9 @@
         <a class="btn btn-sm btn-outline-primary" href="{{ url_for('module_update', id=item.id) }}">
           <i class="bi bi-pencil"></i>
         </a>
+        <a class="btn btn-sm btn-outline-primary" href="{{ url_for('module_resource_list', id=item.id) }}">
+          <i class="bi bi-star"></i>
+        </a>
         <button class="btn btn-sm btn-outline-danger" data-code="{{item.code}}" data-id="{{item.id}}"
           onclick="openDeleteModal(this)">
           <i class="bi bi-trash"></i>
