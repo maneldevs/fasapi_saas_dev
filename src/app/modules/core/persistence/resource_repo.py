@@ -34,11 +34,11 @@ class ResourceRepo:
             self.__save(resource_in_db)
         return resource_in_db
 
-    def delete(self, id: str) -> Module:
-        module_in_db = self.read_by_id(id)
-        if module_in_db is not None:
-            self.__delete(module_in_db)
-        return module_in_db
+    def delete(self, id: str) -> Resource:
+        resource_in_db = self.read_by_id(id)
+        if resource_in_db is not None:
+            self.__delete(resource_in_db)
+        return resource_in_db
 
     def __save(self, resource: Resource) -> Resource:
         try:

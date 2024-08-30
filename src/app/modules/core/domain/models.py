@@ -1,4 +1,5 @@
 from typing import Optional
+from sqlalchemy import UniqueConstraint
 from sqlmodel import Field, SQLModel, Relationship
 
 
@@ -85,6 +86,7 @@ class RoleBase(SQLModel):
 class Role(RoleBase, table=True):
     __tablename__ = "roles"
     id: str | None = Field(default=None, primary_key=True)
+    permissions: list["Permission"] = Relationship(back_populates="role", cascade_delete=True)
 
 
 class RoleCommand(RoleBase):
@@ -230,6 +232,43 @@ class ResourceSimpleResponse(SQLModel):
 
 class ResourceResponse(ResourceSimpleResponse):
     module: ModuleResponse
+
+
+""" Permissions """
+
+
+class Permission(SQLModel, table=True):
+    __tablename__ = "permissions"
+    __table_args__ = (UniqueConstraint("role_id", "resource_id"),)
+    id: str | None = Field(default=None, primary_key=True)
+    scope: str | None = None
+    scope_owner: str | None = None
+    role_id: str = Field(foreign_key="roles.id", ondelete="CASCADE")
+    resource_id: str = Field(foreign_key="resources.id", ondelete="CASCADE")
+    role: Role = Relationship(back_populates="permissions")
+    resource: Resource = Relationship()
+
+
+class PermissionCreateCommand(SQLModel):
+    scope: str | None = None
+    scope_owner: str | None = None
+    resource_id: str
+
+
+class PermissionUpdateCommand(SQLModel):
+    scope: str | None = None
+    scope_owner: str | None = None
+
+
+class PermissionSimpleResponse(SQLModel):
+    id: str
+    scope: str | None = None
+    scope_owner: str | None = None
+    resource: ResourceResponse
+
+
+class PermissionResponse(PermissionSimpleResponse):
+    role: RoleResponse
 
 
 """ Statistics """

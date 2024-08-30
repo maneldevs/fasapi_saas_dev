@@ -173,6 +173,24 @@ PUT {{urlBase}}/resources/7455c736-8866-4a32-aa91-b3bdbbb51b94
 DELETE {{urlBase}}/resources/7455c736-8866-4a32-aa91-b3bdbbb51b94
 
 
+##################################################### PERMISSION #######################################################
+
+
+### ROLE PERMISSION - CREATE
+POST {{urlBase}}/roles/375fdcab-4027-427d-9e1c-37eb3985cd6f/permissions
+
+{
+    "scope": "CRUD",
+    "scope_owner": "R",
+    "resource_id": "06c98a11-7046-4e70-b843-c66d348cfdc9"
+}
+
+
+### ROLE PERMISSION - READ INDEX
+
+GET {{urlBase}}/roles/375fdcab-4027-427d-9e1c-37eb3985cd6f/permissions/index
+
+
 ####################################################### AUTH ###########################################################
 
 POST {{urlBase}}/auth?locale=es_ES

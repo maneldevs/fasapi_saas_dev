@@ -1,7 +1,14 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, status
 
-from src.app.modules.core.domain.models import RoleCommand, RoleFilter, RoleResponse
+from src.app.modules.core.domain.models import (
+    PermissionCreateCommand,
+    PermissionResponse,
+    PermissionSimpleResponse,
+    RoleCommand,
+    RoleFilter,
+    RoleResponse,
+)
 from src.app.modules.core.domain.services.role_service import RoleService
 from src.app.modules.core.utils.paginator import PageParams, PageParser, PageResponse
 
@@ -47,3 +54,15 @@ async def update(id: str, command: RoleCommand, service: Annotated[RoleService, 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete(id: str, service: Annotated[RoleService, Depends()]):
     service.delete(id)
+
+
+@router.post("/{id}/permissions", response_model=PermissionResponse, status_code=status.HTTP_201_CREATED)
+async def create_role_permission(id: str, command: PermissionCreateCommand, service: Annotated[RoleService, Depends()]):
+    permission = service.create_permission(id, command)
+    return permission
+
+
+@router.get("/{id}/permissions/index", response_model=list[PermissionSimpleResponse])
+async def read_role_permissions_index(id: str, service: Annotated[RoleService, Depends()]):
+    permissions = service.read_role_permission_index(id)
+    return permissions
