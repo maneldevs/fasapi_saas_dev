@@ -62,9 +62,9 @@ class Form(Generic[T]):
             if self.model_type is not None:
                 command = self.model_type.model_validate(await self.load())
         except ValidationError as exc:
-            errors = exc.errors()
+            errors = tr.t_errors(exc.errors(), self.request.state.locale)
             for error in errors:
-                errors_dict[error["loc"][0]] = tr.t(error["msg"], self.request.state.locale)
+                errors_dict[error["loc"][0]] = error["msg"]
             self.flash_validation_errors(errors_dict)
             self.flash_form_values(self.to_dict())
             redirect_ulr = self.request.url_for(method_nok, **method_nok_params)

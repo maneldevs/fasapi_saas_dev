@@ -24,19 +24,19 @@
   <div class="row g-3 mb-3">
     <div class="mb-2 col-md-6">
       {{ form_control(_t("username", request.state.locale), "text", errors.username if errors and errors.username else
-      None, "username", values.username or username, true) }}
+      None, "username", (values.username if errors else username), true) }}
     </div>
     <div class="mb-2 col-md-6">
       {{ form_control(_t("password", request.state.locale), "password", errors.password_raw if errors and
-      errors.password_raw else None, "password_raw", values.password_raw or password_raw, true) }}
+      errors.password_raw else None, "password_raw", (values.password_raw if errors else password_raw), true) }}
     </div>
     <div class="mb-2 col-md-6">
       {{ form_control(_t("firstname", request.state.locale), "text", errors.firstname if errors and errors.firstname
-      else None, "firstname", values.firstname or firstname) }}
+      else None, "firstname", (values.firstname if errors else firstname)) }}
     </div>
     <div class="mb-2 col-md-6">
       {{ form_control(_t("lastname", request.state.locale), "text", errors.lastname if errors and errors.lastname else
-      None, "lastname", values.lastname or lastname) }}
+      None, "lastname", (values.lastname if errors else lastname)) }}
     </div>
     <div class="mb-2 col-md-6">
       <label class="form-label">{{ _t("group", request.state.locale) }}</label>
