@@ -28,7 +28,7 @@ async def user_list(
     service: Annotated[UserService, Depends()],
     service_group: Annotated[GroupService, Depends()],
     msg: str = None,
-    type: str = "success"
+    type: str = "success",
 ):
     page_params.order_field = "username"
     users, total = service.read_all_paginated(page_params, filter.parseToUserFilter())
@@ -63,7 +63,7 @@ async def user_create_perform(
     roles = __fetch_roles(service_role)
     context = {"groups": groups, "roles": roles}
     command, errors_dict, response, context = await form.validate(context)
-    if (errors_dict):
+    if errors_dict:
         return response
     params = {"command": command}
     return await form.perform_operation(service.create, params, "user_list", context)
@@ -85,23 +85,35 @@ async def user_update(
     return main.templates.TemplateResponse(request=request, name="core/user_update.html", context=context)
 
 
+# @router.post("/update/{id}")
+# async def user_update_perform(
+#     request: Request,
+#     id: str,
+#     service: Annotated[UserService, Depends()],
+#     service_group: Annotated[GroupService, Depends()],
+#     service_role: Annotated[RoleService, Depends()],
+# ):
+#     form = UserUpdateForm(request, UserUpdateCommand, "core/user_update.html")
+#     groups = __fetch_groups(service_group)
+#     roles = __fetch_roles(service_role)
+#     context = {"id": id, "groups": groups, "roles": roles}
+#     command, errors_dict, response, context = await form.validate(context)
+#     if (errors_dict):
+#         return response
+#     params = {"id": id, "command": command}
+#     return await form.perform_operation(service.update, params, "user_list", context)
+
+
 @router.post("/update/{id}")
-async def user_update_perform(
-    request: Request,
-    id: str,
-    service: Annotated[UserService, Depends()],
-    service_group: Annotated[GroupService, Depends()],
-    service_role: Annotated[RoleService, Depends()],
-):
-    form = UserUpdateForm(request, UserUpdateCommand, "core/user_update.html")
-    groups = __fetch_groups(service_group)
-    roles = __fetch_roles(service_role)
-    context = {"id": id, "groups": groups, "roles": roles}
-    command, errors_dict, response, context = await form.validate(context)
-    if (errors_dict):
+async def user_update_perform(request: Request, id: str, service: Annotated[UserService, Depends()]):
+    form = UserUpdateForm(request, UserUpdateCommand)
+    command, errors_dict, response = await form.perform_validation("user_update_perform", {"id": id})
+    if errors_dict:
         return response
     params = {"id": id, "command": command}
-    return await form.perform_operation(service.update, params, "user_list", context)
+    return await form.perform_action(
+        lambda: service.update(**params), "user_list", {}, "user_update_perform", {"id": id}
+    )
 
 
 @router.post("/delete/{id}")

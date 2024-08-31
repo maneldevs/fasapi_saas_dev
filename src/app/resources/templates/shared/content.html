@@ -1,5 +1,9 @@
 {% extends 'shared/base.html' %}
 
+{% set message = unflash_message(request) %}
+{% set msg = message.msg if message %}
+{% set type = message.type if message %}
+
 {% block content %}
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-2">
   <div class="container-fluid">

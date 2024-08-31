@@ -5,9 +5,11 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.middleware.sessions import SessionMiddleware
 import src.app.configuration.exception_handler as handler
 import src.app.configuration.exception_handler_admin as handler_admin
 from src.app.modules.core.domain.dependencies import get_locale
+from src.app.modules.core.domain.forms import Form
 from src.app.modules.core.utils.exceptions import BaseError
 from src.app.modules.core.api import router as core_router
 from src.app.modules.core.utils.middleware import AddUsernameMiddleware
@@ -40,7 +42,11 @@ app.mount("/admin", admin)
 admin.include_router(core_web_router)
 templates = Jinja2Templates(directory=app_folder + "/resources/templates")
 templates.env.globals['_t'] = tr.t
+templates.env.globals['unflash_message'] = Form.unflash_message
+templates.env.globals['unflash_validation_errors'] = Form.unflash_validation_errors
+templates.env.globals['unflash_form_values'] = Form.unflash_form_values
 admin.add_exception_handler(BaseError, handler_admin.base_handler)
+admin.add_middleware(SessionMiddleware, secret_key="random-string-13579")
 add_username_middleware = AddUsernameMiddleware()
 admin.add_middleware(BaseHTTPMiddleware, dispatch=add_username_middleware)
 

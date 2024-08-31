@@ -23,9 +23,68 @@ class Form(Generic[T]):
         return self.to_dict()
 
     def to_dict(self) -> dict:
-        return self.__dict__
+        return {k: v for k, v in self.__dict__.items() if k not in ["request", "model_type", "self_path", "errors"]}
 
-    async def validate(self, extra_context={}) -> tuple[SQLModel, dict[str, str], Response, dict]:
+    def flash_message(self, msg: str, type: str) -> None:
+        self.__flash(message={"msg": msg, "type": type})
+
+    def flash_validation_errors(self, errors: dict) -> None:
+        self.__flash(errors=errors)
+
+    def flash_form_values(self, values: dict) -> None:
+        self.__flash(form_values=values)
+
+    def unflash(self):
+        print(self.request.session)
+        flash_keys = [k for k in self.request.session if "flash_" in k]
+        for k in flash_keys:
+            self.request.session.pop(k)
+
+    @staticmethod
+    def unflash_message(request: Request) -> dict[str, str]:
+        return request.session.pop("flash_message", None)
+
+    @staticmethod
+    def unflash_validation_errors(request: Request) -> dict[str, str]:
+        return request.session.pop("flash_errors", None)
+
+    @staticmethod
+    def unflash_form_values(request: Request) -> dict[str, str]:
+        return request.session.pop("flash_form_values", None)
+
+    async def perform_validation(
+        self, method_nok: str, method_nok_params: dict
+    ) -> tuple[SQLModel, dict[str, str], Response]:
+        command = None
+        errors_dict = {}
+        response = None
+        try:
+            if self.model_type is not None:
+                command = self.model_type.model_validate(await self.load())
+        except ValidationError as exc:
+            errors = exc.errors()
+            for error in errors:
+                errors_dict[error["loc"][0]] = tr.t(error["msg"], self.request.state.locale)
+            self.flash_validation_errors(errors_dict)
+            self.flash_form_values(self.to_dict())
+            redirect_ulr = self.request.url_for(method_nok, **method_nok_params)
+            response = RedirectResponse(redirect_ulr, 303)
+        return (command, errors_dict, response)
+
+    async def perform_action(
+        self, func: callable, method_ok: str, method_ok_params: dict, method_nok: str, method_nok_params: dict
+    ) -> Response:
+        try:
+            func()
+            redirect_ulr = self.request.url_for(method_ok, **method_ok_params)
+            self.flash_message(tr.t("Successful operation", self.request.state.locale), "success")
+        except Exception as e:
+            redirect_ulr = self.request.url_for(method_nok, **method_nok_params)
+            self.flash_message(tr.t(e.msg, self.request.state.locale) if e.msg else None, "danger")
+            self.flash_form_values(self.to_dict())
+        return RedirectResponse(redirect_ulr, 303)
+
+    async def validate(self, extra_context={}) -> tuple[SQLModel, dict[str, str], Response, dict]:  # original
         context = await self.load()
         context |= extra_context
         errors_dict = {}
@@ -42,7 +101,7 @@ class Form(Generic[T]):
             response = self.__generate_error_response(context)
         return (command, errors_dict, response, context)
 
-    async def perform_operation(
+    async def perform_operation(  # original
         self, func: callable, params: dict, redirect_method_name, context={}, **url_params
     ) -> Response:
         try:
@@ -66,6 +125,10 @@ class Form(Generic[T]):
 
     def __generate_error_response(self, context: dict) -> Response:
         return main.templates.TemplateResponse(self.request, name=self.self_path, context=context)
+
+    def __flash(self, **kwargs) -> None:
+        for k, v in kwargs.items():
+            self.request.session["flash_" + k] = v
 
 
 """ Auth """
@@ -101,7 +164,7 @@ class GroupCreateForm(Form):
 
 
 class GroupUpdateForm(Form):
-    def __init__(self, request: Request, model_type: Type[T], self_path: str):
+    def __init__(self, request: Request, model_type: Type[T], self_path: str = None):
         super().__init__(request, model_type, self_path)
         self.code: str | None = None
         self.webname: str | None = None
@@ -156,7 +219,7 @@ class UserCreateForm(Form):
 
 
 class UserUpdateForm(Form):
-    def __init__(self, request: Request, model_type: Type[T], self_path: str):
+    def __init__(self, request: Request, model_type: Type[T], self_path: str = None):
         super().__init__(request, model_type, self_path)
         self.username: str
         self.password_raw: str | None

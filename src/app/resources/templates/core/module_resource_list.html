@@ -8,6 +8,8 @@
 {% endblock title %}
 
 {% block main %}
+{% set message_dict = unflash_message(request) %}
+{% set errors_dict = unflash_validation_errors(request) %}
 <div class="d-flex mb-3">
   <div class="flex-grow-1 p-1">
     <form action="{{ url_for('resource_create_perform', module_id=module.id) }}" method="post"

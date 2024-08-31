@@ -43,6 +43,10 @@ async def resource_update_perform(
     resources_copy = [r.__class__(**r.model_dump()) for r in resources]
     context = {"module": module_copy, "resources": resources_copy}
     form = ResourceForm(request, ResourceUpdateCommand, "core/module_resource_list.html")
+    # form.flash_message("todo ok", "success")
+    # form.flash_validation_errors({"error1": "error1v", "error2": "error2v"})
+    # message = Form.unflash_message(request)
+    # errs = Form.unflash_validation_errors(request)
     command, errors_dict, response, context = await form.validate(context)
     if errors_dict:
         return response

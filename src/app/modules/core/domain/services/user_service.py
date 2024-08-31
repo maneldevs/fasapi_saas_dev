@@ -66,7 +66,7 @@ class UserService:
                 raise EntityNotFoundError(msg=tr.t("Not found", self.locale, entity=id))
             return user_updated
         except EntityAlreadyExistsError as e:
-            e.msg = "User code already exists"
+            e.msg = tr.t("Already exists", self.locale, entity=command.username)
             raise e
 
     def delete(self, id: str) -> None:
