@@ -52,6 +52,14 @@ class Form(Generic[T]):
     def unflash_form_values(request: Request) -> dict[str, str]:
         return request.session.pop("flash_form_values", None)
 
+    @staticmethod
+    def unflash_all(request: Request) -> dict[str, any]:
+        message = Form.unflash_message(request)
+        errors = Form.unflash_validation_errors(request)
+        values = Form.unflash_form_values(request)
+        has_error = True if errors or (message and message["type"]) == "danger" else False
+        return {"f_message": message, "f_errors": errors, "f_values": values, "f_has_error": has_error}
+
     async def perform_validation(
         self, method_nok: str, method_nok_params: dict
     ) -> tuple[SQLModel, dict[str, str], Response]:
@@ -84,7 +92,7 @@ class Form(Generic[T]):
             self.flash_form_values(self.to_dict())
         return RedirectResponse(redirect_ulr, 303)
 
-    async def validate(self, extra_context={}) -> tuple[SQLModel, dict[str, str], Response, dict]:  # original
+    async def validate(self, extra_context={}) -> tuple[SQLModel, dict[str, str], Response, dict]:  # remove
         context = await self.load()
         context |= extra_context
         errors_dict = {}
@@ -101,7 +109,7 @@ class Form(Generic[T]):
             response = self.__generate_error_response(context)
         return (command, errors_dict, response, context)
 
-    async def perform_operation(  # original
+    async def perform_operation(  # remove
         self, func: callable, params: dict, redirect_method_name, context={}, **url_params
     ) -> Response:
         try:
@@ -114,7 +122,7 @@ class Form(Generic[T]):
             context |= {"msg": e.msg or None, "type": "danger"}
         return self.__generate_error_response(context)
 
-    async def perform_delete(self, func: callable, params: dict, redirect_method_name, **url_params) -> Response:
+    async def perform_delete(self, func: callable, params: dict, redirect_method_name, **url_params) -> Response:  # remove
         try:
             func(**params)
             params = {"msg": tr.t("Successful operation", self.request.state.locale)}
@@ -123,7 +131,7 @@ class Form(Generic[T]):
         redirect_ulr = self.request.url_for(redirect_method_name, **url_params).include_query_params(**params)
         return RedirectResponse(redirect_ulr, 303)
 
-    def __generate_error_response(self, context: dict) -> Response:
+    def __generate_error_response(self, context: dict) -> Response:  # remove
         return main.templates.TemplateResponse(self.request, name=self.self_path, context=context)
 
     def __flash(self, **kwargs) -> None:
@@ -198,7 +206,7 @@ class RoleForm(Form):
 
 
 class UserCreateForm(Form):
-    def __init__(self, request: Request, model_type: Type[T], self_path: str):
+    def __init__(self, request: Request, model_type: Type[T], self_path: str = None):
         super().__init__(request, model_type, self_path)
         self.username: str
         self.password_raw: str

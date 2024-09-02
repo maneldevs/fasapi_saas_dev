@@ -51,22 +51,32 @@ async def user_create(
     return main.templates.TemplateResponse(request=request, name="core/user_create.html", context=context)
 
 
+# @router.post("/create")
+# async def user_create_perform(
+#     request: Request,
+#     service: Annotated[UserService, Depends()],
+#     service_group: Annotated[GroupService, Depends()],
+#     service_role: Annotated[RoleService, Depends()],
+# ):
+#     form = UserCreateForm(request, UserCreateCommand, "core/user_create.html")
+#     groups = __fetch_groups(service_group)
+#     roles = __fetch_roles(service_role)
+#     context = {"groups": groups, "roles": roles}
+#     command, errors_dict, response, context = await form.validate(context)
+#     if errors_dict:
+#         return response
+#     params = {"command": command}
+#     return await form.perform_operation(service.create, params, "user_list", context)
+
+
 @router.post("/create")
-async def user_create_perform(
-    request: Request,
-    service: Annotated[UserService, Depends()],
-    service_group: Annotated[GroupService, Depends()],
-    service_role: Annotated[RoleService, Depends()],
-):
-    form = UserCreateForm(request, UserCreateCommand, "core/user_create.html")
-    groups = __fetch_groups(service_group)
-    roles = __fetch_roles(service_role)
-    context = {"groups": groups, "roles": roles}
-    command, errors_dict, response, context = await form.validate(context)
+async def user_create_perform(request: Request, service: Annotated[UserService, Depends()]):
+    form = UserCreateForm(request, UserCreateCommand)
+    command, errors_dict, response = await form.perform_validation("user_create_perform", {})
     if errors_dict:
         return response
     params = {"command": command}
-    return await form.perform_operation(service.create, params, "user_list", context)
+    return await form.perform_action(lambda: service.create(**params), "user_list", {}, "user_create_perform", {})
 
 
 @router.get("/update/{id}")
@@ -120,7 +130,8 @@ async def user_update_perform(request: Request, id: str, service: Annotated[User
 async def user_delete_perform(request: Request, id: str, service: Annotated[UserService, Depends()]):
     form = Form(request)
     params = {"id": id}
-    return await form.perform_delete(service.delete, params, "user_list")
+    # return await form.perform_delete(service.delete, params, "user_list")
+    return await form.perform_action(lambda: service.delete(**params), "user_list", {}, "user_list", {})
 
 
 def __fetch_groups(service_group: GroupService):

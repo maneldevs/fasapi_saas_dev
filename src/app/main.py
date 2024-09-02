@@ -45,6 +45,7 @@ templates.env.globals['_t'] = tr.t
 templates.env.globals['unflash_message'] = Form.unflash_message
 templates.env.globals['unflash_validation_errors'] = Form.unflash_validation_errors
 templates.env.globals['unflash_form_values'] = Form.unflash_form_values
+templates.env.globals['unflash_all'] = Form.unflash_all
 admin.add_exception_handler(BaseError, handler_admin.base_handler)
 admin.add_middleware(SessionMiddleware, secret_key="random-string-13579")
 add_username_middleware = AddUsernameMiddleware()

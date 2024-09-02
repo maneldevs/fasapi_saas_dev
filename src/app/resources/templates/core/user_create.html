@@ -16,26 +16,26 @@
     <div class="row g-3">
         <div class="mb-2 col-md-6">
             {{ form_control(_t("username", request.state.locale), "text", errors.username if errors and errors.username else None, "username",
-            username, true) }}
+            (values.username if has_error else username), true) }}
         </div>
         <div class="mb-2 col-md-6">
             {{ form_control(_t("password", request.state.locale), "password", errors.password_raw if errors and errors.password_raw else None,
-            "password_raw", password_raw, true) }}
+            "password_raw", (values.password_raw if has_error else password_raw), true) }}
         </div>
         <div class="mb-2 col-md-6">
             {{ form_control(_t("firstname", request.state.locale), "text", errors.firstname if errors and errors.firstname else None, "firstname",
-            firstname) }}
+            (values.firstname if has_error else firstname)) }}
         </div>
         <div class="mb-2 col-md-6">
             {{ form_control(_t("lastname", request.state.locale), "text", errors.lastname if errors and errors.lastname else None, "lastname",
-            lastname) }}
+            (values.lastname if has_error else lastname)) }}
         </div>
         <div class="mb-2 col-md-6">
             <label class="form-label">{{ _t("group", request.state.locale) }}</label>
             <select class="form-select" name="group_id">
                 <option value="{{null}}"></option>
                 {% for g in groups %}
-                <option value="{{g.id}}" {{'selected' if g.id==group_id}}>{{ g.code + ' - ' + g.webname }}</option>
+                <option value="{{g.id}}" {{'selected' if g.id==(values.group_id if has_error else group_id)}}>{{ g.code + ' - ' + g.webname }}</option>
                 {% endfor %}
             </select>
         </div>
@@ -44,7 +44,7 @@
             <select class="form-select" name="role_id">
                 <option value="{{null}}"></option>
                 {% for r in roles %}
-                <option value="{{r.id}}" {{'selected' if r.id==role_id}}>{{ r.code + ' - ' + r.webname }}</option>
+                <option value="{{r.id}}" {{'selected' if r.id==(values.role_id if has_error else role_id)}}>{{ r.code + ' - ' + r.webname }}</option>
                 {% endfor %}
             </select>
         </div>
