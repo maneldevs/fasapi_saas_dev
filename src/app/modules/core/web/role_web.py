@@ -33,12 +33,12 @@ async def role_create(request: Request):
 
 @router.post("/create")
 async def role_create_perform(request: Request, service: Annotated[RoleService, Depends()]):
-    form = RoleForm(request, RoleCommand, "core/role_create.html")
-    command, errors_dict, response, context = await form.validate()
-    if (errors_dict):
+    form = RoleForm(request, RoleCommand)
+    command, errors_dict, response = await form.perform_validation("role_create_perform", {})
+    if errors_dict:
         return response
     params = {"command": command}
-    return await form.perform_operation(service.create, params, "role_list", context)
+    return await form.perform_action(lambda: service.create(**params), "role_list", {}, "role_create_perform", {})
 
 
 @router.get("/update/{id}")
@@ -49,17 +49,18 @@ async def role_update(request: Request, id: str, service: Annotated[RoleService,
 
 @router.post("/update/{id}")
 async def role_update_perform(request: Request, id: str, service: Annotated[RoleService, Depends()]):
-    form = RoleForm(request, RoleCommand, "core/role_update.html")
-    command, errors_dict, response, context = await form.validate()
-    if (errors_dict):
+    form = RoleForm(request, RoleCommand)
+    command, errors_dict, response = await form.perform_validation("role_update_perform", {"id": id})
+    if errors_dict:
         return response
     params = {"id": id, "command": command}
-    context |= {"id": id}
-    return await form.perform_operation(service.update, params, "role_list", context)
+    return await form.perform_action(
+        lambda: service.update(**params), "role_list", {}, "role_update_perform", {"id": id}
+    )
 
 
 @router.post("/delete/{id}")
 async def role_delete_perform(request: Request, id: str, service: Annotated[RoleService, Depends()]):
     form = Form(request)
     params = {"id": id}
-    return await form.perform_delete(service.delete, params, "role_list")
+    return await form.perform_action(lambda: service.delete(**params), "role_list", {}, "role_list", {})

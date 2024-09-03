@@ -1,4 +1,5 @@
 {% from 'shared/macros/modal_delete.html' import modal_delete with context %}
+{% from 'shared/macros/paginator.html' import paginator with context %}
 {% extends 'shared/content.html' %}
 
 {% set current_page = 'modules' %}
@@ -7,48 +8,40 @@
 {{ module.webname if module else '' }} - {{ _t("resources", request.state.locale )}}
 {% endblock title %}
 
+{% block title_right %}
+<a class="btn btn-success" href="{{ url_for('module_resource_create', id=module.id) }}">
+  {{ _t("Create", request.state.locale )}} {{ _t("resource", request.state.locale )}}
+</a>
+{% endblock title_right %}
+
 {% block main %}
-{% set message_dict = unflash_message(request) %}
-{% set errors_dict = unflash_validation_errors(request) %}
-<div class="d-flex mb-3">
-  <div class="flex-grow-1 p-1">
-    <form action="{{ url_for('resource_create_perform', module_id=module.id) }}" method="post"
-      id="create-resource-form">
-      <input type="text" class="form-control form-control-sm {{'is-invalid' if errors and errors.code else ''}}"
-        name="code" required minlength="3">
-    </form>
-  </div>
-  <div class="p-1">
-    <button type="submit" form="create-resource-form" class="btn btn-sm btn-outline-success">
-      <i class="bi bi-plus"></i>
-    </button>
-  </div>
-
+<div class="table-responsive"></div>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">{{ _t("code", request.state.locale) }}</th>
+      <th scope="col" class="text-end"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in resources %}
+    <tr>
+      <td>{{ item.code }}</td>
+      <td class="text-end">
+        <a class="btn btn-sm btn-outline-primary" href="{{ url_for('module_resource_update', id=item.id) }}">
+          <i class="bi bi-pencil"></i>
+        </a>
+        <button class="btn btn-sm btn-outline-danger" data-code="{{item.code}}" data-id="{{item.id}}"
+          onclick="openDeleteModal(this)">
+          <i class="bi bi-trash"></i>
+        </button>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{{ paginator(total, size) }}
 </div>
-
-{% for resource in resources %}
-<div class="d-flex">
-  <div class="flex-grow-1 p-1">
-    <form action="{{ url_for('resource_update_perform', id=resource.id, module_id=module.id) }}" method="post"
-      id="update-resource-form-{{resource.id}}">
-      <input type="text" class="form-control form-control-sm"
-        name="code" value="{{resource.code}}" required minlength="3">
-      <input type="hidden" name="module_id" value="{{resource.module_id}}">
-    </form>
-  </div>
-  <div class="p-1">
-    <button type="submit" form="update-resource-form-{{resource.id}}" class="btn  btn-sm btn-outline-primary">
-      <i class="bi bi-floppy"></i>
-    </button>
-  </div>
-  <div class="p-1">
-    <button class="btn btn-sm btn-outline-danger" data-code="{{resource.code}}" data-id="{{resource.id}}"
-      onclick="openDeleteModal(this)">
-      <i class="bi bi-trash"></i>
-    </button>
-  </div>
-</div>
-{% endfor %}
 {{ modal_delete(_t("Delete", request.state.locale ) + " " + _t("resource", request.state.locale ),
 'resource_delete_perform') }}
 {% endblock main %}

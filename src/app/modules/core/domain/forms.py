@@ -143,7 +143,7 @@ class Form(Generic[T]):
 
 
 class LoginForm(Form):
-    def __init__(self, request: Request, model_type: Type[T], self_path: str):
+    def __init__(self, request: Request, model_type: Type[T], self_path: str = None):
         super().__init__(request, model_type, self_path)
         self.username = str
         self.password = str
@@ -159,7 +159,7 @@ class LoginForm(Form):
 
 
 class GroupCreateForm(Form):
-    def __init__(self, request: Request, model_type: Type[T], self_path: str):
+    def __init__(self, request: Request, model_type: Type[T], self_path: str = None):
         super().__init__(request, model_type, self_path)
         self.code: str | None = None
         self.webname: str | None = None
@@ -190,7 +190,7 @@ class GroupUpdateForm(Form):
 
 
 class RoleForm(Form):
-    def __init__(self, request: Request, model_type: Type[T], self_path: str):
+    def __init__(self, request: Request, model_type: Type[T], self_path: str = None):
         super().__init__(request, model_type, self_path)
         self.code: str | None = None
         self.webname: str | None = None
@@ -255,7 +255,7 @@ class UserUpdateForm(Form):
 
 
 class ModuleForm(Form):
-    def __init__(self, request: Request, model_type: Type[T], self_path: str):
+    def __init__(self, request: Request, model_type: Type[T], self_path: str = None):
         super().__init__(request, model_type, self_path)
         self.code: str | None = None
         self.webname: str | None = None
@@ -271,7 +271,7 @@ class ModuleForm(Form):
 
 
 class ResourceForm(Form):
-    def __init__(self, request: Request, model_type: Type[T], self_path: str):
+    def __init__(self, request: Request, model_type: Type[T], self_path: str = None):
         super().__init__(request, model_type, self_path)
         self.code: str | None = None
         self.module_id: str | None = None

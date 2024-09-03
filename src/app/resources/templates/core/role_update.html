@@ -21,10 +21,10 @@
   </div>
   <div class="row g-3 mb-4">
     <div class="col-md-6">
-      {{ form_control(_t("code", request.state.locale ), "text", errors.code if errors and errors.code else None, "code", code, true) }}
+      {{ form_control(_t("code", request.state.locale ), "text", errors.code if errors and errors.code else None, "code", (values.code if has_error else code), true) }}
     </div>
     <div class="col-md-6">
-      {{ form_control(_t("webname", request.state.locale ), "text", errors.webname if errors and errors.webname else None, "webname", webname, true) }}
+      {{ form_control(_t("webname", request.state.locale ), "text", errors.webname if errors and errors.webname else None, "webname", (values.webname if has_error else webname), true) }}
     </div>
   </div>
 </form>
