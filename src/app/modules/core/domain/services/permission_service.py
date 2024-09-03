@@ -1,17 +1,24 @@
-class PermissionService:
-    pass
-    # def __init__(
-    #     self, repo: Annotated[ResourceRepo, Depends()], module_repo: Annotated[ModuleRepo, Depends()], locale: Locale
-    # ) -> None:
-    #     self.repo = repo
-    #     self.module_repo = module_repo
-    #     self.locale = locale
+from typing import Annotated
 
-    # def read_by_id(self, id: str) -> Resource:
-    #     resource = self.repo.read_by_id(id)
-    #     if resource is None:
-    #         raise EntityNotFoundError(msg=tr.t("Not found", self.locale, entity=id))
-    #     return resource
+from fastapi import Depends
+from src.app.modules.core.domain.dependencies import Locale
+from src.app.modules.core.domain.models import Permission
+from src.app.modules.core.persistence.permission_repo import PermissionRepo
+from src.app.modules.core.utils.exceptions import EntityNotFoundError
+from src.app.configuration.lang import tr
+
+
+class PermissionService:
+
+    def __init__(self, repo: Annotated[PermissionRepo, Depends()], locale: Locale) -> None:
+        self.repo = repo
+        self.locale = locale
+
+    def read_by_id(self, id: str) -> Permission:
+        permission = self.repo.read_by_id(id)
+        if permission is None:
+            raise EntityNotFoundError(msg=tr.t("Not found", self.locale, entity=id))
+        return permission
 
     # def update(self, id: str, command: ResourceUpdateCommand):
     #     try:

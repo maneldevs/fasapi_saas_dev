@@ -151,12 +151,10 @@ POST {{urlBase}}/modules/08100acc-9cbe-4263-b8b3-294976c288c3/resources?locale=e
 
 
 ### MODULE RESOURCE - READ INDEX
-
-GET {{urlBase}}/modules/08100acc-9cbe-4263-b8b3-294976c288c3/resources/index
+GET {{urlBase}}/modules/ed6fe0a4-0f73-48cb-a0db-70db6722e80d/resources/index
 
 
 ### MODULE RESOURCE - READ BY ID
-
 GET {{urlBase}}/resources/7455c736-8866-4a32-aa91-b3bdbbb51b94
 
 
@@ -182,7 +180,7 @@ POST {{urlBase}}/roles/375fdcab-4027-427d-9e1c-37eb3985cd6f/permissions
 {
     "scope": "CRUD",
     "scope_owner": "R",
-    "resource_id": "06c98a11-7046-4e70-b843-c66d348cfdc9"
+    "resource_id": "b2efc261-9373-4dc3-ac86-2a8bd15e94f4"
 }
 
 
@@ -190,6 +188,13 @@ POST {{urlBase}}/roles/375fdcab-4027-427d-9e1c-37eb3985cd6f/permissions
 
 GET {{urlBase}}/roles/375fdcab-4027-427d-9e1c-37eb3985cd6f/permissions/index
 
+
+### ROLE PERMISSION - READ BY ID
+GET {{urlBase}}/permissions/de86655e-e007-41e7-9251-6616386b9b86
+
+### ROLE PERMISSION - UPDATE
+
+### ROLE PERMISSION - DELETE BY ID
 
 ####################################################### AUTH ###########################################################
 

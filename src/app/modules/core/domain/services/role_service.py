@@ -83,7 +83,7 @@ class RoleService:
 
     def create_permission(self, role_id: str, command: PermissionCreateCommand):
         try:
-            resource = self.__validate(command)
+            resource = self.__validate_permission_command(command)
             role = self.read_by_id(role_id)
             permission_dict = command.model_dump()
             permission_dict.update({"role": role, "resource": resource})
@@ -99,8 +99,8 @@ class RoleService:
         permissions = self.permission_repo.read_all_by_role(role)
         return permissions
 
-    def __validate(self, command: PermissionCreateCommand) -> Resource:
-        if command.resource_id:
+    def __validate_permission_command(self, command: PermissionCreateCommand) -> Resource:
+        if command.role_id:
             resource = self.resource_repo.read_by_id(command.resource_id)
             if resource is None:
                 raise EntityNotFoundError(msg=tr.t("Not found", self.locale, entity=command.resource_id))
