@@ -4,11 +4,9 @@ from fastapi import APIRouter, Depends, Request
 from src.app import main
 from src.app.modules.core.domain.dependencies import principal_god
 from src.app.modules.core.domain.forms import Form, ResourceForm
-from src.app.modules.core.domain.models import ModuleResponse, ResourceCreateCommand, ResourceUpdateCommand
+from src.app.modules.core.domain.models import ResourceUpdateCommand
 from src.app.modules.core.domain.services.module_service import ModuleService
 from src.app.modules.core.domain.services.resource_service import ResourceService
-from src.app.modules.core.utils.paginator import PageParser
-
 
 
 router = APIRouter(prefix="/core/resources", dependencies=[Depends(principal_god)])
@@ -29,22 +27,7 @@ async def module_resource_update(
 
 
 @router.post("/{id}/update")
-async def resource_update_perform(
-    request: Request, id: str, service: Annotated[ResourceService, Depends()]
-):
-    # resource_to_update = service.read_by_id(id)
-    # module = resource_to_update.module
-    # module_copy = module.__class__(**module.model_dump())
-    # resources = module.resources
-    # resources.sort(key=lambda r: r.code)
-    # resources_copy = [r.__class__(**r.model_dump()) for r in resources]
-    # context = {"module": module_copy, "resources": resources_copy}
-    # form = ResourceForm(request, ResourceUpdateCommand, "core/module_resource_list.html")
-    # command, errors_dict, response, context = await form.validate(context)
-    # if errors_dict:
-    #     return response
-    # params = {"id": id, "command": command}
-    # return await form.perform_operation(service.update, params, "module_resource_list", context, id=module_id)
+async def resource_update_perform(request: Request, id: str, service: Annotated[ResourceService, Depends()]):
     form = ResourceForm(request, ResourceUpdateCommand)
     context = {"id": id}
     command, errors_dict, response = await form.perform_validation("resource_update_perform", context)
@@ -52,7 +35,11 @@ async def resource_update_perform(
         return response
     params = {"id": id, "command": command}
     return await form.perform_action(
-        lambda: service.update(**params), "module_resource_list", {"id": command.module_id}, "resource_update_perform", context
+        lambda: service.update(**params),
+        "module_resource_list",
+        {"id": command.module_id},
+        "resource_update_perform",
+        context,
     )
 
 

@@ -16,13 +16,11 @@ async def role_list(
     page_params: Annotated[PageParams, Depends()],
     filter: Annotated[RoleFilter, Depends()],
     service: Annotated[RoleService, Depends()],
-    msg: str = None,
-    type: str = "success"
 ):
     page_params.order_field = "code"
     roles, total = service.read_all_paginated(page_params, filter)
     parser = PageParser(roles, RoleResponse)
-    context = parser.generate_web_context(page_params, total, filter, msg, type)
+    context = parser.generate_web_context(page_params, total, filter)
     return main.templates.TemplateResponse(request=request, name="core/role_list.html", context=context)
 
 

@@ -16,13 +16,11 @@ async def module_list(
     page_params: Annotated[PageParams, Depends()],
     filter: Annotated[ModuleFilter, Depends()],
     service: Annotated[ModuleService, Depends()],
-    msg: str = None,
-    type: str = "success",
 ):
     page_params.order_field = "code"
     modules, total = service.read_all_paginated(page_params, filter)
     parser = PageParser(modules, ModuleResponse)
-    context = parser.generate_web_context(page_params, total, filter, msg, type)
+    context = parser.generate_web_context(page_params, total, filter)
     return main.templates.TemplateResponse(request=request, name="core/module_list.html", context=context)
 
 

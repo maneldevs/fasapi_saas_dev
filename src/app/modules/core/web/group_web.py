@@ -18,13 +18,11 @@ async def group_list(
     page_params: Annotated[PageParams, Depends()],
     filter: Annotated[GroupFilter, Depends()],
     service: Annotated[GroupService, Depends()],
-    msg: str = None,
-    type: str = "success",
 ):
     page_params.order_field = "code"
     groups, total = service.read_all_paginated(page_params, filter)
     parser = PageParser(groups, GroupResponse)
-    context = parser.generate_web_context(page_params, total, filter, msg, type)
+    context = parser.generate_web_context(page_params, total, filter)
     return main.templates.TemplateResponse(request=request, name="core/group_list.html", context=context)
 
 
