@@ -13,14 +13,14 @@
     <div class="mb-2">
       <div class="input-group">
         <i class="input-group-text bi bi-person"></i>
-        <input type="text" id="login-username" name="username" value="{{username}}"
+        <input type="text" id="login-username" name="username" value="{{(values.username if has_error else username)}}"
           class="form-control {{'is-invalid' if errors and errors.username else ''}}">
       </div>
     </div>
     <div class="mb-4">
       <div class="input-group">
         <i class="input-group-text bi bi-key"></i>
-        <input type="password" id="login-password" name="password" value="{{password}}"
+        <input type="password" id="login-password" name="password" value="{{(values.password if has_error else password)}}"
           class="form-control {{'is-invalid' if errors and errors.password else ''}}">
 
       </div>
