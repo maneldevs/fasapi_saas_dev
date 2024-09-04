@@ -29,8 +29,9 @@ class PermissionRepo:
 
     def update(self, id: str, permission: Permission):
         permission_in_db = self.read_by_id(id)
+        permission_dict = permission.model_dump(exclude=["role_id", "resource_id"])
         if permission_in_db is not None:
-            permission_in_db.sqlmodel_update(permission)
+            permission_in_db.sqlmodel_update(permission_dict)
             self.__save(permission_in_db)
         return permission_in_db
 

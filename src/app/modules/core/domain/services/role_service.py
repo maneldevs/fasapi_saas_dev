@@ -100,7 +100,7 @@ class RoleService:
         return permissions
 
     def __validate_permission_command(self, command: PermissionCreateCommand) -> Resource:
-        if command.role_id:
+        if command.resource_id:
             resource = self.resource_repo.read_by_id(command.resource_id)
             if resource is None:
                 raise EntityNotFoundError(msg=tr.t("Not found", self.locale, entity=command.resource_id))

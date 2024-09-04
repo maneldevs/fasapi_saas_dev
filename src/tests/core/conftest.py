@@ -8,6 +8,9 @@ from src.app.modules.core.domain.models import (
     GroupUpdateCommand,
     Module,
     ModuleCommand,
+    Permission,
+    PermissionCreateCommand,
+    PermissionUpdateCommand,
     Resource,
     ResourceCreateCommand,
     ResourceUpdateCommand,
@@ -141,7 +144,7 @@ def user_fixture():
         firstname="Myfirstname",
         lastname="MyLastname",
         group_id="abc-123-def-456",
-        role_id="abc-123-def-456"
+        role_id="abc-123-def-456",
     )
 
 
@@ -154,7 +157,7 @@ def user2_fixture():
         firstname="Otherfirstname",
         lastname="OtherLastname",
         group_id="abc-123-def-456",
-        role_id="abc-123-def-456"
+        role_id="abc-123-def-456",
     )
 
 
@@ -212,7 +215,7 @@ def modules_in_db_fixture(session: Session, module: Module, module2: Module):
     return [module, module2]
 
 
-""" Module """
+""" Module Resource """
 
 
 @pytest.fixture(name="resource_create_command")
@@ -251,3 +254,65 @@ def resources_in_db_fixture(session: Session, resource: Resource, resource2: Res
     session.add(resource2)
     session.commit()
     return [resource, resource2]
+
+
+""" Permission """
+
+
+@pytest.fixture(name="permission_create_command")
+def permission_create_command_fixture():
+    return PermissionCreateCommand(scope="CRUD", scope_owner="R", resource_id="abc-123-def-456")
+
+
+@pytest.fixture(name="permission_update_command")
+def permission_update_command_fixture():
+    return PermissionUpdateCommand(scope="R", scope_owner="CRUD")
+
+
+@pytest.fixture(name="permission")
+def permission_fixture(role: Role, resource: Resource):
+    return Permission(
+        id="abc-123-def-456",
+        scope="R",
+        scope_owner="CRUD",
+        role_id=role.id,
+        role=role,
+        resource_id=resource.id,
+        resource=resource,
+    )
+
+
+@pytest.fixture(name="permission2")
+def permission2_fixture(role: Role, resource2: Resource):
+    return Permission(
+        id="ghi-123-jkl-456",
+        scope="CRUD",
+        scope_owner="R",
+        role_id=role.id,
+        role=role,
+        resource_id=resource2.id,
+        resource=resource2,
+    )
+
+
+@pytest.fixture(name="permission_in_db")
+def permission_in_db_fixture(session: Session, permission: Permission, role_in_db: Role, resource_in_db: Resource):
+    permission.role_id = role_in_db.id
+    permission.resource_id = resource_in_db.id
+    session.add(permission)
+    session.commit()
+    return permission
+
+
+@pytest.fixture(name="permissions_in_db")
+def permissions_in_db_fixture(
+    session: Session, permission: Permission, permission2: Permission, role_in_db: Role, resources_in_db: list[Resource]
+):
+    permission.role_id = role_in_db.id
+    permission.resource_id = resources_in_db[0].id
+    permission2.role_id = role_in_db.id
+    permission2.resource_id = resources_in_db[1].id
+    session.add(permission)
+    session.add(permission2)
+    session.commit()
+    return [permission, permission2]

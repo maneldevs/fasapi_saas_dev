@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
 from sqlmodel import Session
 
-from src.app.modules.core.domain.models import Role, RoleCommand, User
+from src.app.modules.core.domain.models import Permission, PermissionCreateCommand, Resource, Role, RoleCommand, User
 
 BASE_URL: str = "/api/core/roles"
 
@@ -174,3 +174,105 @@ def test_i_delete_no_existent(client: TestClient):
 def test_i_delete_role_with_dependants(client: TestClient, user_in_db: User):
     response = client.delete(f"{BASE_URL}/{user_in_db.role.id}")
     assert response.status_code == 400
+
+
+""" Read resource index """
+
+
+def test_id_read_permission_index_happy(client: TestClient, permissions_in_db: list[Permission]):
+    role = permissions_in_db[0].role
+    response = client.get(f"{BASE_URL}/{role.id}/permissions/index")
+    data = response.json()
+    assert response.status_code == 200
+    assert len(data) == 2
+
+    assert data[0]["id"] == permissions_in_db[0].id
+    assert data[0]["scope"] == permissions_in_db[0].scope
+    assert data[0]["scope_owner"] == permissions_in_db[0].scope_owner
+    assert data[0]["resource"]["id"] == permissions_in_db[0].resource.id
+    assert data[0]["resource"]["code"] == permissions_in_db[0].resource.code
+    assert data[0]["resource"]["module"]["id"] == permissions_in_db[0].resource.module.id
+    assert data[0]["resource"]["module"]["code"] == permissions_in_db[0].resource.module.code
+    assert data[0]["resource"]["module"]["webname"] == permissions_in_db[0].resource.module.webname
+
+    assert data[1]["id"] == permissions_in_db[1].id
+    assert data[1]["scope"] == permissions_in_db[1].scope
+    assert data[1]["scope_owner"] == permissions_in_db[1].scope_owner
+    assert data[1]["resource"]["id"] == permissions_in_db[1].resource.id
+    assert data[1]["resource"]["code"] == permissions_in_db[1].resource.code
+    assert data[1]["resource"]["module"]["id"] == permissions_in_db[1].resource.module.id
+    assert data[1]["resource"]["module"]["code"] == permissions_in_db[1].resource.module.code
+    assert data[1]["resource"]["module"]["webname"] == permissions_in_db[1].resource.module.webname
+
+
+def test_id_read_permission_index_none_in_db(client: TestClient, role_in_db: Role):
+    response = client.get(f"{BASE_URL}/{role_in_db.id}/permissions/index")
+    data = response.json()
+    assert response.status_code == 200
+    assert len(data) == 0
+
+
+def test_id_read_permission_module_no_exists(client: TestClient):
+    response = client.get(f"{BASE_URL}/888/permissions/index")
+    assert response.status_code == 404
+
+
+""" Create permission """
+
+
+def test_i_create_permission_happy(
+    client: TestClient,
+    session: Session,
+    permission_create_command: PermissionCreateCommand,
+    role_in_db: Role,
+    resource_in_db: Resource,
+):
+    body = permission_create_command.model_dump(exclude_defaults=True)
+    response = client.post(f"{BASE_URL}/{role_in_db.id}/permissions", json=body)
+    data = response.json()
+    created = session.get(Permission, {data["id"]})
+    assert response.status_code == 201
+    assert created is not None
+    assert data["id"] == created.id
+    assert data["scope"] == permission_create_command.scope == created.scope
+    assert data["scope_owner"] == permission_create_command.scope_owner == created.scope_owner
+    assert data["resource"]["id"] == created.resource.id == permission_create_command.resource_id
+    assert data["resource"]["code"] == created.resource.code
+    assert data["resource"]["module"]["id"] == created.resource.module.id
+    assert data["resource"]["module"]["code"] == created.resource.module.code
+    assert data["resource"]["module"]["webname"] == created.resource.module.webname
+    assert data["role"]["id"] == created.role.id == role_in_db.id
+    assert data["role"]["code"] == created.role.code
+    assert data["role"]["webname"] == created.role.webname
+
+
+def test_i_create_permission_no_scope_happy(
+    client: TestClient,
+    session: Session,
+    permission_create_command: PermissionCreateCommand,
+    role_in_db: Role,
+    resource_in_db: Resource,
+):
+    permission_create_command.scope = None
+    body = permission_create_command.model_dump(exclude_defaults=True)
+    response = client.post(f"{BASE_URL}/{role_in_db.id}/permissions", json=body)
+    data = response.json()
+    created = session.get(Permission, {data["id"]})
+    assert response.status_code == 201
+    assert created is not None
+    assert data["scope"] is None
+
+
+def test_i_create_permission_no_resource_id(
+    client: TestClient, permission_create_command: PermissionCreateCommand, role_in_db: Role
+):
+    permission_create_command.resource_id = None
+    body = permission_create_command.model_dump(exclude_defaults=True)
+    response = client.post(f"{BASE_URL}/{role_in_db.id}/permissions", json=body)
+    assert response.status_code == 422
+
+
+def test_i_create_permission_role_no_exists(client: TestClient, permission_create_command: PermissionCreateCommand):
+    body = permission_create_command.model_dump(exclude_defaults=True)
+    response = client.post(f"{BASE_URL}/8888/permissions", json=body)
+    assert response.status_code == 404
