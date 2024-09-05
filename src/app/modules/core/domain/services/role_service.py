@@ -94,9 +94,9 @@ class RoleService:
             e.msg = tr.t("Already exists", self.locale, entity=f"r:{role_id} res:{command.resource_id}")
             raise e
 
-    def read_role_permission_index(self, role_id: str):
+    def read_role_permission_index(self, role_id: str, filter: RoleFilter = None):
         role = self.read_by_id(role_id)
-        permissions = self.permission_repo.read_all_by_role(role)
+        permissions = self.permission_repo.read_all_by_role(role, filter)
         return permissions
 
     def __validate_permission_command(self, command: PermissionCreateCommand) -> Resource:

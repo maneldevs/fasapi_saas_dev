@@ -271,6 +271,10 @@ class PermissionResponse(PermissionSimpleResponse):
     role: RoleResponse
 
 
+class PermissionFilter(SQLModel):
+    module_id: str | None = None
+
+
 """ Statistics """
 
 

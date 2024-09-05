@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, status
 
 from src.app.modules.core.domain.models import (
     PermissionCreateCommand,
+    PermissionFilter,
     PermissionResponse,
     PermissionSimpleResponse,
     RoleCommand,
@@ -63,6 +64,10 @@ async def create_role_permission(id: str, command: PermissionCreateCommand, serv
 
 
 @router.get("/{id}/permissions/index", response_model=list[PermissionSimpleResponse])
-async def read_role_permissions_index(id: str, service: Annotated[RoleService, Depends()]):
-    permissions = service.read_role_permission_index(id)
+async def read_role_permissions_index(
+    id: str,
+    service: Annotated[RoleService, Depends()],
+    filter: Annotated[PermissionFilter, Depends()],
+):
+    permissions = service.read_role_permission_index(id, filter)
     return permissions

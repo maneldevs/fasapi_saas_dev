@@ -205,6 +205,26 @@ def test_id_read_permission_index_happy(client: TestClient, permissions_in_db: l
     assert data[1]["resource"]["module"]["webname"] == permissions_in_db[1].resource.module.webname
 
 
+def test_id_read_permission_index_with_module_filter_happy(client: TestClient, permissions_in_db: list[Permission]):
+    role = permissions_in_db[0].role
+    params = {"module_id": permissions_in_db[0].resource.module_id}
+    response = client.get(f"{BASE_URL}/{role.id}/permissions/index", params=params)
+    data = response.json()
+    assert response.status_code == 200
+    assert len(data) == 2
+
+
+def test_id_read_permission_index_with_module_filter_no_matches(
+    client: TestClient, permissions_in_db: list[Permission]
+):
+    role = permissions_in_db[0].role
+    params = {"module_id": "8888"}
+    response = client.get(f"{BASE_URL}/{role.id}/permissions/index", params=params)
+    data = response.json()
+    assert response.status_code == 200
+    assert len(data) == 0
+
+
 def test_id_read_permission_index_none_in_db(client: TestClient, role_in_db: Role):
     response = client.get(f"{BASE_URL}/{role_in_db.id}/permissions/index")
     data = response.json()

@@ -3,10 +3,10 @@ import uuid
 
 from sqlalchemy.exc import IntegrityError
 from fastapi import Depends
-from sqlmodel import Session
+from sqlmodel import Session, select
 
 from src.app.configuration.database import get_session
-from src.app.modules.core.domain.models import Permission, Role
+from src.app.modules.core.domain.models import Permission, PermissionFilter, Resource, Role
 from src.app.modules.core.utils.exceptions import EntityAlreadyExistsError, EntityRelationshipExistsError
 
 
@@ -19,8 +19,14 @@ class PermissionRepo:
         permission = self.session.get(Permission, id)
         return permission
 
-    def read_all_by_role(self, role: Role) -> list[Permission]:
-        permissions = role.permissions
+    def read_all_by_role(self, role: Role, filter: PermissionFilter = None) -> list[Permission]:
+        stmt = select(Permission).join(Resource)
+        if filter and filter.module_id:
+            stmt = stmt.where(Permission.role_id == role.id)
+            stmt = stmt.where(Resource.module_id == filter.module_id)
+        permissions = self.session.exec(stmt).all()
+        for p in permissions:
+            self.session.refresh(p)
         return permissions
 
     def create(self, permission: Permission) -> Permission:

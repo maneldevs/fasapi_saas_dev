@@ -184,12 +184,13 @@ POST {{urlBase}}/roles/375fdcab-4027-427d-9e1c-37eb3985cd6f/permissions
 }
 
 
-### ROLE PERMISSION - READ INDEX
-GET {{urlBase}}/roles/375fdcab-4027-427d-9e1c-37eb3985cd6f/permissions/index
+### ROLE PERMISSION - READ INDEX FILTERED TODO mmr
+GET {{urlBase}}/roles/375fdcab-4027-427d-9e1c-37eb3985cd6f/permissions/index?module_id=ed6fe0a4-0f73-48cb-a0db-70db6722e80d
 
 
 ### ROLE PERMISSION - READ BY ID
 GET {{urlBase}}/permissions/555d6151-cb75-4123-92bf-3aeb51ccc124
+
 
 ### ROLE PERMISSION - UPDATE
 PUT {{urlBase}}/permissions/de86655e-e007-41e7-9251-6616386b9b86
