@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, Request
 
 from src.app.modules.core.domain.dependencies import principal_god
 from src.app.modules.core.domain.forms import Form
-from src.app.modules.core.domain.models import PermissionCreateCommand, PermissionFilter, PermissionUpdateCommand
+from src.app.modules.core.domain.models import PermissionCreateCommand, PermissionUpdateCommand
 from src.app.modules.core.domain.services.permission_service import PermissionService
 from src.app.modules.core.domain.services.role_service import RoleService
 

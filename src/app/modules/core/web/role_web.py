@@ -4,7 +4,6 @@ from src.app import main
 from src.app.modules.core.domain.dependencies import principal_god
 from src.app.modules.core.domain.models import Permission, PermissionFilter, RoleCommand, RoleFilter, RoleResponse
 from src.app.modules.core.domain.services.module_service import ModuleService
-from src.app.modules.core.domain.services.permission_service import PermissionService
 from src.app.modules.core.domain.services.role_service import RoleService
 from src.app.modules.core.utils.paginator import PageParams, PageParser
 from src.app.modules.core.domain.forms import Form, RoleForm

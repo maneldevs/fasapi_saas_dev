@@ -75,6 +75,15 @@ class GroupFilter(SQLModel):
     target: str | None = None
 
 
+""" RoleMenu """
+
+
+class RoleMenu(SQLModel, table=True):
+    __tablename__ = "role_menu"
+    role_id: str | None = Field(default=None, primary_key=True, foreign_key="roles.id")
+    menu_id: str | None = Field(default=None, primary_key=True, foreign_key="menus.id")
+
+
 """ Role """
 
 
@@ -273,6 +282,27 @@ class PermissionResponse(PermissionSimpleResponse):
 
 class PermissionFilter(SQLModel):
     module_id: str | None = None
+
+
+""" Menu """
+
+
+class Menu(SQLModel, table=True):
+    __tablename__ = "menus"
+    id: str | None = Field(default=None, primary_key=True)
+    code: str = Field(unique=True, min_length=3)
+    link: str | None = None
+    module_id: str = Field(foreign_key="modules.id", ondelete="CASCADE")
+    module: Module = Relationship()
+    parent_id: str | None = Field(foreign_key="menus.id", ondelete="CASCADE", default=None, nullable=True)
+    parent: Optional['Menu'] | None = Relationship(back_populates='children')
+    children: list['Menu'] = Relationship(back_populates='parent', cascade_delete=True)
+    roles: list[Group] = Relationship(back_populates="menus", link_model=RoleMenu)
+
+
+class MenuCreateCommand(SQLModel):
+    code: str
+    link: str | None = None
 
 
 """ Statistics """
