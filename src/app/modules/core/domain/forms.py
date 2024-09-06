@@ -3,6 +3,7 @@ from fastapi import Request, Response
 from fastapi.responses import RedirectResponse
 from pydantic_core import ValidationError
 from sqlmodel import SQLModel
+from starlette.datastructures import URL
 
 from src.app.configuration.lang import tr
 
@@ -79,12 +80,17 @@ class Form(Generic[T]):
     async def perform_action(
         self, func: callable, method_ok: str, method_ok_params: dict, method_nok: str, method_nok_params: dict
     ) -> Response:
+        url_ok = self.request.url_for(method_ok, **method_ok_params)
+        url_nok = self.request.url_for(method_nok, **method_nok_params)
+        return await self.perform_action_by_url(func, url_ok, url_nok)
+
+    async def perform_action_by_url(self, func: callable, url_ok: URL, url_nok: URL) -> Response:
         try:
             func()
-            redirect_ulr = self.request.url_for(method_ok, **method_ok_params)
+            redirect_ulr = url_ok
             self.flash_message(tr.t("Successful operation", self.request.state.locale), "success")
         except Exception as e:
-            redirect_ulr = self.request.url_for(method_nok, **method_nok_params)
+            redirect_ulr = url_nok
             self.flash_message(tr.t(e.msg, self.request.state.locale) if e.msg else None, "danger")
             self.flash_form_values(self.to_dict())
         return RedirectResponse(redirect_ulr, 303)

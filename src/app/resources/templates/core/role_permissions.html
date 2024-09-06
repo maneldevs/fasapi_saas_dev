@@ -1,0 +1,106 @@
+{% extends 'shared/content.html' %}
+
+{% set current_page = 'roles' %}
+
+{% block title %}
+{{ _t("role", request.state.locale )}} {{ role.webname }} - {{ _t("permissions", request.state.locale )}}
+{% endblock title %}
+
+{% block main %}
+<form method="get" class="d-flex justify-content-end mb-3">
+  <div class="me-2 mb-2">
+    <div class="input-group">
+      <label class="input-group-text">{{ _t("module", request.state.locale )}}</label>
+      <select class="form-select" name="module_id">
+        <option value="{{null}}"></option>
+        {% for m in modules %}
+        <option value="{{m.id}}" {{'selected' if m.id==module_id}}>{{ m.code }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+  <div>
+    <button type="submit" class="btn btn-outline-info">{{ _t("Filter", request.state.locale )}}</button>
+  </div>
+</form>
+
+<div class="table-responsive">
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">{{ _t("resource", request.state.locale) }}</th>
+        <th scope="col">{{ _t("owner", request.state.locale) }}</th>
+        <th scope="col">{{ _t("others", request.state.locale) }}</th>
+        <th scope="col" class="text-end"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for d in data %}
+      <tr>
+        <td>{{ d.resource.code }} </td>
+        <td>{{ d.permission.scope_owner or '-' }}</td>
+        <td>{{ d.permission.scope or '-' }}</td>
+        <td class="text-end">
+          <button class="btn btn-sm btn-outline-primary" data-id="{{d.permission.id}}"
+            data-scope_owner="{{d.permission.scope_owner}}" data-scope="{{d.permission.scope}}"
+            data-role_id="{{d.permission.role_id}}" data-resource_id="{{d.permission.resource_id}}"
+            data-resource_code="{{d.resource.code}}" data-module_id="{{d.resource.module_id}}" onclick="openFormModal(this)">
+            <i class="bi bi-pencil"></i>
+          </button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="modalLabel">
+            {{ _t("Update", request.state.locale) }} {{ _t("permission", request.state.locale) }}  
+            <span id="resourceCode"></span> 
+          </h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form method="post" action="{{url_for('permission_upsert_perform')}}" id="editForm">
+            <div class="row">
+              <div class="col-md-6 mb-2">
+                <label class="form-label">{{ _t("owner", request.state.locale )}}</label>
+                <input type="text" class="form-control" name="scope_owner" id="scopeOwner" value="">
+              </div>
+              <div class="col-md-6 mb-2">
+                <label class="form-label">{{ _t("others", request.state.locale )}}</label>
+                <input type="text" class="form-control" name="scope" id="scope" value="">
+              </div>
+            </div>
+            <input type="hidden" name="role_id" id="roleId">
+            <input type="hidden" name="resource_id" id="resourceId">
+            <input type="hidden" name="id" id="permissionId">
+            <input type="hidden" name="module_id" id="moduleId">
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ _t("Close", request.state.locale)
+            }}</button>
+          <button type="submit" class="btn btn-primary" form="editForm">{{ _t("Save", request.state.locale) }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    function openFormModal(me) {
+      document.getElementById("scopeOwner").value = me.dataset.scope_owner == 'None' ? null : me.dataset.scope_owner
+      document.getElementById("scope").value = me.dataset.scope == 'None' ? null : me.dataset.scope
+      document.getElementById("resourceCode").innerHTML = me.dataset.resource_code
+      document.getElementById("roleId").value = me.dataset.role_id
+      document.getElementById("resourceId").value = me.dataset.resource_id
+      document.getElementById("permissionId").value = me.dataset.id
+      document.getElementById("moduleId").value = me.dataset.module_id
+      const modal = new bootstrap.Modal(document.getElementById('formModal'))
+      modal.show()
+    }
+  </script>
+</div>
+{% endblock main %}

@@ -21,7 +21,6 @@
   <div>
     <button type="submit" class="btn btn-outline-info">{{ _t("Filter", request.state.locale )}}</button>
   </div>
-  </div>
 </form>
 <div class="table-responsive"></div>
 <table class="table">
@@ -40,6 +39,9 @@
       <td class="text-end">
         <a class="btn btn-sm btn-outline-primary" href="{{ url_for('role_update', id=item.id) }}">
           <i class="bi bi-pencil"></i>
+        </a>
+        <a class="btn btn-sm btn-outline-primary" href="{{ url_for('role_permissions', id=item.id) }}">
+          <i class="bi bi-key"></i>
         </a>
         <button class="btn btn-sm btn-outline-danger" data-code="{{item.code}}" data-id="{{item.id}}"
           onclick="openDeleteModal(this)">

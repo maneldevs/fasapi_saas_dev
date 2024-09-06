@@ -21,10 +21,10 @@
   <div class="me-2 mb-2">
     <div class="input-group">
       <label class="input-group-text"><i class=" bi bi-building"></i></label>
-      <select class="form-select" name="group_id" >
-          <option value="{{null}}"></option>
+      <select class="form-select" name="group_id">
+        <option value="{{null}}"></option>
         {% for g in groups %}
-          <option value="{{g.id}}" {{'selected' if g.id == group_id}}>{{ g.code + ' - ' + g.webname }}</option>
+        <option value="{{g.id}}" {{'selected' if g.id==group_id}}>{{ g.code + ' - ' + g.webname }}</option>
         {% endfor %}
       </select>
     </div>
@@ -32,20 +32,20 @@
   <div class="me-2 mb-2">
     <div class="input-group">
       <label class="input-group-text"><i class=" bi bi-check"></i></label>
-      <select class="form-select" name="active" >
-        <option value="None" {{'selected' if active == 'None'}}>all</option>
-        <option value="{{true}}" {{'selected' if active == 'True'}}>active</option>
-        <option value="{{false}}" {{'selected' if active == 'False'}}>inactive</option>
+      <select class="form-select" name="active">
+        <option value="None" {{'selected' if active=='None' }}>all</option>
+        <option value="{{true}}" {{'selected' if active=='True' }}>active</option>
+        <option value="{{false}}" {{'selected' if active=='False' }}>inactive</option>
       </select>
     </div>
   </div>
   <div class="me-2 mb-2">
     <div class="input-group">
       <label class="input-group-text"><i class="bi bi-person-gear"></i></label>
-      <select class="form-select" name="is_god" >
-        <option value="None" {{'selected' if active == 'None'}}>all</option>
-        <option value="{{true}}" {{'selected' if is_god == 'True'}}>is god</option>
-        <option value="{{false}}" {{'selected' if is_god == 'False'}}>no god</option>
+      <select class="form-select" name="is_god">
+        <option value="None" {{'selected' if active=='None' }}>all</option>
+        <option value="{{true}}" {{'selected' if is_god=='True' }}>is god</option>
+        <option value="{{false}}" {{'selected' if is_god=='False' }}>no god</option>
       </select>
     </div>
   </div>
@@ -54,45 +54,46 @@
   </div>
   </div>
 </form>
-<div class="table-responsive"></div>
-<table class="table">
-  <thead>
-    <tr>
-      <th scope="col">{{ _t("username", request.state.locale) }}</th>
-      <th scope="col">{{ _t("firstname", request.state.locale) }}</th>
-      <th scope="col">{{ _t("lastname", request.state.locale) }}</th>
-      <th scope="col">{{ _t("role", request.state.locale) }}</th>
-      <th scope="col">{{ _t("active", request.state.locale) }}</th>
-      <th scope="col" class="text-end"></th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for item in content %}
-    <tr>
-      <td>{{ item.username }}</td>
-      <td>{{ item.firstname }}</td>
-      <td>{{ item.lastname }}</td>
-      <td>{{ item.role.webname if item.role else '' }}</td>
-      <td>
-        {% if item.active %}
-        <i class="text-success bi bi-check-circle-fill"></i>
-        {% else %}
-        <i class="text-danger bi bi-x-circle-fill"></i>
-        {% endif %}
-      </td>
-      <td class="text-end">
-        <a class="btn btn-sm btn-outline-primary" href="{{ url_for('user_update', id=item.id) }}">
-          <i class="bi bi-pencil"></i>
-        </a>
-        <button class="btn btn-sm btn-outline-danger" data-code="{{item.username}}" data-id="{{item.id}}" onclick="openDeleteModal(this)">
-          <i class="bi bi-trash"></i>
-        </button>
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-{{ paginator(total, size) }}
+<div class="table-responsive">
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">{{ _t("username", request.state.locale) }}</th>
+        <th scope="col">{{ _t("firstname", request.state.locale) }}</th>
+        <th scope="col">{{ _t("lastname", request.state.locale) }}</th>
+        <th scope="col">{{ _t("role", request.state.locale) }}</th>
+        <th scope="col">{{ _t("active", request.state.locale) }}</th>
+        <th scope="col" class="text-end"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in content %}
+      <tr>
+        <td>{{ item.username }}</td>
+        <td>{{ item.firstname }}</td>
+        <td>{{ item.lastname }}</td>
+        <td>{{ item.role.webname if item.role else '' }}</td>
+        <td>
+          {% if item.active %}
+          <i class="text-success bi bi-check-circle-fill"></i>
+          {% else %}
+          <i class="text-danger bi bi-x-circle-fill"></i>
+          {% endif %}
+        </td>
+        <td class="text-end">
+          <a class="btn btn-sm btn-outline-primary" href="{{ url_for('user_update', id=item.id) }}">
+            <i class="bi bi-pencil"></i>
+          </a>
+          <button class="btn btn-sm btn-outline-danger" data-code="{{item.username}}" data-id="{{item.id}}"
+            onclick="openDeleteModal(this)">
+            <i class="bi bi-trash"></i>
+          </button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {{ paginator(total, size) }}
 </div>
 {{ modal_delete(_t("Delete", request.state.locale ) + " " + _t("user", request.state.locale ), 'user_delete_perform') }}
 {% endblock main %}
