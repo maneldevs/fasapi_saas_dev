@@ -2,6 +2,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, status
 
 from src.app.modules.core.domain.models import (
+    MenuResponse,
     PermissionCreateCommand,
     PermissionFilter,
     PermissionResponse,
@@ -71,3 +72,15 @@ async def read_role_permissions_index(
 ):
     permissions = service.read_role_permission_index(id, filter)
     return permissions
+
+
+@router.patch("/{id}/menus", response_model=list[MenuResponse])
+async def update_menus(id: str, command: list[str], service: Annotated[RoleService, Depends()]):
+    role = service.update_menus(id, command)
+    return role.generate_menu_tree()
+
+
+@router.get("/{id}/menus/tree", response_model=list[MenuResponse])
+async def read_role_menu_tree(id: str, service: Annotated[RoleService, Depends()]):
+    role = service.read_by_id(id)
+    return role.generate_menu_tree()

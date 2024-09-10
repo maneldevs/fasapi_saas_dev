@@ -7,7 +7,7 @@ from sqlmodel.sql.expression import SelectOfScalar
 
 from src.app.configuration.database import get_session
 from src.app.modules.core.utils.exceptions import EntityAlreadyExistsError, EntityRelationshipExistsError
-from src.app.modules.core.domain.models import Role, RoleFilter
+from src.app.modules.core.domain.models import Menu, Role, RoleFilter
 from src.app.modules.core.utils.paginator import Paginator
 from src.app.modules.core.utils.paginator import PageParams
 
@@ -59,6 +59,13 @@ class RoleRepo:
         role_in_db = self.read_by_id(id)
         if (role_in_db is not None):
             self.__delete(role_in_db)
+        return role_in_db
+
+    def update_menus(self, id: str, menus: list[Menu]) -> Role:
+        role_in_db = self.read_by_id(id)
+        if (role_in_db is not None):
+            role_in_db.menus = menus
+            self.__save(role_in_db)
         return role_in_db
 
     def __apply_filter(self, stmt: SelectOfScalar[Role], filter: RoleFilter):

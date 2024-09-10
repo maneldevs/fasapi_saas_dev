@@ -3,6 +3,7 @@ from typing import Annotated
 from fastapi import Depends
 
 from src.app.modules.core.domain.dependencies import Locale
+from src.app.modules.core.persistence.menu_repo import MenuRepo
 from src.app.modules.core.persistence.permission_repo import PermissionRepo
 from src.app.modules.core.persistence.resource_repo import ResourceRepo
 from src.app.modules.core.utils.exceptions import (
@@ -30,11 +31,13 @@ class RoleService:
         repo: Annotated[RoleRepo, Depends()],
         permission_repo: Annotated[PermissionRepo, Depends()],
         resource_repo: Annotated[ResourceRepo, Depends()],
+        menu_repo: Annotated[MenuRepo, Depends()],
         locale: Locale,
     ) -> None:
         self.repo = repo
         self.permission_repo = permission_repo
         self.resource_repo = resource_repo
+        self.menu_repo = menu_repo
         self.locale = locale
 
     def create(self, command: RoleCommand) -> Role:
@@ -98,6 +101,18 @@ class RoleService:
         role = self.read_by_id(role_id)
         permissions = self.permission_repo.read_all_by_role(role, filter)
         return permissions
+
+    def update_menus(self, id: str, command: list[str]) -> Role:
+        menus = []
+        for menu_id in command:
+            menu = self.menu_repo.read_by_id(menu_id)
+            if menu is None:
+                raise EntityNotFoundError(msg=tr.t("Not found", self.locale, entity=menu_id))
+            menus.append(menu)
+        role_updated = self.repo.update_menus(id, menus)
+        if role_updated is None:
+            raise EntityNotFoundError(msg=tr.t("Not found", self.locale, entity=id))
+        return role_updated
 
     def __validate_permission_command(self, command: PermissionCreateCommand) -> Resource:
         if command.resource_id:

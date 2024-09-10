@@ -35,5 +35,3 @@ async def update(id: str, command: MenuCommand, service: Annotated[MenuService, 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete(id: str, service: Annotated[MenuService, Depends()]):
     service.delete(id)
-
-# TODO mmr asign menus to role (hacer en el controller del role)

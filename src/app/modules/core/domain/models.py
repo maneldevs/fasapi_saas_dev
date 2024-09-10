@@ -98,6 +98,17 @@ class Role(RoleBase, table=True):
     permissions: list["Permission"] = Relationship(back_populates="role", cascade_delete=True)
     menus: list["Menu"] = Relationship(back_populates="roles", link_model=RoleMenu)
 
+    def generate_menu_tree(self):
+        response = []
+        all_menus = self.menus
+        all_menus_ids = [menu.id for menu in all_menus]
+        menu_roots = [menu for menu in all_menus if menu.parent is None]
+        for menu_root in menu_roots:
+            children = [menu_child for menu_child in menu_root.children if menu_child.id in all_menus_ids]
+            menu_root.children = children
+            response.append(menu_root)
+        return response
+
 
 class RoleCommand(RoleBase):
     pass

@@ -211,8 +211,8 @@ DELETE {{urlBase}}/permissions/88910f3d-b2b4-404f-9028-dd4f4a1caa84
 POST {{urlBase}}/menus
 
 {
-    "code": "menu 11",
-    "link": "link 11",
+    "code": "menu 12",
+    "link": "link 12",
     "parent_id": "06961cae-4b81-4db2-abd0-47f6f3587880",
     "module_id": "ed6fe0a4-0f73-48cb-a0db-70db6722e80d"
 }
@@ -237,11 +237,16 @@ PUT {{urlBase}}/menus/e0d761d9-98a9-4f63-a1ad-ef7124e4af14
 DELETE {{urlBase}}/menus/e0d761d9-98a9-4f63-a1ad-ef7124e4af14
 
 ### ROLE - UPDATE MENUS
-PATCH {{urlBase}}/role/375fdcab-4027-427d-9e1c-37eb3985cd6f/menus
+PATCH {{urlBase}}/roles/375fdcab-4027-427d-9e1c-37eb3985cd6f/menus
 
-[ "08100acc-9cbe-4263-b8b3-294976c288c3", "16b6ab5a-a588-4a68-9450-b118c75afa9a" ]
+[ "06961cae-4b81-4db2-abd0-47f6f3587880", "1990098d-054c-4f66-9636-a04aff773bec", "b27be874-366a-4432-9276-2707d2ba89ec" ]
+
+### ROLE - MENUS TREE
+GET {{urlBase}}/roles/375fdcab-4027-427d-9e1c-37eb3985cd6f/menus/tree
+
 
 ####################################################### AUTH ###########################################################
+
 
 POST {{urlBase}}/auth?locale=es_ES
 Content-Type: application/x-www-form-urlencoded
