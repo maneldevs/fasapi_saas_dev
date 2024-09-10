@@ -1,8 +1,8 @@
 """create menu tables
 
-Revision ID: 3588e59111c6
+Revision ID: 3ba8c41d3c0c
 Revises: 9fc37de6e31f
-Create Date: 2024-09-06 09:35:58.689935
+Create Date: 2024-09-06 11:57:27.556741
 
 """
 
@@ -14,7 +14,7 @@ import sqlmodel
 
 
 # revision identifiers, used by Alembic.
-revision: str = "3588e59111c6"
+revision: str = "3ba8c41d3c0c"
 down_revision: Union[str, None] = "9fc37de6e31f"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None

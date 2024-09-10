@@ -96,6 +96,7 @@ class Role(RoleBase, table=True):
     __tablename__ = "roles"
     id: str | None = Field(default=None, primary_key=True)
     permissions: list["Permission"] = Relationship(back_populates="role", cascade_delete=True)
+    menus: list["Menu"] = Relationship(back_populates="roles", link_model=RoleMenu)
 
 
 class RoleCommand(RoleBase):
@@ -294,15 +295,35 @@ class Menu(SQLModel, table=True):
     link: str | None = None
     module_id: str = Field(foreign_key="modules.id", ondelete="CASCADE")
     module: Module = Relationship()
-    parent_id: str | None = Field(foreign_key="menus.id", ondelete="CASCADE", default=None, nullable=True)
-    parent: Optional['Menu'] | None = Relationship(back_populates='children')
-    children: list['Menu'] = Relationship(back_populates='parent', cascade_delete=True)
-    roles: list[Group] = Relationship(back_populates="menus", link_model=RoleMenu)
+    parent_id: str | None = Field(foreign_key="menus.id", ondelete="CASCADE", nullable=True)
+    parent: Optional["Menu"] | None = Relationship(
+        back_populates="children", sa_relationship_kwargs=dict(remote_side="Menu.id")
+    )
+    children: list["Menu"] = Relationship(back_populates="parent", cascade_delete=True)
+    roles: list[Role] = Relationship(back_populates="menus", link_model=RoleMenu)
 
 
-class MenuCreateCommand(SQLModel):
+class MenuCommand(SQLModel):
     code: str
     link: str | None = None
+    parent_id: str | None = None
+    module_id: str
+
+
+class MenuSimpleResponse(SQLModel):
+    id: str
+    code: str
+    link: str | None = None
+    parent: Optional["MenuSimpleResponse"]
+    module: ModuleResponse
+
+
+class MenuResponse(SQLModel):
+    id: str
+    code: str
+    link: str | None = None
+    children: list["MenuResponse"] | None = None
+    module: ModuleResponse
 
 
 """ Statistics """
