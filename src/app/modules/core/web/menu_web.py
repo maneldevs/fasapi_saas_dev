@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, Request
 
 from src.app import main
 from src.app.modules.core.domain.dependencies import principal_god
-from src.app.modules.core.domain.forms import MenuForm
+from src.app.modules.core.domain.forms import Form, MenuForm
 from src.app.modules.core.domain.models import MenuCommand
 from src.app.modules.core.domain.services.menu_service import MenuService
 from src.app.modules.core.domain.services.module_service import ModuleService
@@ -95,3 +95,10 @@ async def menu_update_perform(request: Request, id: str, service: Annotated[Menu
         return response
     params = {"id": id, "command": command}
     return await form.perform_action(lambda: service.update(**params), "menu_tree", {}, "menu_update", {"id": id})
+
+
+@router.post("/delete/{id}")
+async def menu_delete_perform(request: Request, id: str, service: Annotated[MenuService, Depends()]):
+    form = Form(request)
+    params = {"id": id}
+    return await form.perform_action(lambda: service.delete(**params), "menu_tree", {}, "menu_tree", {})

@@ -1,0 +1,48 @@
+{% extends 'shared/content.html' %}
+
+{% set current_page = 'roles' %}
+
+{% block title %}
+{{ _t("role", request.state.locale ) | capitalize()}} {{ _t("menus", request.state.locale )}}
+{% endblock title %}
+
+{% block title_right %}
+<button type="submit" form="update-role-menus" class="btn btn-primary">{{ _t("Save", request.state.locale ) }}</button>
+{% endblock title_right %}
+
+{% block main %}
+<form id="update-role-menus" method="post">
+  <div class="row align-items-center mb-3">
+    <div class="col-md-6">
+      <label for="id" class="form-label">id</label>
+      <input type="text" class="form-control" name="id" value="{{role.id}}" disabled>
+    </div>
+    <div class="col-md-6">
+      <label for="id" class="form-label">{{ _t("webname", request.state.locale )}}</label>
+      <input type="text" class="form-control" name="name" value="{{role.code}}" disabled>
+    </div>
+  </div>
+  <div class="row mb-4">
+    <div class="list-group">
+      <ul class="list-group">
+        {% for menu_root in menu_roots %}
+        <li class="list-group-item list-group-item-info">
+          <input class="form-check-input me-1" type="checkbox" id="menu-{{menu_root.id}}" {{'checked' if menu_root.id in
+            role_menu_ids }} name="menu_root_selected_ids" value="{{menu_root.id}}">
+          <label class="form-check-label" for="menu-{{menu_root.id}}">{{menu_root.code}}</label>
+        </li>
+        <ul class="list-group ms-4">
+          {% for menu_child in menu_root.children %}
+          <li class="list-group-item">
+            <input class="form-check-input me-1" type="checkbox" id="menu-{{menu_child.id}}" {{'checked' if menu_child.id in
+              role_menu_ids }} name="menu_child_selected_ids" value="{{menu_child.id}}">
+            <label class="form-check-label" for="menu-{{menu_child.id}}">{{menu_child.code}}</label>
+          </li>
+          {% endfor %}
+        </ul>
+      </ul>
+      {% endfor %}
+    </div>
+  </div>
+</form>
+{% endblock main %}
