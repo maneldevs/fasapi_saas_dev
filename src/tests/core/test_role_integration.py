@@ -1,7 +1,16 @@
 from fastapi.testclient import TestClient
 from sqlmodel import Session
 
-from src.app.modules.core.domain.models import Permission, PermissionCreateCommand, Resource, Role, RoleCommand, User
+from src.app.modules.core.domain.models import (
+    Menu,
+    Permission,
+    PermissionCreateCommand,
+    Resource,
+    Role,
+    RoleCommand,
+    RoleMenu,
+    User,
+)
 
 BASE_URL: str = "/api/core/roles"
 
@@ -295,4 +304,103 @@ def test_i_create_permission_no_resource_id(
 def test_i_create_permission_role_no_exists(client: TestClient, permission_create_command: PermissionCreateCommand):
     body = permission_create_command.model_dump(exclude_defaults=True)
     response = client.post(f"{BASE_URL}/8888/permissions", json=body)
+    assert response.status_code == 404
+
+
+""" Update role menus """
+
+
+def test_i_update_menus_happy(client: TestClient, session: Session, role_in_db: Role, menu_child_in_db: Menu):
+    body = [menu_child_in_db.id, menu_child_in_db.parent.id]
+    response = client.patch(f"{BASE_URL}/{role_in_db.id}/menus", json=body)
+    data = response.json()
+    updated = session.get(Role, role_in_db.id)
+    assert response.status_code == 200
+    assert updated.id == role_in_db.id
+    assert updated.code == role_in_db.code
+    assert updated.webname == role_in_db.webname
+    assert len(updated.menus) == 2
+    assert menu_child_in_db.id in [menu.id for menu in updated.menus]
+    assert menu_child_in_db.parent.id in [menu.id for menu in updated.menus]
+    assert data[0]["id"] == menu_child_in_db.parent.id
+    assert data[0]["code"] == menu_child_in_db.parent.code
+    assert data[0]["link"] == menu_child_in_db.parent.link
+    assert data[0]["module"]["id"] == menu_child_in_db.parent.module_id
+    assert data[0]["module"]["code"] == menu_child_in_db.parent.module.code
+    assert data[0]["module"]["webname"] == menu_child_in_db.parent.module.webname
+    assert data[0]["children"][0]["id"] == menu_child_in_db.id
+    assert data[0]["children"][0]["code"] == menu_child_in_db.code
+    assert data[0]["children"][0]["link"] == menu_child_in_db.link
+    assert data[0]["children"][0]["module"]["id"] == menu_child_in_db.module_id
+    assert data[0]["children"][0]["module"]["code"] == menu_child_in_db.module.code
+    assert data[0]["children"][0]["module"]["webname"] == menu_child_in_db.module.webname
+
+
+def test_i_update_menus_role_no_exists(client: TestClient, menu_child_in_db: Menu):
+    body = [menu_child_in_db.id, menu_child_in_db.parent.id]
+    response = client.patch(f"{BASE_URL}/8888/menus", json=body)
+    assert response.status_code == 404
+
+
+def test_i_update_menus_menu_no_exists(client: TestClient, role_in_db: Role):
+    body = ["nonexistent"]
+    response = client.patch(f"{BASE_URL}/{role_in_db.id}/menus", json=body)
+    assert response.status_code == 404
+
+
+""" Read role menu tree """
+
+
+def test_i_read_menu_tree_happy(client: TestClient, session: Session, role_in_db: Role, menu_child_in_db: Menu):
+    role_menu_child = RoleMenu(menu_id=menu_child_in_db.id, role_id=role_in_db.id)
+    role_menu_parent = RoleMenu(menu_id=menu_child_in_db.parent.id, role_id=role_in_db.id)
+    session.add(role_menu_child)
+    session.add(role_menu_parent)
+    session.commit()
+    response = client.get(f"{BASE_URL}/{role_in_db.id}/menus/tree")
+    data = response.json()
+    assert response.status_code == 200
+    assert len(data) == 1
+    assert data[0]["id"] == menu_child_in_db.parent.id
+    assert data[0]["code"] == menu_child_in_db.parent.code
+    assert data[0]["link"] == menu_child_in_db.parent.link
+    assert data[0]["module"]["id"] == menu_child_in_db.parent.module_id
+    assert data[0]["module"]["code"] == menu_child_in_db.parent.module.code
+    assert data[0]["module"]["webname"] == menu_child_in_db.parent.module.webname
+    assert data[0]["children"][0]["id"] == menu_child_in_db.id
+    assert data[0]["children"][0]["code"] == menu_child_in_db.code
+    assert data[0]["children"][0]["link"] == menu_child_in_db.link
+    assert data[0]["children"][0]["module"]["id"] == menu_child_in_db.module_id
+    assert data[0]["children"][0]["module"]["code"] == menu_child_in_db.module.code
+    assert data[0]["children"][0]["module"]["webname"] == menu_child_in_db.module.webname
+
+
+def test_i_read_menu_no_parents(client: TestClient, session: Session, role_in_db: Role, menu_child_in_db: Menu):
+    role_menu_child = RoleMenu(menu_id=menu_child_in_db.id, role_id=role_in_db.id)
+    session.add(role_menu_child)
+    session.commit()
+    response = client.get(f"{BASE_URL}/{role_in_db.id}/menus/tree")
+    data = response.json()
+    assert response.status_code == 200
+    assert len(data) == 0
+
+
+def test_i_read_menu_no_children(client: TestClient, session: Session, role_in_db: Role, menu_parent_in_db: Menu):
+    role_menu_parent = RoleMenu(menu_id=menu_parent_in_db.id, role_id=role_in_db.id)
+    session.add(role_menu_parent)
+    session.commit()
+    response = client.get(f"{BASE_URL}/{role_in_db.id}/menus/tree")
+    data = response.json()
+    assert response.status_code == 200
+    assert len(data) == 1
+    assert data[0]["id"] == menu_parent_in_db.id
+    assert data[0]["code"] == menu_parent_in_db.code
+    assert data[0]["link"] == menu_parent_in_db.link
+    assert data[0]["module"]["id"] == menu_parent_in_db.module_id
+    assert data[0]["module"]["code"] == menu_parent_in_db.module.code
+    assert data[0]["module"]["webname"] == menu_parent_in_db.module.webname
+
+
+def test_i_read_menu_tree_role_no_exists(client: TestClient):
+    response = client.get(f"{BASE_URL}/8888/menus/tree")
     assert response.status_code == 404

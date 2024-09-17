@@ -242,3 +242,23 @@ class ResourceForm(Form):
         self.code = form.get("code")
         self.module_id = form.get("module_id")
         return self.to_dict()
+
+
+""" Menu """
+
+
+class MenuForm(Form):
+    def __init__(self, request: Request, model_type: Type[T]):
+        super().__init__(request, model_type)
+        self.code: str
+        self.link: str | None = None
+        self.module_id: str
+        self.parent_id: str | None = None
+
+    async def load(self) -> dict:
+        form = await self.request.form()
+        self.code = form.get("code")
+        self.link = form.get("link")
+        self.module_id = form.get("module_id")
+        self.parent_id = form.get("parent_id") if form.get("parent_id") else None
+        return self.to_dict()

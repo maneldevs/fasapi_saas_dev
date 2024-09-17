@@ -6,6 +6,8 @@ from src.app.modules.core.domain.models import (
     Group,
     GroupCreateCommand,
     GroupUpdateCommand,
+    Menu,
+    MenuCommand,
     Module,
     ModuleCommand,
     Permission,
@@ -316,3 +318,57 @@ def permissions_in_db_fixture(
     session.add(permission2)
     session.commit()
     return [permission, permission2]
+
+
+""" Menu """
+
+
+@pytest.fixture(name="menu_parent_command")
+def menu_parent_command_fixture():
+    return MenuCommand(code="menu 1", link="link 1", module_id="abc-123-def-456")
+
+
+@pytest.fixture(name="menu_child_command")
+def menu_child_command_fixture():
+    return MenuCommand(code="menu 11", link="link 11", module_id="abc-123-def-456", parent_id="abc-123-def-456")
+
+
+@pytest.fixture(name="menu_parent")
+def menu_parent_fixture(module: Module):
+    return Menu(
+        id="abc-123-def-456",
+        code="menu 1",
+        link="link 1",
+        module_id=module.id,
+        module=module
+    )
+
+
+@pytest.fixture(name="menu_child")
+def menu_child_fixture(menu_parent: Menu, module: Module):
+    return Menu(
+        id="ghi-123-jkl-456",
+        code="menu 11",
+        link="link 11",
+        module_id=module.id,
+        module=module,
+        parent_id=menu_parent.id,
+        parent=menu_parent
+    )
+
+
+@pytest.fixture(name="menu_parent_in_db")
+def menu_parent_in_db_fixture(session: Session, menu_parent: Menu, module_in_db: Module):
+    menu_parent.module_id = module_in_db.id
+    session.add(menu_parent)
+    session.commit()
+    return menu_parent
+
+
+@pytest.fixture(name="menu_child_in_db")
+def menu_child_in_db_fixture(session: Session, menu_parent_in_db: Menu, menu_child: Menu, module_in_db: Module):
+    menu_child.module_id = module_in_db.id
+    menu_child.parent_id = menu_parent_in_db.id
+    session.add(menu_child)
+    session.commit()
+    return menu_child

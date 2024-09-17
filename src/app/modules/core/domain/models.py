@@ -75,6 +75,15 @@ class GroupFilter(SQLModel):
     target: str | None = None
 
 
+""" RoleMenu """
+
+
+class RoleMenu(SQLModel, table=True):
+    __tablename__ = "role_menu"
+    role_id: str | None = Field(default=None, primary_key=True, foreign_key="roles.id")
+    menu_id: str | None = Field(default=None, primary_key=True, foreign_key="menus.id")
+
+
 """ Role """
 
 
@@ -87,6 +96,18 @@ class Role(RoleBase, table=True):
     __tablename__ = "roles"
     id: str | None = Field(default=None, primary_key=True)
     permissions: list["Permission"] = Relationship(back_populates="role", cascade_delete=True)
+    menus: list["Menu"] = Relationship(back_populates="roles", link_model=RoleMenu)
+
+    def generate_menu_tree(self):
+        response = []
+        all_menus = self.menus
+        all_menus_ids = [menu.id for menu in all_menus]
+        menu_roots = [menu for menu in all_menus if menu.parent is None]
+        for menu_root in menu_roots:
+            children = [menu_child for menu_child in menu_root.children if menu_child.id in all_menus_ids]
+            menu_root.children = children
+            response.append(menu_root)
+        return response
 
 
 class RoleCommand(RoleBase):
@@ -273,6 +294,47 @@ class PermissionResponse(PermissionSimpleResponse):
 
 class PermissionFilter(SQLModel):
     module_id: str | None = None
+
+
+""" Menu """
+
+
+class Menu(SQLModel, table=True):
+    __tablename__ = "menus"
+    id: str | None = Field(default=None, primary_key=True)
+    code: str = Field(unique=True, min_length=3)
+    link: str | None = None
+    module_id: str = Field(foreign_key="modules.id", ondelete="CASCADE")
+    module: Module = Relationship()
+    parent_id: str | None = Field(foreign_key="menus.id", ondelete="CASCADE", nullable=True)
+    parent: Optional["Menu"] | None = Relationship(
+        back_populates="children", sa_relationship_kwargs=dict(remote_side="Menu.id")
+    )
+    children: list["Menu"] = Relationship(back_populates="parent", cascade_delete=True)
+    roles: list[Role] = Relationship(back_populates="menus", link_model=RoleMenu)
+
+
+class MenuCommand(SQLModel):
+    code: str = Field(unique=True, min_length=3)
+    link: str | None = None
+    parent_id: str | None = None
+    module_id: str
+
+
+class MenuSimpleResponse(SQLModel):
+    id: str
+    code: str
+    link: str | None = None
+    parent: Optional["MenuSimpleResponse"]
+    module: ModuleResponse
+
+
+class MenuResponse(SQLModel):
+    id: str
+    code: str
+    link: str | None = None
+    children: list["MenuResponse"] | None = None
+    module: ModuleResponse
 
 
 """ Statistics """

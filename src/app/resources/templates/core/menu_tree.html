@@ -1,0 +1,52 @@
+{% from 'shared/macros/modal_delete.html' import modal_delete with context %}
+{% extends 'shared/content.html' %}
+
+{% set current_page = 'menus' %}
+
+{% block title %}
+{{ _t("menus", request.state.locale ) | capitalize()}}
+{% endblock title %}
+
+{% block title_right %}
+<a class="btn btn-success" href="{{ url_for('menu_create') }}">
+  {{ _t("Create", request.state.locale )}} {{ _t("menu", request.state.locale )}}
+</a>
+{% endblock title_right %}
+
+{% block main %}
+<div class="list-group">
+  <ul class="list-group">
+    {% for menu_root in menu_roots %}
+    <li class="list-group-item list-group-item-info d-flex justify-content-between align-items-center">
+      <strong>{{menu_root.code}}</strong>
+      <div>
+        <a class="btn btn-sm btn-outline-success" href="{{ url_for('submenu_create', parent_id=menu_root.id) }}"><i
+            class="bi bi-plus"></i></a>
+          <a class="btn btn-sm btn-outline-primary" href="{{ url_for('menu_update', id=menu_root.id) }}"><i
+              class="bi bi-pencil"></i></a>
+          <button class="btn btn-sm btn-outline-danger" data-code="{{menu_root.code}}" data-id="{{menu_root.id}}"
+            onclick="openDeleteModal(this)">
+            <i class="bi bi-trash"></i>
+          </button>
+      </div>
+    </li>
+    <ul class="list-group ms-4">
+      {% for menu_child in menu_root.children %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        {{menu_child.code}}
+        <div>
+          <a class="btn btn-sm btn-outline-primary" href="{{ url_for('menu_update', id=menu_child.id) }}"><i
+              class="bi bi-pencil"></i></a>
+          <button class="btn btn-sm btn-outline-danger" data-code="{{menu_child.code}}" data-id="{{menu_child.id}}"
+            onclick="openDeleteModal(this)">
+            <i class="bi bi-trash"></i>
+          </button>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+  </ul>
+  {% endfor %}
+</div>
+{{ modal_delete(_t("Delete", request.state.locale ) + " " + _t("menu", request.state.locale ), 'menu_delete_perform') }}
+{% endblock main %}

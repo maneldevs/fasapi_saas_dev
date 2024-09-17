@@ -1,10 +1,11 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, Request
+from fastapi import Form as FForm
 from src.app import main
 from src.app.modules.core.domain.dependencies import principal_god
 from src.app.modules.core.domain.models import Permission, PermissionFilter, RoleCommand, RoleFilter, RoleResponse
+from src.app.modules.core.domain.services.menu_service import MenuService
 from src.app.modules.core.domain.services.module_service import ModuleService
-from src.app.modules.core.domain.services.permission_service import PermissionService
 from src.app.modules.core.domain.services.role_service import RoleService
 from src.app.modules.core.utils.paginator import PageParams, PageParser
 from src.app.modules.core.domain.forms import Form, RoleForm
@@ -101,3 +102,41 @@ async def role_permissions(
             data.append({"resource": resource, "permission": permission})
     context = {"module_id": module_id, "modules": modules, "role": role, "data": data}
     return main.templates.TemplateResponse(request=request, name="core/role_permissions.html", context=context)
+
+
+@router.get("/{id}/menus")
+async def role_menus(
+    request: Request,
+    id: str,
+    service: Annotated[RoleService, Depends()],
+    menu_service: Annotated[MenuService, Depends()],
+):
+    role = service.read_by_id(id)
+    menu_roots = menu_service.read_all_root()
+    role_menus = []
+    role_menus += role.menus
+    role_menu_ids = [menu.id for menu in role_menus]
+    context = {"role": role, "menu_roots": menu_roots, "role_menu_ids": role_menu_ids}
+    return main.templates.TemplateResponse(request=request, name="core/role_menus.html", context=context)
+
+
+@router.post("/{id}/menus")
+async def role_menus_perform(
+    request: Request,
+    id: str,
+    service: Annotated[RoleService, Depends()],
+    menu_root_selected_ids: Annotated[list[str], FForm()] = [],
+    menu_child_selected_ids: Annotated[list[str], FForm()] = [],
+):
+    form = Form(request)
+    menu_ids = []
+    menu_ids += menu_root_selected_ids
+    menu_ids += menu_child_selected_ids
+    params = {"id": id, "command": menu_ids}
+    return await form.perform_action(
+        lambda: service.update_menus(**params),
+        "role_list",
+        {},
+        "role_menus",
+        {"id": id},
+    )

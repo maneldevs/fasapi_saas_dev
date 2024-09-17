@@ -78,9 +78,9 @@ class UserRepo:
         except IntegrityError as e:
             raise EntityAlreadyExistsError(original_exception=e)
 
-    def __delete(self, module):
+    def __delete(self, user: User):
         try:
-            self.session.delete(module)
+            self.session.delete(user)
             self.session.commit()
         except IntegrityError as e:
             raise EntityRelationshipExistsError(original_exception=e)
