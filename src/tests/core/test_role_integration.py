@@ -1,7 +1,16 @@
 from fastapi.testclient import TestClient
 from sqlmodel import Session
 
-from src.app.modules.core.domain.models import Menu, Permission, PermissionCreateCommand, Resource, Role, RoleCommand, RoleMenu, User
+from src.app.modules.core.domain.models import (
+    Menu,
+    Permission,
+    PermissionCreateCommand,
+    Resource,
+    Role,
+    RoleCommand,
+    RoleMenu,
+    User,
+)
 
 BASE_URL: str = "/api/core/roles"
 

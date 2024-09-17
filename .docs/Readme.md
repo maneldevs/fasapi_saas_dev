@@ -15,7 +15,7 @@
   - Tests d'integració
   - Manejament d'excepcions
   - Variables d'entorn
-  - Desentrrotllament i desplegament en contenidors de Docker
+  - Desentrotllament i desplegament en contenidors de Docker
   - Base de dades i migracions
 
 

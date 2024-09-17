@@ -315,7 +315,7 @@ class Menu(SQLModel, table=True):
 
 
 class MenuCommand(SQLModel):
-    code: str
+    code: str = Field(unique=True, min_length=3)
     link: str | None = None
     parent_id: str | None = None
     module_id: str

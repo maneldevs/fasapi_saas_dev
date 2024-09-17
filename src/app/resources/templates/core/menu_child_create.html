@@ -1,0 +1,49 @@
+{% from 'shared/macros/form_control.html' import form_control %}
+{% extends 'shared/content.html' %}
+
+{% set current_page = 'menus' %}
+
+{% block title %}
+{{ _t("Create", request.state.locale )}} {{ _t("menu", request.state.locale )}}
+{% endblock title %}
+
+{% block title_right %}
+<button type="submit" form="create-menu-form" class="btn btn-primary">{{ _t("Save", request.state.locale ) }}</button>
+{% endblock title_right %}
+
+{% block main %}
+<form id="create-menu-form" method="post" action="{{url_for('submenu_create_perform')}}">
+  <input type="hidden" name="{{parent_id}}" value="{{parent.id}}">
+  <div class="row g-3">
+    <div class="mb-3 col-md-6">
+        <label class="form-label">{{ _t("parent", request.state.locale) }}</label>
+        <select class="form-select" name="parent_id">
+          <option value="{{null}}"></option>
+          {% for p in menu_roots %}
+          <option value="{{p.id}}" {{'selected' if p.id==(values.parent_id if has_error else parent.id)}}>
+            {{ p.code }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+    <div class="mb-3 col-md-6">
+      <label class="form-label">{{ _t("module", request.state.locale) }}</label>
+      <select class="form-select" name="module_id" required>
+        {% for m in modules %}
+        <option value="{{m.id}}" {{'selected' if m.id==(values.module_id if has_error else module_id)}}>
+          {{ m.code + ' - ' + m.webname }}
+        </option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="mb-3 col-md-6">
+      {{ form_control(_t("code", request.state.locale ), "text", errors.code if errors and errors.code else None,
+      "code", (values.code if has_error else code), true) }}
+    </div>
+    <div class="mb-3 col-md-6">
+      {{ form_control(_t("link", request.state.locale ), "text", errors.link if errors and errors.link else
+      None, "link", (values.link if has_error else link), false) }}
+    </div>
+  </div>
+</form>
+{% endblock main %}
