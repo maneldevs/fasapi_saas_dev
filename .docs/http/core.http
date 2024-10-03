@@ -256,13 +256,13 @@ POST {{urlBase}}/configurations
 }
 
 ### CONFIGURATION - READ BY ID
-GET {{urlBase}}/configurations/ca4c56de-3f71-4ec3-860d-888718ac6f37
+GET {{urlBase}}/configurations/b4547f98-dc18-48a5-9ea6-dccdb54693b6
 
 ### CONFIGURATION - READ INDEX
 GET {{urlBase}}/configurations/index
 
 ### CONFIGURATION - UPDATE 
-PUT {{urlBase}}/configurations/ca4c56de-3f71-4ec3-860d-888718ac6f37
+PUT {{urlBase}}/configurations/b4547f98-dc18-48a5-9ea6-dccdb54693b6
 
 {
     "code": "config 1 updated",
@@ -280,24 +280,24 @@ DELETE {{urlBase}}/configurations/ca4c56de-3f71-4ec3-860d-888718ac6f37
 POST {{urlBase}}/groups/59af182f-0bee-43b9-9f6c-d325691950e2/configuration-values
 
 {
-    "configuration_id": "ca4c56de-3f71-4ec3-860d-888718ac6f37",
+    "configuration_id": "b4547f98-dc18-48a5-9ea6-dccdb54693b6",
     "value": "value 1"
 }
 
 ### GROUP CONFIGURATION VALUE - READ INDEX
 GET {{urlBase}}/groups/59af182f-0bee-43b9-9f6c-d325691950e2/configuration-values/index
 
-### GROUP CONFIGURATION VALUE - READ BY ID
+### GROUP CONFIGURATION VALUE - READ BY ID #####
 GET {{urlBase}}/configuration-values/59af182f-0bee-43b9-9f6c-d325691950e2
 
-### GROUP CONFIGURATION VALUE - UPDATE
+### GROUP CONFIGURATION VALUE - UPDATE ####
 PUT {{urlBase}}/configuration-values/59af182f-0bee-43b9-9f6c-d325691950e2
 
 {
     "value": "value 1 updated"
 }
 
-### GROUP CONFIGURATION VALUE - DELETE BY ID
+### GROUP CONFIGURATION VALUE - DELETE BY ID ####
 DELETE {{urlBase}}/configuration-values/59af182f-0bee-43b9-9f6c-d325691950e2
 
 

@@ -3,6 +3,8 @@ from typing import Annotated
 from fastapi import Depends
 
 from src.app.modules.core.domain.dependencies import Locale
+from src.app.modules.core.persistence.configuration_repo import ConfigurationRepo
+from src.app.modules.core.persistence.configuration_value_repo import ConfigurationValueRepo
 from src.app.modules.core.persistence.module_repo import ModuleRepo
 from src.app.modules.core.utils.exceptions import (
     EntityAlreadyExistsError,
@@ -10,6 +12,8 @@ from src.app.modules.core.utils.exceptions import (
     EntityRelationshipExistsError,
 )
 from src.app.modules.core.domain.models import (
+    Configuration,
+    ConfigurationValue,
     ConfigurationValueCommand,
     Group,
     GroupCreateCommand,
@@ -24,10 +28,17 @@ from src.app.configuration.lang import tr
 class GroupService:
 
     def __init__(
-        self, repo: Annotated[GroupRepo, Depends()], module_repo: Annotated[ModuleRepo, Depends()], locale: Locale
+        self,
+        repo: Annotated[GroupRepo, Depends()],
+        module_repo: Annotated[ModuleRepo, Depends()],
+        configuration_repo: Annotated[ConfigurationRepo, Depends()],
+        configuration_value_repo: Annotated[ConfigurationValueRepo, Depends()],
+        locale: Locale,
     ) -> None:
         self.repo = repo
         self.module_repo = module_repo
+        self.configuration_repo = configuration_repo
+        self.configuration_value_repo = configuration_value_repo
         self.locale = locale
 
     def create(self, command: GroupCreateCommand) -> Group:
@@ -86,7 +97,26 @@ class GroupService:
             raise EntityNotFoundError(msg=tr.t("Not found", self.locale, entity=id))
         return group_updated
 
-    def update_configuration_values(self, id: str, commands: list[ConfigurationValueCommand]) -> Group:
+    def read_configuration_values_index(self, id: str) -> list[ConfigurationValue]:
         group = self.read_by_id(id)
-        group_updated = self.repo.upsert_configuration_value(commands, group)
-        return group_updated
+        return group.configuration_values
+
+    def create_configuration_value(self, id: str, command: ConfigurationValueCommand) -> ConfigurationValue:
+        try:
+            group = self.read_by_id(id)
+            configuration = self.__validate_configuration_value_command(command)
+            configuration_value_dict = command.model_dump()
+            configuration_value_dict.update({"configuration": configuration, "group": group})
+            configuration_value = ConfigurationValue(**configuration_value_dict, group_id=id)
+            configuration_value = ConfigurationValue.model_validate(configuration_value)
+            return self.configuration_value_repo.create(configuration_value)
+        except EntityAlreadyExistsError as e:
+            e.msg = tr.t("Already exists", self.locale, entity=f"g:{id} conf:{command.configuration_id}")
+            raise e
+
+    def __validate_configuration_value_command(self, command: ConfigurationValueCommand) -> Configuration:
+        if command.configuration_id:
+            configuration = self.configuration_repo.read_by_id(command.configuration_id)
+            if configuration is None:
+                raise EntityNotFoundError(msg=tr.t("Not found", self.locale, entity=command.configuration_id))
+        return configuration or None

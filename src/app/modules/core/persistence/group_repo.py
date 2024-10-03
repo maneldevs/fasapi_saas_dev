@@ -68,17 +68,6 @@ class GroupRepo:
             self.__save(group_in_db)
         return group_in_db
 
-    def upsert_configuration_value(self, commands, group):
-        for command in commands:
-            config_value = self.exists_configuration_value(group.id, command.configuration_id)
-            if config_value:
-                group_updated = self.update_configuration_value(group.id, command)
-            else:
-                group_updated = self.create_configuration_value(group.id, command)
-        return group_updated
-
-    # TODO mmr 2021-09-29: Implement exists_configuration_value, update_configuration_value and create_configuration_value methods en este fichero o en otro?
-
     def __apply_filter(self, stmt: SelectOfScalar[Group], filter: GroupFilter):
         if filter.target:
             stmt = stmt.where(or_(col(Group.code).contains(filter.target), col(Group.webname).contains(filter.target)))

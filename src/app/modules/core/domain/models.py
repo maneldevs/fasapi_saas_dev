@@ -362,7 +362,7 @@ class ConfigurationResponse(SQLModel):
     module: Optional[ModuleResponse]
 
 
-""" Configuration values"""
+""" Configuration values """
 
 
 class ConfigurationValue(SQLModel, table=True):
@@ -379,6 +379,13 @@ class ConfigurationValue(SQLModel, table=True):
 class ConfigurationValueCommand(SQLModel):
     configuration_id: str
     value: str = Field(min_length=1)
+
+
+class ConfigurationValueResponse(SQLModel):
+    id: str
+    value: str
+    configuration: ConfigurationResponse
+    group: GroupSimpleResponse
 
 
 """ Statistics """

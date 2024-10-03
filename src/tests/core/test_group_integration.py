@@ -1,7 +1,16 @@
 from fastapi.testclient import TestClient
 from sqlmodel import Session
 
-from src.app.modules.core.domain.models import Group, GroupCreateCommand, GroupUpdateCommand, Module, User
+from src.app.modules.core.domain.models import (
+    Configuration,
+    ConfigurationValue,
+    ConfigurationValueCommand,
+    Group,
+    GroupCreateCommand,
+    GroupUpdateCommand,
+    Module,
+    User,
+)
 
 BASE_URL: str = "/api/core/groups"
 
@@ -230,4 +239,120 @@ def test_i_update_group_modules_group_non_existent(client: TestClient, modules_i
 def test_i_update_group_modules_with_modules_non_existent(client: TestClient, group_in_db: Group):
     body = ["abc, def"]
     response = client.patch(f"{BASE_URL}/{group_in_db.id}/modules", json=body)
+    assert response.status_code == 404
+
+
+""" Create configuration value """
+
+
+def test_i_create_configuration_value_happy(
+    client: TestClient,
+    session: Session,
+    group_in_db: Group,
+    configuration_in_db: Configuration,
+    configuration_value_command: ConfigurationValueCommand,
+):
+    body = configuration_value_command.model_dump()
+    response = client.post(f"{BASE_URL}/{group_in_db.id}/configuration-values", json=body)
+    data = response.json()
+    configuration_value_created = session.get(ConfigurationValue, data["id"])
+    assert response.status_code == 201
+    assert configuration_value_created is not None
+    assert data["id"] == configuration_value_created.id
+    assert data["value"] == configuration_value_command.value == configuration_value_created.value
+    assert (
+        data["configuration"]["id"]
+        == configuration_value_command.configuration_id
+        == configuration_value_created.configuration.id
+    )
+    assert data["configuration"]["code"] == configuration_in_db.code == configuration_value_created.configuration.code
+    assert (
+        data["configuration"]["module"]["id"]
+        == configuration_in_db.module.id
+        == configuration_value_created.configuration.module.id
+    )
+    assert (
+        data["configuration"]["module"]["code"]
+        == configuration_in_db.module.code
+        == configuration_value_created.configuration.module.code
+    )
+    assert (
+        data["configuration"]["module"]["webname"]
+        == configuration_in_db.module.webname
+        == configuration_value_created.configuration.module.webname
+    )
+    assert data["group"]["id"] == group_in_db.id == configuration_value_created.group.id
+    assert data["group"]["code"] == group_in_db.code == configuration_value_created.group.code
+    assert data["group"]["webname"] == group_in_db.webname == configuration_value_created.group.webname
+
+
+def test_i_create_configuration_value_no_value(
+    client: TestClient, group_in_db: Group, configuration_value_command: ConfigurationValueCommand
+):
+    configuration_value_command.value = None
+    body = configuration_value_command.model_dump(exclude_defaults=True)
+    response = client.post(f"{BASE_URL}/{group_in_db.id}/configuration-values", json=body)
+    assert response.status_code == 422
+
+
+def test_i_create_configuration_value_no_configuration_id(
+    client: TestClient, group_in_db: Group, configuration_value_command: ConfigurationValueCommand
+):
+    configuration_value_command.configuration_id = None
+    body = configuration_value_command.model_dump(exclude_defaults=True)
+    response = client.post(f"{BASE_URL}/{group_in_db.id}/configuration-values", json=body)
+    assert response.status_code == 422
+
+
+def test_i_create_configuration_value_no_existent_configuration_id(
+    client: TestClient, group_in_db: Group, configuration_value_command: ConfigurationValueCommand
+):
+    configuration_value_command.configuration_id = "8888"
+    body = configuration_value_command.model_dump(exclude_defaults=True)
+    response = client.post(f"{BASE_URL}/{group_in_db.id}/configuration-values", json=body)
+    assert response.status_code == 404
+
+
+def test_i_create_configuration_value_no_existent_group_id(
+    client: TestClient, configuration_in_db: Configuration, configuration_value_command: ConfigurationValueCommand
+):
+    body = configuration_value_command.model_dump(exclude_defaults=True)
+    response = client.post(f"{BASE_URL}/8888/configuration-values", json=body)
+    assert response.status_code == 404
+
+
+""" Read configuration values index """
+
+
+def test_i_read_configuration_values_index_happy(
+    client: TestClient, group_in_db: Group, configuration_values_in_db: list[ConfigurationValue]
+):
+    response = client.get(f"{BASE_URL}/{group_in_db.id}/configuration-values/index")
+    data = response.json()
+    assert response.status_code == 200
+    assert len(data) == 2
+    assert data[0]["id"] == configuration_values_in_db[0].id
+    assert data[0]["value"] == configuration_values_in_db[0].value
+    assert data[0]["configuration"]["id"] == configuration_values_in_db[0].configuration.id
+    assert data[0]["configuration"]["code"] == configuration_values_in_db[0].configuration.code
+    assert data[0]["configuration"]["module"]["id"] == configuration_values_in_db[0].configuration.module.id
+    assert data[0]["configuration"]["module"]["code"] == configuration_values_in_db[0].configuration.module.code
+    assert data[0]["configuration"]["module"]["webname"] == configuration_values_in_db[0].configuration.module.webname
+    assert data[0]["group"]["id"] == group_in_db.id
+    assert data[0]["group"]["code"] == group_in_db.code
+    assert data[0]["group"]["webname"] == group_in_db.webname
+    assert data[1]["id"] == configuration_values_in_db[1].id
+    assert data[1]["value"] == configuration_values_in_db[1].value
+    assert data[1]["configuration"]["id"] == configuration_values_in_db[1].configuration.id
+    assert data[1]["configuration"]["code"] == configuration_values_in_db[1].configuration.code
+    assert data[1]["configuration"]["module"]["id"] == configuration_values_in_db[1].configuration.module.id
+    assert data[1]["configuration"]["module"]["code"] == configuration_values_in_db[1].configuration.module.code
+    assert data[1]["configuration"]["module"]["webname"] == configuration_values_in_db[1].configuration.module.webname
+    assert data[1]["group"]["id"] == group_in_db.id
+    assert data[1]["group"]["code"] == group_in_db.code
+    assert data[1]["group"]["webname"] == group_in_db.webname
+
+
+def test_i_read_configuration_values_index_no_existent(client: TestClient):
+    response = client.get(f"{BASE_URL}/8888/configuration-values/index")
     assert response.status_code == 404

@@ -5,6 +5,8 @@ from src.app.modules.core.domain.services.group_service import GroupService
 from src.app.modules.core.domain.models import (
     Configuration,
     ConfigurationCommand,
+    ConfigurationValue,
+    ConfigurationValueCommand,
     Group,
     GroupCreateCommand,
     GroupUpdateCommand,
@@ -406,3 +408,64 @@ def configurations_in_db_fixture(
     session.add(configuration2)
     session.commit()
     return [configuration, configuration2]
+
+
+""" Configuration Value """
+
+
+@pytest.fixture(name="configuration_value_command")
+def configuration_value_command_fixture(configuration_in_db: Configuration):
+    return ConfigurationValueCommand(configuration_id=configuration_in_db.id, value="value1")
+
+
+@pytest.fixture(name="configuration_value")
+def configuration_value_fixture(configuration: Configuration, group: Group):
+    return ConfigurationValue(
+        id="abc-123-def-456",
+        configuration_id=configuration.id,
+        configuration=configuration,
+        group_id=group.id,
+        group=group,
+        value="value1",
+    )
+
+
+@pytest.fixture(name="configuration_value2")
+def configuration_value2_fixture(configuration2: Configuration, group: Group):
+    return ConfigurationValue(
+        id="ghi-123-jkl-456",
+        configuration_id=configuration2.id,
+        configuration=configuration2,
+        group_id=group.id,
+        group=group,
+        value="value2",
+    )
+
+
+@pytest.fixture(name="configuration_value_in_db")
+def configuration_value_in_db_fixture(
+    session: Session, configuration_value: ConfigurationValue, configuration_in_db: Configuration, group_in_db: Group
+):
+    configuration_value.configuration_id = configuration_in_db.id
+    configuration_value.group_id = group_in_db.id
+    session.add(configuration_value)
+    session.commit()
+    return configuration_value
+
+
+@pytest.fixture(name="configuration_values_in_db")
+def configuration_values_in_db_fixture(
+    session: Session,
+    configuration_value: ConfigurationValue,
+    configuration_value2: ConfigurationValue,
+    configurations_in_db: list[Configuration],
+    group_in_db: Group,
+):
+    configuration_value.configuration_id = configurations_in_db[0].id
+    configuration_value.group_id = group_in_db.id
+    configuration_value2.configuration_id = configurations_in_db[1].id
+    configuration_value2.group_id = group_in_db.id
+    session.add(configuration_value)
+    session.add(configuration_value2)
+    session.commit()
+    return [configuration_value, configuration_value2]
