@@ -9,7 +9,13 @@ from src.app.modules.core.utils.exceptions import (
     EntityNotFoundError,
     EntityRelationshipExistsError,
 )
-from src.app.modules.core.domain.models import Group, GroupCreateCommand, GroupFilter, GroupUpdateCommand
+from src.app.modules.core.domain.models import (
+    ConfigurationValueCommand,
+    Group,
+    GroupCreateCommand,
+    GroupFilter,
+    GroupUpdateCommand,
+)
 from src.app.modules.core.persistence.group_repo import GroupRepo
 from src.app.modules.core.utils.paginator import PageParams
 from src.app.configuration.lang import tr
@@ -78,4 +84,9 @@ class GroupService:
         group_updated = self.repo.update_modules(id, modules)
         if group_updated is None:
             raise EntityNotFoundError(msg=tr.t("Not found", self.locale, entity=id))
+        return group_updated
+
+    def update_configuration_values(self, id: str, commands: list[ConfigurationValueCommand]) -> Group:
+        group = self.read_by_id(id)
+        group_updated = self.repo.upsert_configuration_value(commands, group)
         return group_updated

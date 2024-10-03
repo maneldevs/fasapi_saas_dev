@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, status
 
 from src.app.modules.core.domain.dependencies import principal
 from src.app.modules.core.domain.models import (
+    ConfigurationValueCommand,
     GroupCreateCommand,
     GroupFilter,
     GroupResponse,
@@ -60,4 +61,12 @@ async def delete(id: str, service: Annotated[GroupService, Depends()]):
 @router.patch("/{id}/modules", response_model=GroupResponseWithRels)
 async def update_modules(id: str, command: list[str], service: Annotated[GroupService, Depends()]):
     group = service.update_modules(id, command)
+    return group
+
+
+@router.patch("/{id}/configuration", response_model=GroupResponseWithRels)
+async def update_configuration(
+    id: str, command: list[ConfigurationValueCommand], service: Annotated[GroupService, Depends()]
+):
+    group = service.update_configuration(id, command)
     return group

@@ -3,6 +3,8 @@ from sqlmodel import Session
 
 from src.app.modules.core.domain.services.group_service import GroupService
 from src.app.modules.core.domain.models import (
+    Configuration,
+    ConfigurationCommand,
     Group,
     GroupCreateCommand,
     GroupUpdateCommand,
@@ -335,13 +337,7 @@ def menu_child_command_fixture():
 
 @pytest.fixture(name="menu_parent")
 def menu_parent_fixture(module: Module):
-    return Menu(
-        id="abc-123-def-456",
-        code="menu 1",
-        link="link 1",
-        module_id=module.id,
-        module=module
-    )
+    return Menu(id="abc-123-def-456", code="menu 1", link="link 1", module_id=module.id, module=module)
 
 
 @pytest.fixture(name="menu_child")
@@ -353,7 +349,7 @@ def menu_child_fixture(menu_parent: Menu, module: Module):
         module_id=module.id,
         module=module,
         parent_id=menu_parent.id,
-        parent=menu_parent
+        parent=menu_parent,
     )
 
 
@@ -372,3 +368,41 @@ def menu_child_in_db_fixture(session: Session, menu_parent_in_db: Menu, menu_chi
     session.add(menu_child)
     session.commit()
     return menu_child
+
+
+""" Configuration """
+
+
+@pytest.fixture(name="configuration_command")
+def configuration_command_fixture():
+    return ConfigurationCommand(code="CONFIG1", module_id="abc-123-def-456")
+
+
+@pytest.fixture(name="configuration")
+def configuration_fixture(module: Module):
+    return Configuration(id="abc-123-def-456", code="CONFIG1", module=module, module_id=module.id)
+
+
+@pytest.fixture(name="configuration2")
+def configuration2_fixture(module: Module):
+    return Configuration(id="ghi-123-jkl-456", code="CONFIG2", module=module, module_id=module.id)
+
+
+@pytest.fixture(name="configuration_in_db")
+def configuration_in_db_fixture(session: Session, configuration: Configuration, module_in_db: Module):
+    configuration.module_id = module_in_db.id
+    session.add(configuration)
+    session.commit()
+    return configuration
+
+
+@pytest.fixture(name="configurations_in_db")
+def configurations_in_db_fixture(
+    session: Session, configuration: Configuration, configuration2: Configuration, module_in_db: Module
+):
+    configuration.module_id = module_in_db.id
+    configuration2.module_id = module_in_db.id
+    session.add(configuration)
+    session.add(configuration2)
+    session.commit()
+    return [configuration, configuration2]

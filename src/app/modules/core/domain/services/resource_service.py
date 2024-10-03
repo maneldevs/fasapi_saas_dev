@@ -50,6 +50,6 @@ class ResourceService:
 
     def __validate(self, command: ResourceUpdateCommand) -> None:
         if command.module_id:
-            role = self.module_repo.read_by_id(command.module_id)
-            if role is None:
+            module = self.module_repo.read_by_id(command.module_id)
+            if module is None:
                 raise EntityNotFoundError(msg=tr.t("Not found", self.locale, entity=command.module_id))
