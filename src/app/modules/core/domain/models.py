@@ -381,6 +381,10 @@ class ConfigurationValueCommand(SQLModel):
     value: str = Field(min_length=1)
 
 
+class ConfigurationValueUpdateCommand(SQLModel):
+    value: str = Field(min_length=1)
+
+
 class ConfigurationValueResponse(SQLModel):
     id: str
     value: str

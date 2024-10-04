@@ -288,17 +288,17 @@ POST {{urlBase}}/groups/59af182f-0bee-43b9-9f6c-d325691950e2/configuration-value
 GET {{urlBase}}/groups/59af182f-0bee-43b9-9f6c-d325691950e2/configuration-values/index
 
 ### GROUP CONFIGURATION VALUE - READ BY ID #####
-GET {{urlBase}}/configuration-values/59af182f-0bee-43b9-9f6c-d325691950e2
+GET {{urlBase}}/configuration-values/61e1c0b7-e330-47f9-a059-fd9f3a65b21e
 
 ### GROUP CONFIGURATION VALUE - UPDATE ####
-PUT {{urlBase}}/configuration-values/59af182f-0bee-43b9-9f6c-d325691950e2
+PUT {{urlBase}}/configuration-values/61e1c0b7-e330-47f9-a059-fd9f3a65b21e
 
 {
     "value": "value 1 updated"
 }
 
 ### GROUP CONFIGURATION VALUE - DELETE BY ID ####
-DELETE {{urlBase}}/configuration-values/59af182f-0bee-43b9-9f6c-d325691950e2
+DELETE {{urlBase}}/configuration-values/61e1c0b7-e330-47f9-a059-fd9f3a65b21e
 
 
 

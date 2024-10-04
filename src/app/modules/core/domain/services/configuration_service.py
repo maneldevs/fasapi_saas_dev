@@ -4,7 +4,11 @@ from src.app.modules.core.domain.dependencies import Locale
 from src.app.modules.core.persistence.configuration_repo import ConfigurationRepo
 from src.app.modules.core.domain.models import Configuration, ConfigurationCommand
 from src.app.modules.core.persistence.module_repo import ModuleRepo
-from src.app.modules.core.utils.exceptions import EntityAlreadyExistsError, EntityNotFoundError
+from src.app.modules.core.utils.exceptions import (
+    EntityAlreadyExistsError,
+    EntityNotFoundError,
+    EntityRelationshipExistsError,
+)
 from src.app.configuration.lang import tr
 
 
@@ -56,8 +60,8 @@ class ConfigurationService:
             configuration = self.repo.delete(id)
             if configuration is None:
                 raise EntityNotFoundError(msg=tr.t("Not found", self.locale, entity=id))
-        except EntityNotFoundError as e:
-            e.msg = tr.t("Not found", self.locale, entity=id)
+        except EntityRelationshipExistsError as e:
+            e.msg = tr.t("Entity has dependants", self.locale)
             raise e
 
     def __validate(self, command: ConfigurationCommand) -> None:
@@ -65,5 +69,3 @@ class ConfigurationService:
             module = self.module_repo.read_by_id(command.module_id)
             if module is None:
                 raise EntityNotFoundError(msg=tr.t("Not found", self.locale, entity=command.module_id))
-
-    # TODO: read_all_by_group read_by_id, create and update configuration values En este fichero o en otro?

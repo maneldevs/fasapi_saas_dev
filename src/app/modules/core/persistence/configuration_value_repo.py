@@ -25,6 +25,8 @@ class ConfigurationValueRepo:
 
     def update(self, id: str, configuration_value: ConfigurationValue):
         configuration_value_in_db = self.read_by_id(id)
+        configuration_value.group_id = configuration_value_in_db.group_id
+        configuration_value.configuration_id = configuration_value_in_db.configuration_id
         if configuration_value_in_db is not None:
             configuration_value_in_db.sqlmodel_update(configuration_value)
             self.__save(configuration_value_in_db)
