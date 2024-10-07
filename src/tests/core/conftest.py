@@ -7,6 +7,7 @@ from src.app.modules.core.domain.models import (
     ConfigurationCommand,
     ConfigurationValue,
     ConfigurationValueCommand,
+    ConfigurationValueUpdateCommand,
     Group,
     GroupCreateCommand,
     GroupUpdateCommand,
@@ -416,6 +417,11 @@ def configurations_in_db_fixture(
 @pytest.fixture(name="configuration_value_command")
 def configuration_value_command_fixture(configuration_in_db: Configuration):
     return ConfigurationValueCommand(configuration_id=configuration_in_db.id, value="value1")
+
+
+@pytest.fixture(name="configuration_value_update_command")
+def configuration_value_update_command_fixture():
+    return ConfigurationValueUpdateCommand(value="value1")
 
 
 @pytest.fixture(name="configuration_value")
