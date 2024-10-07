@@ -1,0 +1,42 @@
+{% from 'shared/macros/modal_delete.html' import modal_delete with context %}
+{% extends 'shared/content.html' %}
+
+{% set current_page = 'configurations' %}
+
+{% block title_right %}
+<a class="btn btn-success" href="{{ url_for('configuration_create') }}">
+  {{ _t("Create", request.state.locale )}} {{ _t("configuration", request.state.locale )}}
+</a>
+{% endblock title_right %}
+
+{% block main %}
+<div class="table-responsive"></div>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">{{ _t("code", request.state.locale) }}</th>
+      <th scope="col">{{ _t("module", request.state.locale) }}</th>
+      <th scope="col" class="text-end"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in configurations %}
+    <tr>
+      <td>{{ item.code }}</td>
+      <td>{{ item.module.code if item.module else "-" }}</td>
+      <td class="text-end">
+        <a class="btn btn-sm btn-outline-primary" href="{{ url_for('configuration_update', id=item.id) }}">
+          <i class="bi bi-pencil"></i>
+        </a>
+        <button class="btn btn-sm btn-outline-danger" data-code="{{item.code}}" data-id="{{item.id}}"
+          onclick="openDeleteModal(this)">
+          <i class="bi bi-trash"></i>
+        </button>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{{ modal_delete(_t("Delete", request.state.locale ) + " " + _t("configuration", request.state.locale ), 'configuration_delete_perform') }}
+{% endblock main %}

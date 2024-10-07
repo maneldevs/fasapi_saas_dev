@@ -262,3 +262,19 @@ class MenuForm(Form):
         self.module_id = form.get("module_id")
         self.parent_id = form.get("parent_id") if form.get("parent_id") else None
         return self.to_dict()
+
+
+""" Configuration """
+
+
+class ConfigurationForm(Form):
+    def __init__(self, request: Request, model_type: Type[T]):
+        super().__init__(request, model_type)
+        self.code: str
+        self.module_id: str
+
+    async def load(self) -> dict:
+        form = await self.request.form()
+        self.code = form.get("code")
+        self.module_id = form.get("module_id") if form.get("module_id") else None
+        return self.to_dict()
