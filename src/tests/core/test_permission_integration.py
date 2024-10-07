@@ -30,7 +30,7 @@ def test_i_read_by_id_no_existent(client: TestClient):
     assert response.status_code == 404
 
 
-# """ Update """
+""" Update """
 
 
 def test_i_update_happy(

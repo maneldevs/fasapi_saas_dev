@@ -8,6 +8,8 @@ from .module_api import router as module_router
 from .resources_api import router as resources_router
 from .permission_api import router as permission_router
 from .menu_api import router as menu_router
+from .configuration_api import router as configuration_router
+from .configuration_value_api import router as configuration_value_router
 
 router = APIRouter()
 router.include_router(auth_router)
@@ -18,3 +20,5 @@ router.include_router(module_router)
 router.include_router(resources_router)
 router.include_router(permission_router)
 router.include_router(menu_router)
+router.include_router(configuration_router)
+router.include_router(configuration_value_router)

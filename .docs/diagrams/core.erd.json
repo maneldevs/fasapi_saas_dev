@@ -4,8 +4,8 @@
   "settings": {
     "width": 3000,
     "height": 3000,
-    "scrollTop": -1380.6245,
-    "scrollLeft": -623.5582,
+    "scrollTop": -1448.6245,
+    "scrollLeft": -666.5582,
     "zoomLevel": 0.8,
     "show": 508,
     "database": 4,
@@ -347,7 +347,7 @@
       },
       "jQU4BurZL0wxGQAk4Jnk1": {
         "id": "jQU4BurZL0wxGQAk4Jnk1",
-        "name": "group_configuration",
+        "name": "configuration_values",
         "comment": "",
         "columnIds": [
           "09TZ06SMOAgRS1ILZbLAa",
@@ -371,12 +371,12 @@
           "x": 1796.3394358721641,
           "y": 1822.1998400568623,
           "zIndex": 380,
-          "widthName": 110,
+          "widthName": 111,
           "widthComment": 60,
           "color": "#F44336"
         },
         "meta": {
-          "updateAt": 1723105618893,
+          "updateAt": 1727427201565,
           "createAt": 1722319614053
         }
       },
@@ -1746,7 +1746,7 @@
           "widthDefault": 60
         },
         "meta": {
-          "updateAt": 1723105600864,
+          "updateAt": 1727768508482,
           "createAt": 1723105592208
         }
       }
@@ -2836,7 +2836,7 @@
       1722319614052,
       -1,
       {
-        "name": 1722337368994,
+        "name": 1727427201563,
         "ui.color": 1722337045628
       }
     ],
@@ -3084,7 +3084,7 @@
       1723105592207,
       -1,
       {
-        "options(notNull)": 1723105592207,
+        "options(notNull)": 1727768508482,
         "name": 1723105600864,
         "dataType": 1723105592207,
         "default": 1723105592207,

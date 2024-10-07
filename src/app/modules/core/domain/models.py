@@ -46,6 +46,7 @@ class Group(GroupBase, table=True):
     id: str | None = Field(default=None, primary_key=True)
 
     modules: list["Module"] = Relationship(back_populates="groups", link_model=GroupModule)
+    configuration_values: list["ConfigurationValue"] = Relationship(back_populates="group", cascade_delete=True)
 
 
 class GroupCreateCommand(GroupSimpleBase):
@@ -69,6 +70,7 @@ class GroupResponse(GroupSimpleResponse):
 class GroupResponseWithRels(GroupSimpleResponse):
     active: bool
     modules: list["ModuleResponse"] | None = None
+    configuration_values: list["ConfigurationValue"] | None = None
 
 
 class GroupFilter(SQLModel):
@@ -335,6 +337,59 @@ class MenuResponse(SQLModel):
     link: str | None = None
     children: list["MenuResponse"] | None = None
     module: ModuleResponse
+
+
+""" Configuration """
+
+
+class Configuration(SQLModel, table=True):
+    __tablename__ = "configurations"
+    id: str | None = Field(default=None, primary_key=True)
+    code: str = Field(unique=True, min_length=3)
+    module_id: str | None = Field(default=None, foreign_key="modules.id", ondelete="CASCADE", nullable=True)
+    module: Module | None = Relationship()
+    configuration_values: list["ConfigurationValue"] = Relationship(back_populates="configuration", cascade_delete=True)
+
+
+class ConfigurationCommand(SQLModel):
+    code: str = Field(unique=True, min_length=3)
+    module_id: str | None = None
+
+
+class ConfigurationResponse(SQLModel):
+    id: str
+    code: str
+    module: Optional[ModuleResponse]
+
+
+""" Configuration values """
+
+
+class ConfigurationValue(SQLModel, table=True):
+    __tablename__ = "configuration_values"
+    __table_args__ = (UniqueConstraint("group_id", "configuration_id"),)
+    id: str | None = Field(default=None, primary_key=True)
+    value: str = Field(min_length=1)
+    group_id: str = Field(foreign_key="groups.id", ondelete="CASCADE")
+    group: Group = Relationship()
+    configuration_id: str = Field(foreign_key="configurations.id", ondelete="CASCADE")
+    configuration: Configuration = Relationship()
+
+
+class ConfigurationValueCommand(SQLModel):
+    configuration_id: str
+    value: str = Field(min_length=1)
+
+
+class ConfigurationValueUpdateCommand(SQLModel):
+    value: str = Field(min_length=1)
+
+
+class ConfigurationValueResponse(SQLModel):
+    id: str
+    value: str
+    configuration: ConfigurationResponse
+    group: GroupSimpleResponse
 
 
 """ Statistics """

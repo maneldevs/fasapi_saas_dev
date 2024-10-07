@@ -3,6 +3,8 @@ from fastapi import APIRouter, Depends, status
 
 from src.app.modules.core.domain.dependencies import principal
 from src.app.modules.core.domain.models import (
+    ConfigurationValueCommand,
+    ConfigurationValueResponse,
     GroupCreateCommand,
     GroupFilter,
     GroupResponse,
@@ -61,3 +63,19 @@ async def delete(id: str, service: Annotated[GroupService, Depends()]):
 async def update_modules(id: str, command: list[str], service: Annotated[GroupService, Depends()]):
     group = service.update_modules(id, command)
     return group
+
+
+@router.post(
+    "/{id}/configuration-values", response_model=ConfigurationValueResponse, status_code=status.HTTP_201_CREATED
+)
+async def create_configuration_value(
+    id: str, command: ConfigurationValueCommand, service: Annotated[GroupService, Depends()]
+):
+    configuration_value = service.create_configuration_value(id, command)
+    return configuration_value
+
+
+@router.get("/{id}/configuration-values/index", response_model=list[ConfigurationValueResponse])
+async def read_configuration_values_index(id: str, service: Annotated[GroupService, Depends()]):
+    configuration_values = service.read_configuration_values_index(id)
+    return configuration_values

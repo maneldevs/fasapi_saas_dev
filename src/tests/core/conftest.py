@@ -3,6 +3,11 @@ from sqlmodel import Session
 
 from src.app.modules.core.domain.services.group_service import GroupService
 from src.app.modules.core.domain.models import (
+    Configuration,
+    ConfigurationCommand,
+    ConfigurationValue,
+    ConfigurationValueCommand,
+    ConfigurationValueUpdateCommand,
     Group,
     GroupCreateCommand,
     GroupUpdateCommand,
@@ -335,13 +340,7 @@ def menu_child_command_fixture():
 
 @pytest.fixture(name="menu_parent")
 def menu_parent_fixture(module: Module):
-    return Menu(
-        id="abc-123-def-456",
-        code="menu 1",
-        link="link 1",
-        module_id=module.id,
-        module=module
-    )
+    return Menu(id="abc-123-def-456", code="menu 1", link="link 1", module_id=module.id, module=module)
 
 
 @pytest.fixture(name="menu_child")
@@ -353,7 +352,7 @@ def menu_child_fixture(menu_parent: Menu, module: Module):
         module_id=module.id,
         module=module,
         parent_id=menu_parent.id,
-        parent=menu_parent
+        parent=menu_parent,
     )
 
 
@@ -372,3 +371,107 @@ def menu_child_in_db_fixture(session: Session, menu_parent_in_db: Menu, menu_chi
     session.add(menu_child)
     session.commit()
     return menu_child
+
+
+""" Configuration """
+
+
+@pytest.fixture(name="configuration_command")
+def configuration_command_fixture():
+    return ConfigurationCommand(code="CONFIG1", module_id="abc-123-def-456")
+
+
+@pytest.fixture(name="configuration")
+def configuration_fixture(module: Module):
+    return Configuration(id="abc-123-def-456", code="CONFIG1", module=module, module_id=module.id)
+
+
+@pytest.fixture(name="configuration2")
+def configuration2_fixture(module: Module):
+    return Configuration(id="ghi-123-jkl-456", code="CONFIG2", module=module, module_id=module.id)
+
+
+@pytest.fixture(name="configuration_in_db")
+def configuration_in_db_fixture(session: Session, configuration: Configuration, module_in_db: Module):
+    configuration.module_id = module_in_db.id
+    session.add(configuration)
+    session.commit()
+    return configuration
+
+
+@pytest.fixture(name="configurations_in_db")
+def configurations_in_db_fixture(
+    session: Session, configuration: Configuration, configuration2: Configuration, module_in_db: Module
+):
+    configuration.module_id = module_in_db.id
+    configuration2.module_id = module_in_db.id
+    session.add(configuration)
+    session.add(configuration2)
+    session.commit()
+    return [configuration, configuration2]
+
+
+""" Configuration Value """
+
+
+@pytest.fixture(name="configuration_value_command")
+def configuration_value_command_fixture(configuration_in_db: Configuration):
+    return ConfigurationValueCommand(configuration_id=configuration_in_db.id, value="value1")
+
+
+@pytest.fixture(name="configuration_value_update_command")
+def configuration_value_update_command_fixture():
+    return ConfigurationValueUpdateCommand(value="value1")
+
+
+@pytest.fixture(name="configuration_value")
+def configuration_value_fixture(configuration: Configuration, group: Group):
+    return ConfigurationValue(
+        id="abc-123-def-456",
+        configuration_id=configuration.id,
+        configuration=configuration,
+        group_id=group.id,
+        group=group,
+        value="value1",
+    )
+
+
+@pytest.fixture(name="configuration_value2")
+def configuration_value2_fixture(configuration2: Configuration, group: Group):
+    return ConfigurationValue(
+        id="ghi-123-jkl-456",
+        configuration_id=configuration2.id,
+        configuration=configuration2,
+        group_id=group.id,
+        group=group,
+        value="value2",
+    )
+
+
+@pytest.fixture(name="configuration_value_in_db")
+def configuration_value_in_db_fixture(
+    session: Session, configuration_value: ConfigurationValue, configuration_in_db: Configuration, group_in_db: Group
+):
+    configuration_value.configuration_id = configuration_in_db.id
+    configuration_value.group_id = group_in_db.id
+    session.add(configuration_value)
+    session.commit()
+    return configuration_value
+
+
+@pytest.fixture(name="configuration_values_in_db")
+def configuration_values_in_db_fixture(
+    session: Session,
+    configuration_value: ConfigurationValue,
+    configuration_value2: ConfigurationValue,
+    configurations_in_db: list[Configuration],
+    group_in_db: Group,
+):
+    configuration_value.configuration_id = configurations_in_db[0].id
+    configuration_value.group_id = group_in_db.id
+    configuration_value2.configuration_id = configurations_in_db[1].id
+    configuration_value2.group_id = group_in_db.id
+    session.add(configuration_value)
+    session.add(configuration_value2)
+    session.commit()
+    return [configuration_value, configuration_value2]
