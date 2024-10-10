@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, Request
 from fastapi import Form as FForm
 from src.app import main
 from src.app.modules.core.domain.dependencies import principal_god
+from src.app.modules.core.domain.services.configuration_service import ConfigurationService
 from src.app.modules.core.domain.services.group_service import GroupService
 from src.app.modules.core.domain.models import GroupCreateCommand, GroupFilter, GroupResponse, GroupUpdateCommand
 from src.app.modules.core.domain.services.module_service import ModuleService
@@ -98,4 +99,32 @@ async def group_update_modules_perform(
         {},
         "group_update_modules_perform",
         {"id": id, "module_selected_ids": module_selected_ids},
+    )
+
+
+@router.get("/{id}/configuration-values")
+async def group_configuration_values(
+    request: Request,
+    id: str,
+    service: Annotated[GroupService, Depends()],
+    configuration_service: Annotated[ConfigurationService, Depends()],
+):
+    group = service.read_by_id(id)
+    all_configurations = configuration_service.read_all()
+    configuration_values = service.read_configuration_values_index(id)
+    data = [
+        {
+            "configuration_id": c.id,
+            "code": c.code,
+            "module_id": c.module_id,
+            "module_webname": c.module.webname if c.module else None,
+            "value": next((cv.value for cv in configuration_values if c.id == cv.configuration_id), None),
+            "id": next((cv.id for cv in configuration_values if c.id == cv.configuration_id), None),
+        }
+        for c in all_configurations
+    ]
+    return main.templates.TemplateResponse(
+        request=request,
+        name="core/group_configuration_values.html",
+        context={"group": group, "data": sorted(data, key=lambda c: c["code"])},
     )

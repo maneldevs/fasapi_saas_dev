@@ -10,6 +10,7 @@ from .resource_web import router as resource_web_router
 from .permission_web import router as permission_web_router
 from .menu_web import router as menu_web_router
 from .configuration_web import router as configuration_web_router
+from .configuration_value_web import router as configuration_value_web_router
 
 router = APIRouter()
 router.include_router(index_web_router)
@@ -22,3 +23,4 @@ router.include_router(resource_web_router)
 router.include_router(permission_web_router)
 router.include_router(menu_web_router)
 router.include_router(configuration_web_router)
+router.include_router(configuration_value_web_router)
