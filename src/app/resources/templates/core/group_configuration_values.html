@@ -1,0 +1,82 @@
+{% extends 'shared/content.html' %}
+
+{% set current_page = 'groups' %}
+
+{% block title %}
+{{ _t("group", request.state.locale )}} {{ group.webname }} - {{ _t("configurations", request.state.locale )}}
+{% endblock title %}
+
+{% block main %}
+<div class="table-responsive">
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">{{ _t("configuration", request.state.locale) }}</th>
+        <th scope="col">{{ _t("module", request.state.locale) }}</th>
+        <th scope="col">{{ _t("value", request.state.locale) }}</th>
+        <th scope="col" class="text-end"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for d in data %}
+      <tr>
+        <td>{{ d.code }} </td>
+        <td>{{ d.module_webname or '-' }}</td>
+        <td>{{ d.value or '-' }}</td>
+        <td class="text-end">
+          <button class="btn btn-sm btn-outline-primary" data-id="{{d.id}}" data-value="{{d.value}}" data-configuration-id="{{d.configuration_id}}"
+            data-configuration-code="{{d.code}}" data-group-id="{{group.id}}" onclick="openFormModal(this)">
+            <i class="bi bi-pencil"></i>
+          </button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="modalLabel">
+          {{ _t("Update", request.state.locale) }} {{ _t("configuration", request.state.locale) }}
+          <span id="configurationCode"></span>
+        </h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="{{url_for('configuration_value_upsert_perform')}}" id="editForm">
+          <div class="row">
+            <div class="col-md-6 mb-2">
+              <label class="form-label">{{ _t("value", request.state.locale )}}</label>
+              <input type="text" class="form-control" name="value" id="value" value="">
+            </div>
+          </div>
+          <input type="hidden" name="group_id" id="groupId">
+          <input type="hidden" name="configuration_id" id="configurationId">
+          <input type="hidden" name="id" id="configurationValueId">
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ _t("Close", request.state.locale)
+          }}</button>
+        <button type="submit" class="btn btn-primary" form="editForm">{{ _t("Save", request.state.locale) }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openFormModal(me) {
+    document.getElementById("value").value = me.dataset.value == 'None' ? null : me.dataset.value
+    document.getElementById("configurationCode").innerHTML = me.dataset.configurationCode
+    document.getElementById("groupId").value = me.dataset.groupId
+    document.getElementById("configurationId").value = me.dataset.configurationId
+    document.getElementById("configurationValueId").value = me.dataset.id
+    const modal = new bootstrap.Modal(document.getElementById('formModal'))
+    modal.show()
+  }
+</script>
+
+{% endblock main %}

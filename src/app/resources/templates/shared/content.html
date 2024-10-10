@@ -35,12 +35,12 @@
             href="{{ url_for('module_list') }}">{{ _t("modules", request.state.locale )|capitalize }}</a>
         </li>
         <li class="nav-item"></li>
-          <a class="nav-link {{'active' if current_page == 'menus'}}" aria-current="page"
+        <a class="nav-link {{'active' if current_page == 'menus'}}" aria-current="page"
             href="{{ url_for('menu_tree') }}">{{ _t("menus", request.state.locale )|capitalize }}</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {{'active' if current_page == 'configurations'}}" aria-current="page" href="#">{{
-            _t("configurations", request.state.locale )|capitalize }}</a>
+          <a class="nav-link {{'active' if current_page == 'configurations'}}" aria-current="page"
+            href="{{ url_for('configuration_list')}}">{{ _t("configurations", request.state.locale )|capitalize }}</a>
         </li>
       </ul>
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
